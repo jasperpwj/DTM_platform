@@ -4,18 +4,23 @@ Dynamic Task Management Platform Capstone Project
 
 ## Usage
 
-To ensure the normal usage of imageMagick module, please install the following package in the gloabal system first. 
-If you are using Mac OS X, you can simply use Homebrew and do:
-```
-brew install imagemagick
-```
 
-Then locate to the project dir to install dependencies and locate to the client directory, run:
+Locate to the project dir to install dependencies and locate to the client directory, run:
 ```
 npm install
 cd client
 npm install
+
 ```
+Turn on Mongodb service
+```
+brew services start mongodb-community@4.2
+```
+or 
+```
+brew services start mongodb-community@yourversion
+```
+
 To run the application, you need to open a terminal to run the app.js:
 ```
 node app.js
