@@ -16,4 +16,7 @@ const getCollection = collection => {
 module.exports = {
     users: getCollection("users"),
     projects: getCollection("projects"),
+
+    containers: getCollection("containers"),
+
 };
