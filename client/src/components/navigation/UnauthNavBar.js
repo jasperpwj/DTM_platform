@@ -34,6 +34,7 @@ const useStyles = makeStyles((theme) => ({
 
 export default function UnauthenticNavBar(props) {
     const classes = useStyles();
+    const [pageName, setPageMame] = useState(props.info && props.info.button);
 
     return (
         <div className={classes.root}>
@@ -59,14 +60,17 @@ export default function UnauthenticNavBar(props) {
                         >
                             Login
                         </Button>
-                        <Button
-                            color="inherit"
-                            variant="outlined"
-                            className={classes.button}
-                            href='/sign-up'
-                        >
-                            Sign up
-                        </Button>
+                        {(pageName === "signUp")? (<div/>):(
+                            <Button
+                                color="inherit"
+                                variant="outlined"
+                                className={classes.button}
+                                href='/sign-up'
+                                onClick={()=> setPageMame("signUp")}
+                            >
+                                Sign up
+                            </Button>
+                            )}
                     </Grid>
 
                 </Toolbar>

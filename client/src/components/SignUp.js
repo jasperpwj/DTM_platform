@@ -16,7 +16,6 @@ import {Redirect} from 'react-router-dom';
 import Alert from "@material-ui/lab/Alert";
 import UnauthenticNavBar from "./navigation/UnauthNavBar";
 
-
 //specify the sign up css style
 const useStyles = makeStyles((theme) => ({
     paper: {
@@ -39,8 +38,6 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 
-
-
 export default function SignUp() {
     const classes = useStyles();
     const [userInfo, setUserInfo] = useState({
@@ -53,6 +50,10 @@ export default function SignUp() {
     const [isError, setIsError] = useState(false);
     const [emptyInout, setEmptyInput] = useState(false);
     const [errorMsg, setErrorMsg] =useState("");
+
+    const navInfo = {
+        button: "signUp"
+    };
 
     const handleChange = (e)=> {
         const {id, value} = e.target;
@@ -103,7 +104,7 @@ export default function SignUp() {
                 </div>
             ):(
                 <Container component="main" maxWidth="xs">
-                    <UnauthenticNavBar/>
+                    <UnauthenticNavBar info={navInfo} />
                     <div className={classes.paper}>
                         <Avatar className={classes.avatar}>
                             <PersonAddTwoToneIcon />
