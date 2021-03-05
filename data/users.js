@@ -59,8 +59,15 @@ async function getUserByEmail(email) {
     return user;
 }
 
+async function getUserIdByEmail(email) {
+    const user = getUserByEmail(email);
+    return user._id;
+}
+
+
 module.exports = {
     addUser,
     getUserById,
     getUserByEmail,
+    getUserIdByEmail,
 };
