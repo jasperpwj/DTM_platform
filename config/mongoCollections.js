@@ -15,5 +15,6 @@ const getCollection = collection => {
 /* list the database collection */
 module.exports = {
     users: getCollection("users"),
-    projects: getCollection("projects")
+    projects: getCollection("projects"),
+    containers: getCollection("containers"),
 };
