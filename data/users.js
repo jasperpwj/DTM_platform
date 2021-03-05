@@ -64,10 +64,27 @@ async function getUserIdByEmail(email) {
     return user._id;
 }
 
+async function updateUserEmail(id, email) {
+    if(!id || typeof id !== 'string')  throw 'invalid id is provided';
+    const isValid = validateEmail(email);
+    if(!email || !isValid) throw 'input email is invalid';
+
+    let userToBeUpdated = await getUserById(id);
+    userToBeUpdated.email = email;
+    // console.log(userToBeUpdated);
+    // Object.assign(userToBeUpdated, email);
+
+    const objId = Object.createFromHexString(id);
+    const updateInfo = await userCollection.updateOne({_id: objId}, {$set: userToBeUpdated});
+    if (updateInfo.modifiedCount == 0) throw 'Update failed';
+    return await getUserById(id);
+}
+
 
 module.exports = {
     addUser,
     getUserById,
     getUserByEmail,
     getUserIdByEmail,
+    updateUserEmail,
 };
