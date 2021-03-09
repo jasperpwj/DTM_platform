@@ -82,11 +82,17 @@ const useStyle = makeStyles((theme) => ({
 export default function TopNavBar(props) {
     const classes = useStyle();
     const [open, setOpen] = useState(false);
+
     const handleOpen = () => {
         setOpen(true);
     };
+
     const handleClose = () => {
         setOpen(false);
+    };
+
+    const handleLogout = () => {
+        window.sessionStorage.setItem("userEmail", null);
     };
 
     return (
@@ -160,7 +166,7 @@ export default function TopNavBar(props) {
                         </ListItem>
                     </Link>
                     <Divider/>
-                    <ListItem button key='logout'>
+                    <ListItem button key='logout' onClick={handleLogout}>
                         <ListItemIcon><ExitToAppRoundedIcon /> </ListItemIcon>
                         <ListItemText primary='Logout' />
                     </ListItem>
