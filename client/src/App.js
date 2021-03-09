@@ -11,7 +11,7 @@ import Projects from "./components/Projects";
 
 
 function App() {
-    const [authToken, setAuthToken] = useState();
+    const [authToken, setAuthToken] = useState(false);
 
 
 
