@@ -52,15 +52,17 @@ export default function UnauthenticNavBar(props) {
                         {(props && props.navInfo)? props.navInfo.title: ""}
                     </Typography>
                     <Grid container justify='flex-end' xs={6} sm={5} md={3}>
-                        <Button
-                            color="inherit"
-                            variant="outlined"
-                            className={classes.button}
-                            href='/login'
-                        >
-                            Login
-                        </Button>
-                        {(pageName === "signUp")? (<div/>):(
+                        {(pageName === "signUp" || pageName === "home")? (
+                            <Button
+                                color="inherit"
+                                variant="outlined"
+                                className={classes.button}
+                                href='/login'
+                            >
+                                Login
+                            </Button>
+                        ): (<div/>)}
+                        {(pageName === "login" || pageName === "home")? (
                             <Button
                                 color="inherit"
                                 variant="outlined"
@@ -70,7 +72,7 @@ export default function UnauthenticNavBar(props) {
                             >
                                 Sign up
                             </Button>
-                            )}
+                            ): (<div/>)}
                     </Grid>
 
                 </Toolbar>

@@ -8,26 +8,42 @@ import Home from "./components/Home";
 import AccountPage from "./components/Account";
 import DashboardPage from "./components/Dashboard";
 import Projects from "./components/Projects";
+import TopNavBar from "./components/navigation/TopNavBar";
+import UnauthNavBar from "./components/navigation/UnauthNavBar";
+const authService = require("./services/auth.service");
 
 
 function App() {
-    const [authToken, setAuthToken] = useState(false);
+    const currentUser = authService.getCurrentUser();
+    console.log("App.js")
+    console.log(currentUser);
+    const [authToken, setAuthToken] = useState(!!(currentUser && currentUser.accessToken));
 
+    useEffect(() => {
 
+    }, [authToken]);
 
   return (
       <AuthContext.Provider value={{authToken, setAuthToken}}>
           <Router>
-              <div className="App">
-                  <Switch>
-                      <Route exact path="/" component={Home}/>
-                      <Route exact path="/sign-up" component={SignUp}/>
-                      <Route exact path="/login" component={Login}/>
-                      <Route exact path="/account" component={AccountPage}/>
-                      <Route exact path="/projects" component={Projects}/>
-                      <Route exact path="/dashboard" component={DashboardPage}/>
-                  </Switch>
-              </div>
+                  {authToken? (
+                      <div className="App">
+                          <TopNavBar/>
+                          <Switch>
+                              <Route exact path="/" component={Home}/>
+                              <Route exact path="/account" component={AccountPage}/>
+                              <Route exact path="/projectsController" component={Projects}/>
+                              <Route exact path="/dashboard" component={DashboardPage}/>
+                          </Switch>
+                      </div>):(
+                      <div className="App">
+                          <Switch>
+                              <Route exact path="/" component={Home}/>
+                              <Route exact path="/sign-up" component={SignUp}/>
+                              <Route exact path="/login" component={Login}/>
+                          </Switch>
+                      </div>
+                  )}
           </Router>
       </AuthContext.Provider>
 
