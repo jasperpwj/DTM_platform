@@ -15,6 +15,8 @@ import {useAuth} from "../authentication/auth";
 import axios from "axios";
 import {Redirect} from "react-router-dom";
 import Alert from '@material-ui/lab/Alert';
+import UnauthenticNavBar from "./navigation/UnauthNavBar";
+const authService = require("../services/auth.service");
 
 //specify the log in css style
 const useStyles = makeStyles((theme) => ({
@@ -37,15 +39,16 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-export default function Login() {
+export default function Login(props) {
     const classes = useStyles();
 
-    const {authToken, setAuthToken} = useAuth();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const [isLogin, setLogin] =useState(false);
     const [isError, setIsError] = useState(false);
     const [emptyInput, setEmptyInput] = useState(false);
+    const navInfo = {
+        button: "login"
+    };
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -55,17 +58,11 @@ export default function Login() {
         } else {
             setEmptyInput(false);
             try {
-                const user = {
-                    email: email,
-                    password: password
-                };
-                axios.post('http://localhost:4000/users/login', user)
+                authService.login(email, password)
                     .then(response => {
                         if(response) {
-                            setEmail(response.data.email);
-                            setLogin(true);
-                            setAuthToken(true);
-                            window.sessionStorage.setItem("userEmail", email);
+                            props.history.push("/");
+                            window.location.reload();
                         }
                     }).catch(error => {
                     setIsError(true)
@@ -76,11 +73,9 @@ export default function Login() {
         }
     };
 
-    if(isLogin) {
-        return <Redirect to='/' />;
-    }
     return (
         <Container component='main' maxWidth="xs">
+            <UnauthenticNavBar info={navInfo} />
             <div className={classes.paper}>
                 <Avatar className={classes.avatar}>
                     <VpnKeyOutlinedIcon/>
