@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from "react";
+import React, {useState} from "react";
 import {makeStyles} from "@material-ui/core";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
@@ -16,7 +16,6 @@ import HomeRoundedIcon from '@material-ui/icons/HomeRounded';
 import DashboardRoundedIcon from '@material-ui/icons/DashboardRounded';
 import ExitToAppRoundedIcon from '@material-ui/icons/ExitToAppRounded';
 import Link from "@material-ui/core/Link";
-import Redirect from "react-router-dom/es/Redirect";
 const authService = require("../../services/auth.service");
 
 const drawerWidth = 200;
@@ -83,10 +82,6 @@ const useStyle = makeStyles((theme) => ({
 export default function TopNavBar(props) {
     const classes = useStyle();
     const [open, setOpen] = useState(false);
-
-    // useEffect(() => {
-    //     const user = authService.getCurrentUser()
-    // }, []);
 
     const handleOpen = () => {
         setOpen(true);
@@ -159,7 +154,7 @@ export default function TopNavBar(props) {
                             <ListItemText primary='Account' />
                         </ListItem>
                     </Link>
-                    <Link href='/projectsController'>
+                    <Link href='/projects'>
                         <ListItem button key='projectsController'>
                             <ListItemIcon><FolderRoundedIcon /> </ListItemIcon>
                             <ListItemText primary='Projects' />

@@ -1,6 +1,5 @@
 import React, {useState} from 'react';
 import {makeStyles} from "@material-ui/core";
-import clsx from "clsx";
 import Toolbar from "@material-ui/core/Toolbar";
 import IconButton from "@material-ui/core/IconButton";
 import Typography from "@material-ui/core/Typography";
@@ -51,7 +50,7 @@ export default function UnauthenticNavBar(props) {
                     <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
                         {(props && props.navInfo)? props.navInfo.title: ""}
                     </Typography>
-                    <Grid container justify='flex-end' xs={6} sm={5} md={3}>
+                    <Grid container item justify='flex-end' xs={6} sm={5} md={3}>
                         {(pageName === "signUp" || pageName === "home")? (
                             <Button
                                 color="inherit"
@@ -72,7 +71,8 @@ export default function UnauthenticNavBar(props) {
                             >
                                 Sign up
                             </Button>
-                            ): (<div/>)}
+                        ): (<div/>)}
+
                     </Grid>
 
                 </Toolbar>
