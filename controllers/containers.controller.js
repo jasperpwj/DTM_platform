@@ -4,7 +4,7 @@ const {ObjectId} = require("mongodb");
 
 async function addContainer(title, priority) {
     if(!title || typeof title !== 'string') throw 'title is empty or invalid input type';
-    if(!priority || typeof priority !== 'string' || isNaN(Number(priority))) throw 'title is empty or invalid input type';
+    if(!priority || typeof priority !== 'string' || isNaN(Number(priority))) throw 'priority is empty or invalid input type';
 
     const containerCollection = await containersController();
     let newContainer = {
