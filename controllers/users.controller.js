@@ -9,7 +9,7 @@ const helperFun = require("./helper.controller");
 
 async function getUserById(req, res) {
     // if(!req.body.id || typeof req.body.id !== 'string')  throw 'invalid id is provided';
-    console.log("users.control")
+    console.log("users.control");
     const objId = ObjectId.createFromHexString(req.id);
     const userCollection = await usersController();
     const user = await userCollection.findOne({_id: objId});
@@ -20,10 +20,17 @@ async function getUserById(req, res) {
     return res.status(200).json(user);
 }
 
+<<<<<<< Updated upstream
 // updated 3/16
 async function getUserByEmail(req, res) {
     console.log("users.control")
     const objEmail = ObjectId.createFromHexString(req.email);
+=======
+
+async function getUserByEmail(email) {
+    const isValid = helperFun.validateEmail(email);
+    if(!email || !isValid) throw 'input email is invalid';
+>>>>>>> Stashed changes
     const userCollection = await usersController();
     const user = await userCollection.findOne({email: objEmail});
     if (!user) {
