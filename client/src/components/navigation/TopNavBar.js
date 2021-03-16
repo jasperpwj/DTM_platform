@@ -4,7 +4,6 @@ import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import IconButton from "@material-ui/core/IconButton";
 import Typography from "@material-ui/core/Typography";
-import Badge from "@material-ui/core/Badge";
 import MenuIcon from '@material-ui/icons/Menu';
 import clsx from "clsx";
 import Drawer from "@material-ui/core/Drawer";
@@ -17,6 +16,7 @@ import HomeRoundedIcon from '@material-ui/icons/HomeRounded';
 import DashboardRoundedIcon from '@material-ui/icons/DashboardRounded';
 import ExitToAppRoundedIcon from '@material-ui/icons/ExitToAppRounded';
 import Link from "@material-ui/core/Link";
+const authService = require("../../services/auth.service");
 
 const drawerWidth = 200;
 
@@ -82,11 +82,18 @@ const useStyle = makeStyles((theme) => ({
 export default function TopNavBar(props) {
     const classes = useStyle();
     const [open, setOpen] = useState(false);
+
     const handleOpen = () => {
         setOpen(true);
     };
+
     const handleClose = () => {
         setOpen(false);
+    };
+
+    const handleLogout = () => {
+        authService.logout();
+        console.log("out");
     };
 
     return (
@@ -110,7 +117,7 @@ export default function TopNavBar(props) {
                         <MenuIcon />
                     </IconButton>
                     <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
-                        {props.navInfo.title}
+                        {props.navInfo && props.navInfo.title? props.navInfo.title: ""}
                     </Typography>
                 </Toolbar>
             </AppBar>
@@ -148,7 +155,7 @@ export default function TopNavBar(props) {
                         </ListItem>
                     </Link>
                     <Link href='/projects'>
-                        <ListItem button key='projects'>
+                        <ListItem button key='projectsController'>
                             <ListItemIcon><FolderRoundedIcon /> </ListItemIcon>
                             <ListItemText primary='Projects' />
                         </ListItem>
@@ -160,10 +167,12 @@ export default function TopNavBar(props) {
                         </ListItem>
                     </Link>
                     <Divider/>
-                    <ListItem button key='logout'>
-                        <ListItemIcon><ExitToAppRoundedIcon /> </ListItemIcon>
-                        <ListItemText primary='Logout' />
-                    </ListItem>
+                    <Link href ="/">
+                        <ListItem button key='logout' onClick={handleLogout}>
+                            <ListItemIcon><ExitToAppRoundedIcon /> </ListItemIcon>
+                            <ListItemText primary='Logout' />
+                        </ListItem>
+                    </Link>
                 </List>
             </Drawer>
         </div>

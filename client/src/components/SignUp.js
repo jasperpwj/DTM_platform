@@ -12,9 +12,10 @@ import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import axios from "axios";
-import {Redirect} from 'react-router-dom';
+import {Redirect}  from 'react-router-dom';
 import Alert from "@material-ui/lab/Alert";
 import UnauthenticNavBar from "./navigation/UnauthNavBar";
+
 
 //specify the sign up css style
 const useStyles = makeStyles((theme) => ({
@@ -46,10 +47,10 @@ export default function SignUp() {
         email: "",
         password: ""
     });
-    const [email, setEmail] = useState("");
+    const [registered, setRegistered] = useState(false);
     const [isError, setIsError] = useState(false);
     const [emptyInout, setEmptyInput] = useState(false);
-    const [errorMsg, setErrorMsg] =useState("");
+    const [errorMsg, setErrorMsg] =useState([]);
 
     const navInfo = {
         button: "signUp"
@@ -65,26 +66,31 @@ export default function SignUp() {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        if(userInfo.firstName === "" || userInfo.lastName === "" || userInfo.email === "" || userInfo.password === "") {
-            setEmptyInput(true)
+        setErrorMsg([]);
+        if(userInfo.username === "" || userInfo.firstName === "" || userInfo.lastName === "" || userInfo.email === "" || userInfo.password === "") {
+            setEmptyInput(true);
         } else {
+            setEmptyInput(false);
             try {
                 if(userInfo.password) {
                     const user = {
+                        username: userInfo.username,
                         firstName: userInfo.firstName,
                         lastName: userInfo.lastName,
                         email: userInfo.email,
                         password: userInfo.password
                     };
                     try {
-                        axios.post('http://localhost:4000/users/sign-up', user)
-                            .then(res => setEmail(res.data.email))
+                        axios.post('http://localhost:4000/auth/sign-up', user)
+                            .then(res => {
+                                setRegistered(true);
+                                setErrorMsg([])
+                            })
                             .catch(error => {
                                 console.log({Error: error.response.data});
                                 setIsError(true);
-                                setErrorMsg(JSON.stringify(error.response.data))
+                                setErrorMsg(preMsg => ([...preMsg, error.response.data.message]));
                             });
-                        console.log(email);
                     } catch(error) {
                         console.log(error);
                     }
@@ -98,7 +104,7 @@ export default function SignUp() {
 
     return (
         <div>
-            {email? (
+            {registered? (
                 <div>
                     <Redirect to='/login'/>
                 </div>
@@ -113,9 +119,22 @@ export default function SignUp() {
                             Create your account
                         </Typography>
                         {emptyInout? (<Alert severity="error">Each field cannot be empty</Alert>):(<div><br/><br/></div>)}
-                        {isError? (<Alert severity="error">{errorMsg}</Alert>):(<div><br/><br/></div>)}
+                        {isError? (errorMsg.map(message => <Alert severity="error"> {message}</Alert>)):(<div><br/><br/></div>)}
                         <form className={classes.form} noValidate>
                             <Grid container spacing={2}>
+                                <Grid item xs={12}>
+                                    <TextField
+                                        autoComplete="username"
+                                        name="username"
+                                        variant="outlined"
+                                        required
+                                        fullWidth
+                                        id="username"
+                                        label="Username"
+                                        value={userInfo.username}
+                                        onChange={handleChange}
+                                    />
+                                </Grid>
                                 <Grid item xs={12} sm={6}>
                                     <TextField
                                         autoComplete="first-name"

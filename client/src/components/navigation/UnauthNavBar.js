@@ -1,6 +1,5 @@
 import React, {useState} from 'react';
 import {makeStyles} from "@material-ui/core";
-import clsx from "clsx";
 import Toolbar from "@material-ui/core/Toolbar";
 import IconButton from "@material-ui/core/IconButton";
 import Typography from "@material-ui/core/Typography";
@@ -51,16 +50,18 @@ export default function UnauthenticNavBar(props) {
                     <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
                         {(props && props.navInfo)? props.navInfo.title: ""}
                     </Typography>
-                    <Grid container justify='flex-end' xs={6} sm={5} md={3}>
-                        <Button
-                            color="inherit"
-                            variant="outlined"
-                            className={classes.button}
-                            href='/login'
-                        >
-                            Login
-                        </Button>
-                        {(pageName === "signUp")? (<div/>):(
+                    <Grid container item justify='flex-end' xs={6} sm={5} md={3}>
+                        {(pageName === "signUp" || pageName === "home")? (
+                            <Button
+                                color="inherit"
+                                variant="outlined"
+                                className={classes.button}
+                                href='/login'
+                            >
+                                Login
+                            </Button>
+                        ): (<div/>)}
+                        {(pageName === "login" || pageName === "home")? (
                             <Button
                                 color="inherit"
                                 variant="outlined"
@@ -70,7 +71,8 @@ export default function UnauthenticNavBar(props) {
                             >
                                 Sign up
                             </Button>
-                            )}
+                        ): (<div/>)}
+
                     </Grid>
 
                 </Toolbar>

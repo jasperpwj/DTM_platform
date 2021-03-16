@@ -81,6 +81,7 @@ async function updateUserEmail(req, res) {
     // const updateInfo = await userCollection.updateOne({_id: objId}, {$set: userToBeUpdated});
     // if (updateInfo.modifiedCount === 0) throw 'Update failed';
     // return await getUserById(id);
+
 }
 
 
