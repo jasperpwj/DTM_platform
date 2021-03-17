@@ -2,10 +2,11 @@ const mongoCollection = require("../config/mongoCollections");
 const projectsController = mongoCollection.projects;
 const {ObjectId} = require("mongodb");
 
-async function addProject(projectName, owner_email) {
-    if (!projectName || typeof projectName !== "string") throw "name of project is empty or invalid input type";
-    if (!owner_email || typeof status !== "string") throw "owner's email is empty or invalid input type";
-    const projectCollection = await projectsController();  // get projectsController database
+
+// update 3/17
+async function addProject(req, res) {
+    if (!req.body.projectname || typeof req.body.projectname !== 'string') throw 'name of project is empty or invalid input type';
+    const projectCollection = await projectsController();
     let newProject = {
         projectName: projectName,
         status: true,  // open: true, close: false
@@ -15,19 +16,22 @@ async function addProject(projectName, owner_email) {
         clients: [],
         containers: [],
         tasks: []
-    };
+    }
     const insertInfo = await projectCollection.insertOne(newProject);
     if (insertInfo.insertedCount === 0) throw "fail to add new project in the database";
-    return true; // return true when project added successfully
+    return res.send({message: "Project is created successfully"});
 }
 
-async function getProjectById(id) {
-    if (!id || typeof id !== "string") throw "invalid id is provided";
-    const objId = ObjectId.createFromHexString(id);
+
+async function getProjectById(req, res) {
+    // if (!id || typeof id !== "string") throw "invalid id is provided";
+    const objId = ObjectId.createFromHexString(req.id);
     const projectCollection = await projectsController();
     const project = await projectCollection.findOne({_id: objId});
-    if (!project) throw "No project found";
-    return project;
+    if (!project) {
+        res.status(400).send({message: "Project not found"})
+    }
+    return res.status(200).json(project)
 }
 
 module.exports = {
