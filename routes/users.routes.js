@@ -13,4 +13,6 @@ require('dotenv').config();
 
 router.get("/account", [authJwt.verifyToken], userController.getUserById);
 
+router.patch("/edit_account", [authJwt.verifyToken], userController.updateUserAccount);
+
 module.exports = router;

@@ -1,6 +1,6 @@
 const mongoCollection = require("../config/mongoCollections");
 const usersController = mongoCollection.users;
-const helperFun = require("../controllers/helper.controller");
+const helperFun = require("../controllers/user.helper");
 
 checkExistedUsernameOrEmail = async (req, res, next) => {
     //check existed username

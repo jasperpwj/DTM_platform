@@ -9,7 +9,13 @@ function getUserProfile() {
     })
 }
 
+function updateUserAccount(user) {
+    return axios.patch(API_URL + "edit_account", user, {headers: authHeader()}).then(res => {
+        return res;
+    })
+}
 
 export {
     getUserProfile,
+    updateUserAccount,
 };
