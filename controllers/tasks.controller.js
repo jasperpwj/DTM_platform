@@ -1,5 +1,5 @@
 const mongoCollection = require("../config/mongoCollections");
-const tasksController = mongoCollection.tasks;
+const tasks = mongoCollection.tasks;
 const {ObjectId} = require("mongodb");
 
 async function addTask(title, editor, priority, content, container) {
@@ -9,7 +9,7 @@ async function addTask(title, editor, priority, content, container) {
     if (!content || typeof content !== 'string' || !content.trim()) throw 'content does not exist or invalid type';
     if (!container || typeof container !== 'string' || !container.trim()) throw 'container does not exist or invalid type';
 
-    const taskCollection = await tasksController();
+    const taskCollection = await tasks();
     let newTask = {
         title: title,
         editor: editor,
@@ -28,7 +28,7 @@ async function addTask(title, editor, priority, content, container) {
 async function getTaskById(id) {
     if(!id || typeof id !== 'string')  throw 'invalid id is provided';
     const objId = ObjectId.createFromHexString(id);
-    const taskCollection = await tasksController();
+    const taskCollection = await tasks();
     const task = await taskCollection.findOne({_id: objId});
     if(!task) throw 'No task found';
     return task;
@@ -37,38 +37,29 @@ async function getTaskById(id) {
 async function removeTask(id) {
     if (!id || typeof id !== "string" || !id.trim()) throw "Invalid id";
     const objId = ObjectId(id);
-    const taskCollection = await tasksController();
+    const taskCollection = await tasks();
     const deleteInfo = await taskCollection.removeOne({ _id: objId });
     if (deleteInfo.deletedCount === 0) throw "Deletion failed";
 }
 
-async function updateTask(id, updatedTask) {
-    if (!id || typeof id !== "string" || !id.trim()) throw "Invalid id";
-    if (!updatedTask.title || typeof updatedTask.title !== 'string' || !updatedTask.title.trim()) {
-        throw 'title does not exist or invalid type';
+async function editTask(req, res) {
+    const objId = ObjectId.createFromHexString(req.id);
+    const taskCollection = await tasks();
+    let editInfo = {};
+    if(req.body.title) {
+        editInfo.title = req.body.title;
     }
-    if (!updatedTask.editor || typeof updatedTask.editor !== 'string' || !updatedTask.editor.trim()) {
-        throw 'editor does not exist or invalid type';
+    if(req.body.priority) {
+        editInfo.priority = req.body.priority;
     }
-    if (!updatedTask.create_date || typeof updatedTask.create_date !== 'string' || !updatedTask.create_date.trim()) {
-        throw 'create_date does not exist or invalid type';
+    if(req.body.content) {
+        editInfo.content = req.body.content;
     }
-    if (!updatedTask.last_edited_date || typeof updatedTask.last_edited_date !== 'string' || !updatedTask.last_edited_date.trim()) {
-        throw 'last_edited_date does not exist or invalid type';
+    if(JSON.stringify(editInfo) !== '{}') {
+        const editStatus = await taskCollection.updateOne({_id: objId}, {$set:editInfo});
+        if(editStatus.modifiedCount === 0) throw "Edit failed!";
     }
-    if (!updatedTask.priority || typeof updatedTask.priority !== 'string' || isNaN(priority)) {
-        throw 'priority does not exist or invalid type';
-    }
-    if (!updatedTask.content || typeof updatedTask.content !== 'string' || !updatedTask.content.trim()) {
-        throw 'content does not exist or invalid type';
-    }
-    if (!updatedTask.container || typeof updatedTask.container !== 'string' || !updatedTask.container.trim()) {
-        throw 'container does not exist or invalid type';
-    }
-    const objId = ObjectId(id);
-    const taskCollection = await tasksController();
-    await taskCollection.updateOne({ _id: objId }, { $set: updatedTask });
-    return await this.getTaskById(id);
+    return res.status(200).send({message: "Edit succeeded!"})
 }
 
 
@@ -76,5 +67,5 @@ module.exports = {
     addTask,
     getTaskById,
     removeTask,
-    updateTask
+    editTask,
 }
