@@ -9,7 +9,7 @@ async function addProject(req, res) {
     const projectCollection = await projects();
     let newProject = {
         projectName: projectName,
-        status: true,  // open: true, close: false
+        status: "open",  // open: open, close: completed
         initial_Date: new Date().toLocaleString(),
         owner: owner_email,  // owner is the string of email
         developers: [],

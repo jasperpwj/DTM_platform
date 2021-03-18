@@ -39,6 +39,10 @@ async function updateUserAccount(req, res) {
     if(req.body.phoneNumber) {
         updateInfo.phoneNumber = req.body.phoneNumber;
     }
+    if(JSON.stringify(updateInfo) !== '{}') {
+        const updatedStatus = await userCollection.updateOne({_id: objId}, {$set:updateInfo});
+        if(updatedStatus.modifiedCount === 0) throw "fail to reset password";
+    }
     return res.status(200).send({message: "User account updated successfully."})
 }
 
