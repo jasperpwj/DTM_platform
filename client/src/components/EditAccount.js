@@ -50,7 +50,6 @@ export default function EditAccountFormDialog() {
             >
                 Edit Profile
             </Button>
-
             <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title" fullWidth={true}>
                 <DialogTitle id="form-dialog-title">Edit Profile Information</DialogTitle>
                 <DialogContent>
