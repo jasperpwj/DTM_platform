@@ -13,7 +13,7 @@ const useStyles = makeStyles((theme) => ({
 
     },
 }));
-
+console.log("here");
 export default function Projects() {
     const classes = useStyles();
 

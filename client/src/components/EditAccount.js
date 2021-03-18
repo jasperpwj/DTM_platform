@@ -60,7 +60,7 @@ export default function EditAccountFormDialog() {
                                     autoFocus
                                     margin="dense"
                                     id="firstName"
-                                    label="Fist Name"
+                                    label="First Name"
                                     fullWidth
                                     onChange={handleChange}
                                 />
