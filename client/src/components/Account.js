@@ -1,6 +1,15 @@
 import React, {useState, useEffect} from 'react';
 import {makeStyles} from "@material-ui/core";
 import Typography from "@material-ui/core/Typography";
+import Grid from "@material-ui/core/Grid";
+import Avatar from "@material-ui/core/Avatar";
+import Button from "@material-ui/core/Button";
+import EmailOutlinedIcon from '@material-ui/icons/EmailOutlined';
+import AccountBoxOutlinedIcon from '@material-ui/icons/AccountBoxOutlined';
+import CloudUploadIcon from '@material-ui/icons/CloudUpload';
+import EditAccountFormDialog from "./EditAccount";
+import ResetPasswordFormDialog from "./ResetPassword";
+import PhoneAndroidOutlinedIcon from '@material-ui/icons/PhoneAndroidOutlined';
 const UserService = require("../services/user.service");
 
 const useStyles = makeStyles((theme) => ({
