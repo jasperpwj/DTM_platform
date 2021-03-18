@@ -89,6 +89,9 @@ export default function AccountPage() {
                     <Grid container justify="flex-end">
                         <EditAccountFormDialog/>
                     </Grid>
+                    <Grid container justify="flex-end">
+                        <ResetPasswordFormDialog/>
+                    </Grid>
                     <Grid container item>
                         <Typography paragraph className={classes.typography}>
                             {currentUser && currentUser.firstName} {currentUser && currentUser.lastName}

@@ -25,8 +25,9 @@ export default function ResetPasswordFormDialog() {
     const handleSubmit = (e) => {
         e.preventDefault();
         if(!(formInfo.password === "" )) {
+            console.log(formInfo)
             userService.resetPassword(formInfo).then(r => {return r;});
-            window.location.reload()
+
         }
     };
     const handleChange = (e) => {
