@@ -15,4 +15,6 @@ router.get("/account", [authJwt.verifyToken], userController.getUserById);
 
 router.patch("/edit_account", [authJwt.verifyToken], userController.updateUserAccount);
 
+router.patch("/reset_password", [authJwt.verifyToken], userController.resetPassword);
+
 module.exports = router;

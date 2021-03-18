@@ -8,6 +8,7 @@ import EmailOutlinedIcon from '@material-ui/icons/EmailOutlined';
 import AccountBoxOutlinedIcon from '@material-ui/icons/AccountBoxOutlined';
 import CloudUploadIcon from '@material-ui/icons/CloudUpload';
 import EditAccountFormDialog from "./EditAccount";
+import ResetPasswordFormDialog from "./ResetPassword";
 import PhoneAndroidOutlinedIcon from '@material-ui/icons/PhoneAndroidOutlined';
 const UserService = require("../services/user.service");
 
@@ -87,6 +88,9 @@ export default function AccountPage() {
                 <Grid container className={classes.content} direction="column" justify="flex-start">
                     <Grid container justify="flex-end">
                         <EditAccountFormDialog/>
+                    </Grid>
+                    <Grid container justify="flex-end">
+                        <ResetPasswordFormDialog/>
                     </Grid>
                     <Grid container item>
                         <Typography paragraph className={classes.typography}>

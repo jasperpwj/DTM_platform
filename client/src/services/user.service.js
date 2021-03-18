@@ -15,7 +15,14 @@ function updateUserAccount(user) {
     })
 }
 
+function resetPassword(password) {
+    return axios.patch(API_URL + "reset_password", password, {headers: authHeader()}).then(res => {
+        return res;
+    })
+}
+
 export {
     getUserProfile,
     updateUserAccount,
+    resetPassword,
 };

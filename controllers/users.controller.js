@@ -39,11 +39,22 @@ async function updateUserAccount(req, res) {
     if(req.body.phoneNumber) {
         updateInfo.phoneNumber = req.body.phoneNumber;
     }
+    return res.status(200).send({message: "User account updated successfully."})
+}
+
+async function resetPassword(req, res) {
+    const objId = ObjectId.createFromHexString(req.id);
+    const userCollection = await users();
+    let updateInfo = {};
+    if(req.body.password) {
+        const hashPwd = await bcrypt.hash(req.body.password, 5);
+        updateInfo.password = hashPwd;
+    }
     if(JSON.stringify(updateInfo) !== '{}') {
         const updatedStatus = await userCollection.updateOne({_id: objId}, {$set:updateInfo});
-        if(updatedStatus.modifiedCount === 0) throw "fail to update the user's information";
+        if(updatedStatus.modifiedCount === 0) throw "fail to reset password";
     }
-    return res.status(200).send({message: "User account updated successfully."})
+    return res.status(200).send({message: "User password reset successfully."})
 }
 
 
@@ -72,11 +83,13 @@ async function updateUserAccount(req, res) {
 //     return res.status(200).json(user._id);
 
 
+// }
 
 
 module.exports = {
     getUserById,
     updateUserAccount,
     getUserIdByEmail,
+    resetPassword,
     // updateUserEmail,
 };
