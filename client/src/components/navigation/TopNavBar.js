@@ -22,7 +22,7 @@ const drawerWidth = 200;
 
 const useStyle = makeStyles((theme) => ({
     topBar: {
-        display: 'flex'
+        display: 'flex',
     },
     appBar: {
         zIndex: theme.zIndex.drawer + 1,
@@ -117,7 +117,7 @@ export default function TopNavBar(props) {
                         <MenuIcon />
                     </IconButton>
                     <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
-                        {props.navInfo && props.navInfo.title? props.navInfo.title: ""}
+                        Dynamic Task Management Platform
                     </Typography>
                 </Toolbar>
             </AppBar>

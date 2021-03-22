@@ -1,6 +1,7 @@
 const mongoCollection = require("../config/mongoCollections");
 const projects = mongoCollection.projects;
 const {ObjectId} = require("mongodb");
+const projectHelper = require("./projects.helper");
 
 
 // update 3/17
@@ -8,19 +9,62 @@ async function addProject(req, res) {
     if (!req.body.projectName || typeof req.body.projectName !== 'string') throw 'name of project is empty or invalid input type';
     const projectCollection = await projects();
     let newProject = {
-        projectName: projectName,
+        projectName: req.body.projectName,
         status: "open",  // open: open, close: completed
         initial_Date: new Date().toLocaleString(),
-        owner: owner_email,  // owner is the string of email
+        lastUpdateTime: new Date().toLocaleString(),
+        description: (req.body.description)? req.body.description: "No description",
+        visibility: req.body.visibility,
+        owner: req.id,  // owner is the string of email
         developers: [],
         clients: [],
         containers: [],
         tasks: []
-    }
+    };
     const insertInfo = await projectCollection.insertOne(newProject);
     if (insertInfo.insertedCount === 0) throw "fail to add new project in the database";
+    //add projectId to user
+    const projectId = insertInfo.insertedId;
+    const additionResult  = await projectHelper.addProjectIdToUser(req.id, projectId);
+    if(!additionResult) throw 'Fail to add project Id to the user';
     return res.send({message: "Project is created successfully"});
 }
+
+async function getOpenProjects(req, res) {
+    const projectList = await projectHelper.getProjectListByUserId(req.id);
+    if(!projectList.length) {
+        res.status(200).send(projectList);
+    } else {
+        const projectCollection = await projects();
+        let openProjects = [];
+        for(let project of projectList) {
+            const openProject = await projectCollection.findOne({_id: project._id, status: "open"});
+            if(openProject !== null) {
+                openProjects.push(openProject);
+            }
+        }
+        res.status(200).json(openProjects);
+    }
+}
+
+async function getClosedProjects(req, res) {
+    const projectList = await projectHelper.getProjectListByUserId(req.id);
+    if(!projectList.length) {
+        res.status(200).send(projectList);
+    } else {
+        const projectCollection = await projects();
+        let closedProjects = [];
+        for(let project of projectList) {
+            const closedProject = await projectCollection.findOne({_id: project._id, status: "completed"});
+            if(closedProject !== null) {
+                closedProjects.push(closedProject);
+            }
+        }
+        res.status(200).json(closedProjects);
+    }
+}
+
+
 
 
 async function getProjectById(req, res) {
@@ -55,6 +99,8 @@ async function editProject(req, res) {
 }
 module.exports = {
     addProject,
+    getOpenProjects,
+    getClosedProjects,
     getProjectById,
     editProject,
 }

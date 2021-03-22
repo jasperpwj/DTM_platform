@@ -4,6 +4,7 @@ const path = require("path");
 const app = express();
 const userRoutes = require("./routes/users.routes");
 const authRoutes = require("./routes/auth.routes");
+const projectsRoutes = require("./routes/projects.routes");
 const mongoose = require("mongoose");
 const cors = require("cors");
 
@@ -44,6 +45,7 @@ app.use((req, res, next) => {
 // set up routes
 app.use("/auth", authRoutes);
 app.use("/users", userRoutes);
+app.use("/projects", projectsRoutes);
 
 app.use("*", (req, res) => {
     res.status(404).json({error: "Page Not Found"})
