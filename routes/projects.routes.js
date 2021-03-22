@@ -10,4 +10,6 @@ router.post("/create_project", [authJwt.verifyToken], projectController.addProje
 router.get("/open_projects", [authJwt.verifyToken], projectController.getOpenProjects);
 
 router.get("/closed_projects", [authJwt.verifyToken], projectController.getClosedProjects);
+
+router.patch("/change_project_status", [authJwt.verifyToken], projectController.changeProjectStatus);
 module.exports = router;

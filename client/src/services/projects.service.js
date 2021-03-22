@@ -21,9 +21,15 @@ function getClosedProjects() {
     })
 }
 
+function changeProjectStatus(operation) {
+    return axios.patch(API_URL + "change_project_status", operation, {headers:authHeader()}).then(res => {
+        return res;
+    })
+}
 
 export {
     createProject,
     getOpenProjects,
     getClosedProjects,
+    changeProjectStatus,
 }
