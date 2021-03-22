@@ -5,12 +5,14 @@ import DialogContent from "@material-ui/core/DialogContent";
 import TextField from "@material-ui/core/TextField";
 import DialogActions from "@material-ui/core/DialogActions";
 import Button from "@material-ui/core/Button";
-import EditIcon from "@material-ui/icons/Edit";
+import FingerprintIcon from "@material-ui/icons/Fingerprint";
+import Alert from '@material-ui/lab/Alert';
 import Grid from "@material-ui/core/Grid";
 const userService = require("../services/user.service");
 
 export default function ResetPasswordFormDialog() {
     const [open, setOpen] = useState(false);
+    const [diffInput, setDiffInput] = useState(false);
     const initialInfo = Object.freeze({
         password:"",
     });
@@ -20,15 +22,23 @@ export default function ResetPasswordFormDialog() {
         setOpen(true);
     };
     const handleClose = () => {
+        setDiffInput(false);
         setOpen(false);
     };
     const handleSubmit = (e) => {
         e.preventDefault();
-        if(!(formInfo.password === "" )) {
-            console.log(formInfo)
-            userService.resetPassword(formInfo).then(r => {return r;});
-
+        if(formInfo.password != formInfo.password_check) {
+            // check 的密码不一致
+            console.log('cl')
+            setDiffInput(true);
         }
+        else if(!(formInfo.password === "" )) {
+            console.log(formInfo)
+            setDiffInput(false);
+            userService.resetPassword(formInfo).then(r => {return r;});
+            console.log('hi')
+        }
+        
     };
     const handleChange = (e) => {
         if(e.target.id && e.target.value) {
@@ -40,19 +50,21 @@ export default function ResetPasswordFormDialog() {
     };
     return (
         <div >
+
             <Button
                 variant="contained"
                 color="primary"
                 size="small"
-                startIcon={<EditIcon/>}
+                startIcon={<FingerprintIcon/>}
                 onClick={handleClickOpen}
             >
-                ResetPassword
+                Change Password
             </Button>
-
             <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title" fullWidth={true}>
-                <DialogTitle id="form-dialog-title">Reset Password</DialogTitle>
+                <DialogTitle id="form-dialog-title">Change Password</DialogTitle>
                 <DialogContent>
+                {diffInput?( <Alert severity='error'>Password don't match!</Alert>):(<div><br/><br/></div>)}
+                <p/>
                     <form>
                         <TextField
                             autoFocus
@@ -62,14 +74,14 @@ export default function ResetPasswordFormDialog() {
                             fullWidth
                             onChange={handleChange}
                         />
-                        {/* <TextField
+                        <TextField
                             autoFocus
                             margin="dense"
-                            id="phoneNumber"
+                            id="password_check"
                             label="Enter NewPassword Again"
                             fullWidth
                             onChange={handleChange}
-                        /> */}
+                        />
                     </form>
                 </DialogContent>
                 <DialogActions>
