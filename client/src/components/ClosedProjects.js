@@ -51,6 +51,14 @@ export default function ClosedProjects(props) {
     const handleCloseMore = () => {
         setAnchorEl(null);
     };
+    const handleProjectStatusChange = (event) => {
+        let changeStatus = {};
+        changeStatus.operation = event.target.attributes.name && event.target.attributes.name.value;
+        changeStatus.projectId = event.target.attributes.id && event.target.attributes.id.value;
+        projectService.changeProjectStatus(changeStatus).then(res => {
+        });
+        window.location.reload();
+    };
 
     const buildProjectRow = (project) => {
         return (
@@ -75,10 +83,18 @@ export default function ClosedProjects(props) {
                         open={open}
                         onClose={handleCloseMore}
                     >
-                        <MenuItem key={project._id + "edit"}>
+                        <MenuItem
+                            key={project._id + "edit"}
+                            id={project._id}
+                        >
                             Edit
                         </MenuItem>
-                        <MenuItem key={project._id + "close-project"}>
+                        <MenuItem
+                            key={project._id + "open-project"}
+                            id={project._id}
+                            name="open"
+                            onClick={handleProjectStatusChange}
+                        >
                             Open Project
                         </MenuItem>
                     </Menu>

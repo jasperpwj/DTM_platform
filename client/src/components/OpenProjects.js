@@ -42,7 +42,6 @@ export default function OpenProjects(props) {
                 setIsEmptyProject(false);
                 setOpenProjects(res.data);
             }
-
         })
     }, []);
 
@@ -54,6 +53,15 @@ export default function OpenProjects(props) {
 
     const handleCloseMore = () => {
         setAnchorEl(null);
+    };
+
+    const handleProjectStatusChange = (event) => {
+        let changeStatus = {};
+        changeStatus.operation = event.target.attributes.name && event.target.attributes.name.value;
+        changeStatus.projectId = event.target.attributes.id && event.target.attributes.id.value;
+        projectService.changeProjectStatus(changeStatus).then(res => {
+        });
+        window.location.reload();
     };
 
     const buildProjectRow = (project) => {
@@ -78,11 +86,20 @@ export default function OpenProjects(props) {
                         keepMounted
                         open={open}
                         onClose={handleCloseMore}
+
                     >
-                        <MenuItem key={project._id + "edit"}>
+                        <MenuItem
+                            key={project._id + "edit"}
+                            id={project._id}
+                        >
                             Edit
                         </MenuItem>
-                        <MenuItem key={project._id + "close-project"}>
+                        <MenuItem
+                            key={project._id + "close_project"}
+                            id={project._id}
+                            name="closed"
+                            onClick={handleProjectStatusChange}
+                        >
                             Close Project
                         </MenuItem>
                     </Menu>
@@ -113,7 +130,6 @@ export default function OpenProjects(props) {
                                 {openProjectList}
                             </TableBody>
                         </React.Fragment>
-
                     ):(
                         <TableBody>
                             <TableRow className={classes.emptyRow}>
