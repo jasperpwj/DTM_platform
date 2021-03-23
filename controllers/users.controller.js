@@ -47,8 +47,18 @@ async function updateUserAccount(req, res) {
 }
 
 async function resetPassword(req, res) {
+
     const objId = ObjectId.createFromHexString(req.id);
     const userCollection = await users();
+    const user = await userCollection.findOne({_id: objId});
+    let isPwdMatched = await bcrypt.compare(req.body.ori_password, user.password);
+
+    if (!isPwdMatched) {
+        return res.status(200).json({
+            status: false
+        })
+        
+    }
     let updateInfo = {};
     if(req.body.password) {
         const hashPwd = await bcrypt.hash(req.body.password, 5);
@@ -56,38 +66,14 @@ async function resetPassword(req, res) {
     }
     if(JSON.stringify(updateInfo) !== '{}') {
         const updatedStatus = await userCollection.updateOne({_id: objId}, {$set:updateInfo});
-        if(updatedStatus.modifiedCount === 0) throw "fail to reset password";
+        if(updatedStatus.modifiedCount === 0) throw "fail to change password";
     }
-    return res.status(200).send({message: "User password reset successfully."})
+    // return res.status(200).send({message: "User password change successfully."})
+    return res.status(200).json({
+        status: true
+    })
 }
 
-
-// update 3/16  req:id  res:??
-// async function updateUserEmail(req, res) {
-//     console.log("users.control")
-//     const objId = ObjectId.createFromHexString(req.id);
-//     const userCollection = await usersController();
-//     const user = await userCollection.findOne({_id: objId});
-//     if(!user) {
-//         res.status(400).send({message: "User not found"})
-//     }
-//     const isValid = helperFun.validateEmail(req.email);
-//     if(!isValid) {
-//         res.status(400).send({message: "Invalid email is provided"})
-//     }
-//     let yserToBeUpdated = await getUserById(req.id);
-//     userToBeUpdated.email = req.email;
-//     const userCollection = await usersController();
-//     const objId = Object.createFromHexString(id);
-//     const updateInfo = await userCollection.updateOne({_id: objId}, {$set: userToBeUpdated});
-//     if (updateInfo.modifiedCount === 0) {
-//         res.status(400).send({message: "Update failed"})
-//     }
-//     console.log(user)
-//     return res.status(200).json(user._id);
-
-
-// }
 
 
 module.exports = {
@@ -95,5 +81,4 @@ module.exports = {
     updateUserAccount,
     getUserIdByEmail,
     resetPassword,
-    // updateUserEmail,
 };
