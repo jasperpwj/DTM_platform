@@ -8,7 +8,7 @@ import EmailOutlinedIcon from '@material-ui/icons/EmailOutlined';
 import AccountBoxOutlinedIcon from '@material-ui/icons/AccountBoxOutlined';
 import CloudUploadIcon from '@material-ui/icons/CloudUpload';
 import EditAccountFormDialog from "./EditAccount";
-import ResetPasswordFormDialog from "./ResetPassword";
+import ResetPasswordFormDialog from "./ChangePassword";
 import PhoneAndroidOutlinedIcon from '@material-ui/icons/PhoneAndroidOutlined';
 
 

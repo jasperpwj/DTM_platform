@@ -14,6 +14,7 @@ async function getUserByEmail(email) {
     return user;
 }
 
+
 module.exports = {
     validateEmail,
     getUserByEmail,
