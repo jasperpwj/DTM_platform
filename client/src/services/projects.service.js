@@ -27,9 +27,16 @@ function changeProjectStatus(operation) {
     })
 }
 
+function editProjectInfo(project) {
+    return axios.patch(API_URL + "edit_project", project, {headers: authHeader()}).then(res => {
+        return res;
+    })
+}
+
 export {
     createProject,
     getOpenProjects,
     getClosedProjects,
     changeProjectStatus,
+    editProjectInfo,
 }

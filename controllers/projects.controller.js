@@ -85,23 +85,28 @@ async function getProjectById(req, res) {
 }
 
 async function editProject(req, res) {
-    const objId = ObjectId.createFromHexString(req.id);
+    const objId = ObjectId.createFromHexString(req.body.projectId);
     const projectCollection = await projects();
+
     let editInfo = {};
     if (req.body.projectName) {
         editInfo.projectName = req.body.projectName;
+    }
+    if (req.body.description) {
+        editInfo.description = req.body.description;
     }
 
     if (req.body.status) {
         editInfo.status = req.body.status;
     }
 
+    editInfo.lastUpdateTime = new Date().toLocaleString();
     if (JSON.stringify(editInfo) !== '{}') {
         const editStatus = await projectCollection.updateOne({_id: objId}, {$set: editInfo});
-        if (editStatus.modifiedCount === 0) throw "Edit failed!";
+        if (editStatus.modifiedCount === 0) throw "Failed to edit project's info";
     }
 
-    return res.status(200).send({message: "Edit succeeded!"})
+    return res.status(200).send({message: "Edition of project info succeeded!"})
 }
 module.exports = {
     addProject,
