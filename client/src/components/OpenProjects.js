@@ -91,13 +91,7 @@ export default function OpenProjects(props) {
                         onClose={handleCloseMore}
 
                     >
-                        <MenuItem
-                            key={project._id + "edit"}
-                            id={project._id}
-                        >
-                            Edit
 
-                        </MenuItem>
 
                         <EditProjectFormDialog projectId={project._id}/>
                         <MenuItem
