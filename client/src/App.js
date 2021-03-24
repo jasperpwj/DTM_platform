@@ -10,6 +10,7 @@ import DashboardPage from "./components/Dashboard";
 import Projects from "./components/Projects";
 import TopNavBar from "./components/navigation/TopNavBar";
 import Project from "./components/Project";
+import NotFoundPage from "./components/NotFoundPage";
 const authService = require("./services/auth.service");
 
 
@@ -45,6 +46,7 @@ function App() {
                           </Switch>
                       </div>
                   )}
+                  <Route path="*" component={NotFoundPage}/>
           </Router>
       </AuthContext.Provider>
 
