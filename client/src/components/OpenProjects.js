@@ -13,6 +13,8 @@ import IconButton from "@material-ui/core/IconButton";
 import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
 import AddProject from "./AddProject";
+import EditProjectFormDialog from "./EditProject";
+
 const projectService = require("../services/projects.service");
 
 const useStyles = makeStyles({
@@ -46,7 +48,6 @@ export default function OpenProjects(props) {
     }, []);
 
 
-
     const handleClickMore = (event) => {
         setAnchorEl(event.currentTarget);
     };
@@ -63,6 +64,8 @@ export default function OpenProjects(props) {
         });
         window.location.reload();
     };
+
+
 
     const buildProjectRow = (project) => {
         return (
@@ -93,7 +96,10 @@ export default function OpenProjects(props) {
                             id={project._id}
                         >
                             Edit
+
                         </MenuItem>
+
+                        <EditProjectFormDialog projectId={project._id}/>
                         <MenuItem
                             key={project._id + "close_project"}
                             id={project._id}
