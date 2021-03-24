@@ -85,9 +85,18 @@ export default function ClosedProjects(props) {
                         open={open}
                         onClose={handleCloseMore}
                     >
+<<<<<<< Updated upstream
 
                         <EditProjectFormDialog projectId={project._id}/>
 
+=======
+                        <MenuItem
+                            key={project._id + "edit"}
+                            id={project._id}
+                        >
+                            Setting
+                        </MenuItem>
+>>>>>>> Stashed changes
                         <MenuItem
                             key={project._id + "open-project"}
                             id={project._id}

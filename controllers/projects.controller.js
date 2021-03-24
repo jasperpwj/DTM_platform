@@ -9,11 +9,11 @@ async function addProject(req, res) {
     const projectCollection = await projects();
     let newProject = {
         projectName: req.body.projectName,
-        status: "open",  // open: open, close: completed
+        status: "open",  // open: open, closed: closed or completed
         initial_Date: new Date().toLocaleString(),
-        lastUpdateTime: new Date().toLocaleString(),
+        lastUpdateTime: new Date().toLocaleDateString(),
         description: (req.body.description)? req.body.description: "No description",
-        visibility: req.body.visibility,
+        visibility: req.body.visibility, // public or private
         owner: req.id,  // owner is the string of email
         developers: [],
         clients: [],

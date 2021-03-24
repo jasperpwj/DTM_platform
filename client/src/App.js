@@ -9,6 +9,7 @@ import AccountPage from "./components/Account";
 import DashboardPage from "./components/Dashboard";
 import Projects from "./components/Projects";
 import TopNavBar from "./components/navigation/TopNavBar";
+import Project from "./components/Project";
 const authService = require("./services/auth.service");
 
 
@@ -33,6 +34,7 @@ function App() {
                               <Route exact path="/account" component={AccountPage}/>
                               <Route exact path="/projects" component={Projects}/>
                               <Route exact path="/dashboard" component={DashboardPage}/>
+                              <Route exact path='/projects/:projectName' component={Project}/>
                           </Switch>
                       </div>):(
                       <div className="App">
