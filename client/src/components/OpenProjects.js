@@ -13,12 +13,9 @@ import IconButton from "@material-ui/core/IconButton";
 import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
 import AddProject from "./AddProject";
-<<<<<<< Updated upstream
 import EditProjectFormDialog from "./EditProject";
 
-=======
 import Link from "@material-ui/core/Link";
->>>>>>> Stashed changes
 const projectService = require("../services/projects.service");
 
 const useStyles = makeStyles({
@@ -95,18 +92,15 @@ export default function OpenProjects(props) {
                         onClose={handleCloseMore}
 
                     >
-<<<<<<< Updated upstream
 
 
                         <EditProjectFormDialog projectId={project._id}/>
-=======
                         <MenuItem
                             key={project._id + "edit"}
                             id={project._id}
                         >
                             Setting
                         </MenuItem>
->>>>>>> Stashed changes
                         <MenuItem
                             key={project._id + "close_project"}
                             id={project._id}
