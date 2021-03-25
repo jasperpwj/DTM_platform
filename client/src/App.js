@@ -36,6 +36,7 @@ function App() {
                               <Route exact path="/projects" component={Projects}/>
                               <Route exact path="/dashboard" component={DashboardPage}/>
                               <Route exact path='/projects/:projectName' component={Project}/>
+                              <Route path="*" component={NotFoundPage}/>
                           </Switch>
                       </div>):(
                       <div className="App">
@@ -43,10 +44,10 @@ function App() {
                               <Route exact path="/" component={Home}/>
                               <Route exact path="/sign-up" component={SignUp}/>
                               <Route exact path="/login" component={Login}/>
+                              <Route path="*" component={NotFoundPage}/>
                           </Switch>
                       </div>
                   )}
-                  <Route path="*" component={NotFoundPage}/>
           </Router>
       </AuthContext.Provider>
 
