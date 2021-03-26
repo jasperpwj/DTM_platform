@@ -15,7 +15,7 @@ import MenuItem from "@material-ui/core/MenuItem";
 import AddProject from "./AddProject";
 import EditProjectFormDialog from "./EditProject";
 
-import Link from "@material-ui/core/Link";
+import { Link } from "react-router-dom";
 const projectService = require("../services/projects.service");
 
 const useStyles = makeStyles({
@@ -47,8 +47,6 @@ export default function OpenProjects(props) {
             }
         })
     }, []);
-
-
     const handleClickMore = (event) => {
         setAnchorEl(event.currentTarget);
     };
@@ -71,7 +69,11 @@ export default function OpenProjects(props) {
     const buildProjectRow = (project) => {
         return (
             <TableRow key={project._id}>
-                <TableCell component="th" scope="row"><Link href={`/projects/${project.projectName}`}>{project.projectName}</Link></TableCell>
+                <TableCell component="th" scope="row"><Link
+                    to={{pathname:`/projects/${project.projectName}`,
+                        state: {projectId: project._id}
+                    }}
+                >{project.projectName}</Link></TableCell>
                 <TableCell align="center" width={50}>{project.visibility}</TableCell>
                 <TableCell align="center" width={150}>{project.lastUpdateTime}</TableCell>
                 <TableCell align="center">{project.description}</TableCell>
@@ -92,8 +94,6 @@ export default function OpenProjects(props) {
                         onClose={handleCloseMore}
 
                     >
-
-
                         <EditProjectFormDialog projectId={project._id}/>
                         <MenuItem
                             key={project._id + "edit"}
@@ -117,7 +117,9 @@ export default function OpenProjects(props) {
     let openProjectList = openProject && openProject.map((project) => {
         return buildProjectRow(project);
     });
-
+    console.log("open")
+    console.log(typeof openProject)
+    console.log(openProject)
     return (
         <React.Fragment>
             <TableContainer component={Paper}>
