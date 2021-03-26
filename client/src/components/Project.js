@@ -12,7 +12,12 @@ import SettingsIcon from '@material-ui/icons/Settings';
 import AppBar from "@material-ui/core/AppBar";
 import AddIcon from '@material-ui/icons/Add';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
+import Badge from '@material-ui/core/Badge';
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
 import {DragDropContext, Droppable, Draggable} from 'react-beautiful-dnd';
+import AddContainer from "./AddContainer";
+
 
 const useStyles = makeStyles( (theme) => ({
     root: {
@@ -24,7 +29,6 @@ const useStyles = makeStyles( (theme) => ({
     title: {
         padding: theme.spacing(1),
         backgroundColor: "lightblue",
-        // spacing: theme.spacing(0,0,0,1),
         padding: theme.spacing(2,2,1,2),
         spacing: theme.spacing(1),
         backgroundColor: "white",
@@ -32,42 +36,53 @@ const useStyles = makeStyles( (theme) => ({
     avatar: {
         width: theme.spacing(3),
         height: theme.spacing(3),
-
+    },
+    taskCount: {
+        width: theme.spacing(2) + 4,
+        height: theme.spacing(2) + 4,
+        backgroundColor: '#bf360c',
     },
     button_group: {
         backgroundColor: "white",
         padding: theme.spacing(0,0,0,1),
     },
-    dragDropArea: {
-        height: '100vh',
-        display: 'flex',
-        // backgroundColor: 'lightgrey',
-    },
     containersArea: {
         overflow: 'auto',
+        height: '100vh',
+        marginLeft: theme.spacing(2),
+        // backgroundColor: 'lightgrey',
     },
     containerArea: {
-        // backgroundColor: "lightgreen",
         height: '100vh',
-        margin: theme.spacing(1),
-
+        width: 350,
+        margin: theme.spacing(1,1,2,1),
+        borderRadius: '8px',
+        border: "2px solid #bdbdbd",
     },
     containerHead: {
-        backgroundColor: "lightgreen",
         padding: theme.spacing(0,0,0,1),
         height: 50,
+        borderRadius: '8px 8px 0 0',
+        backgroundColor: '#eeeeee',
     },
-    container: {
-        // backgroundColor: "lightgreen",
-        height: '94vh',
-        // margin: theme.spacing(1),
-        width: 320,
-        padding:theme.spacing(1),
-
+    containerTitle: {
+        marginLeft: theme.spacing(1),
+    },
+    containerContent: {
+        height: 'calc(100% - 53px)',
+        width: 'calc(100%)',
+        borderRadius: '0 0 8px 8px',
+    },
+    task: {
+        userSelect: 'none',
+        padding: theme.spacing(3),
+        margin: theme.spacing(0,1,2,1),
+        minHeight: '50px',
+        borderRadius: '8px',
+        border: "2px solid #e0e0e0",
     },
     test: {
-        backgroundColor: "lightgreen",
-        padding: theme.spacing(0,0,0,1),
+        backgroundColor: "lightblue",
     },
 }));
 
@@ -141,12 +156,18 @@ const onDragEnd = (result, containers, setContainers) => {
     }
 }
 
-
-
 export default function Project(props) {
     const [containers, setContainers] = useState(columns);
     const classes = useStyles();
+    const [anchorEl, setAnchorEl] = React.useState(null);
 
+    const handleOpenContainerMore= (event) => {
+        setAnchorEl(event.currentTarget);
+    };
+
+    const handleClose = () => {
+        setAnchorEl(null);
+    };
 
     return (
         <div className={classes.root}>
@@ -183,34 +204,46 @@ export default function Project(props) {
             <Divider/>
             <Grid container justify="flex-start" className={classes.dragDropArea}>
                 <Grid item xs={12}>
+                    <AddContainer/>
                     <Typography >
                         Page
                     </Typography>
                 </Grid>
                 <DragDropContext onDragEnd={result => onDragEnd(result,containers, setContainers)} >
-                    <Grid container direction='row' alignItems='center' justify='flex-start' wrap='nowrap'className={classes.containersArea}>
+                    <Grid container direction='row'  wrap='nowrap'className={classes.containersArea}>
                         {containers && Object.entries(containers).map(([id, container]) => {
                             return (
                                 <Grid key={id} item className={classes.containerArea} >
-                                    <Grid container justify='space-between' alignItems='center' className={classes.containerHead}>
-                                        <Typography align='left'>{container.name}</Typography>
-                                        <Grid item>
-                                            <IconButton size='small'><AddIcon/></IconButton>
-                                            <IconButton size='small'><MoreVertIcon/></IconButton>
+                                    <Grid container  alignItems='center' className={classes.containerHead}>
+                                        <Avatar className={classes.taskCount} variant='circular'><Typography variant='body2'>10</Typography></Avatar>
+                                        <Grid container item xs alignItems='center'className={classes.containerTitle}>
+                                            <Typography variant='subtitle1'>{container.name}</Typography>
                                         </Grid>
-
+                                        <Grid container item xs={3} alignItems='flex-end' justify='flex-end'>
+                                            <IconButton size='small'><AddIcon/></IconButton>
+                                            <IconButton size='small' onClick={handleOpenContainerMore}><MoreVertIcon/></IconButton>
+                                            <Menu
+                                                id="container-menu"
+                                                anchorEl={anchorEl}
+                                                keepMounted
+                                                open={Boolean(anchorEl)}
+                                                onClose={handleClose}
+                                            >
+                                                <MenuItem onClick={handleClose}>Edit Container</MenuItem>
+                                                <MenuItem onClick={handleClose}>Delete Container</MenuItem>
+                                            </Menu>
+                                        </Grid>
                                     </Grid>
-
                                     <Droppable droppableId={container._id} key={container._id}>
                                         {(provided, snapshot) => {
                                             return (
-                                                <div
+                                                <Grid
                                                     {...provided.droppableProps}
                                                     ref={provided.innerRef}
                                                     style={{
                                                         backgroundColor: snapshot.isDraggingOver ? "#cfd8dc": "#eeeeee",
                                                     }}
-                                                    className={classes.container}
+                                                    className={classes.containerContent}
                                                 >
                                                     {container.tasks && container.tasks.map((task, index) => {
                                                         return (
@@ -222,13 +255,10 @@ export default function Project(props) {
                                                                             {...provided.draggableProps}
                                                                             {...provided.dragHandleProps}
                                                                             style={{
-                                                                                userSelect: 'none',
-                                                                                padding: 16,
-                                                                                margin: '0 0 8px 0',
-                                                                                minHeight: '50px',
                                                                                 backgroundColor: snapshot.isDragging ? 'lightblue' : '#ffecb3',
                                                                                 ...provided.draggableProps.style
                                                                             }}
+                                                                            className={classes.task}
                                                                         >
                                                                             {task.content}
                                                                         </div>
@@ -238,7 +268,7 @@ export default function Project(props) {
                                                         )
                                                     })}
                                                     {provided.placeholder}
-                                                </div>
+                                                </Grid>
                                             )
                                         }}
                                     </Droppable>
