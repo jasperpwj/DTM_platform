@@ -64,8 +64,6 @@ export default function OpenProjects(props) {
         window.location.reload();
     };
 
-
-
     const buildProjectRow = (project) => {
         return (
             <TableRow key={project._id}>
@@ -117,9 +115,7 @@ export default function OpenProjects(props) {
     let openProjectList = openProject && openProject.map((project) => {
         return buildProjectRow(project);
     });
-    console.log("open")
-    console.log(typeof openProject)
-    console.log(openProject)
+
     return (
         <React.Fragment>
             <TableContainer component={Paper}>
