@@ -17,6 +17,10 @@ import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import {DragDropContext, Droppable, Draggable} from 'react-beautiful-dnd';
 import AddContainer from "./AddContainer";
+import EditContainer from "./EditContainer";
+import DeleteContainer from "./DeleteContainer";
+const containerService = require("../services/container.service");
+
 
 
 const useStyles = makeStyles( (theme) => ({
@@ -80,6 +84,14 @@ const useStyles = makeStyles( (theme) => ({
         minHeight: '50px',
         borderRadius: '8px',
         border: "2px solid #e0e0e0",
+    },
+    emptyCard: {
+        height: 250,
+        width: 450,
+        marginTop: 50,
+        borderRadius: '8px 8px 8px 8px',
+        border: "2px dashed black",
+        // backgroundColor: "#f5f5f5",
     },
     test: {
         backgroundColor: "lightblue",
@@ -155,19 +167,45 @@ const onDragEnd = (result, containers, setContainers) => {
         })
     }
 }
+const emptyCard = (projectId) => {
+    return (
+        <React.Fragment>
+            <Typography >You don' have any container yet. Create one!</Typography>
+            <AddContainer  value={projectId}/>
+        </React.Fragment>
+    )
+}
+
+
 
 export default function Project(props) {
-    const [containers, setContainers] = useState(columns);
+    const [project, setProject] = useState("");
+    const [containers, setContainers] = useState("");
     const classes = useStyles();
     const [anchorEl, setAnchorEl] = React.useState(null);
+    const [emptyContainer, setEmptyContainer] = useState(false);
+    const [projectId, setProjectId] = useState(props.location.state.projectId);
+
 
     const handleOpenContainerMore= (event) => {
         setAnchorEl(event.currentTarget);
     };
-
     const handleClose = () => {
         setAnchorEl(null);
     };
+
+    useEffect(() => {
+        console.log("run")
+        containerService.getContainers(projectId).then(res => {
+            if(Object.entries(res).length === 0) {
+                setEmptyContainer(true);
+            } else {
+                setEmptyContainer(false);
+                setContainers(res);
+            }
+        })
+    }, [projectId])
+
 
     return (
         <div className={classes.root}>
@@ -202,82 +240,88 @@ export default function Project(props) {
                 <Button size="small">Timeline</Button>
             </Grid>
             <Divider/>
-            <Grid container justify="flex-start" className={classes.dragDropArea}>
+
+            <Grid container justify="center" className={classes.dragDropArea}>
                 <Grid item xs={12}>
-                    <AddContainer/>
+                    <AddContainer value={projectId} />
                     <Typography >
                         Page
                     </Typography>
                 </Grid>
-                <DragDropContext onDragEnd={result => onDragEnd(result,containers, setContainers)} >
-                    <Grid container direction='row'  wrap='nowrap'className={classes.containersArea}>
-                        {containers && Object.entries(containers).map(([id, container]) => {
-                            return (
-                                <Grid key={id} item className={classes.containerArea} >
-                                    <Grid container  alignItems='center' className={classes.containerHead}>
-                                        <Avatar className={classes.taskCount} variant='circular'><Typography variant='body2'>10</Typography></Avatar>
-                                        <Grid container item xs alignItems='center'className={classes.containerTitle}>
-                                            <Typography variant='subtitle1'>{container.name}</Typography>
-                                        </Grid>
-                                        <Grid container item xs={3} alignItems='flex-end' justify='flex-end'>
-                                            <IconButton size='small'><AddIcon/></IconButton>
-                                            <IconButton size='small' onClick={handleOpenContainerMore}><MoreVertIcon/></IconButton>
-                                            <Menu
-                                                id="container-menu"
-                                                anchorEl={anchorEl}
-                                                keepMounted
-                                                open={Boolean(anchorEl)}
-                                                onClose={handleClose}
-                                            >
-                                                <MenuItem onClick={handleClose}>Edit Container</MenuItem>
-                                                <MenuItem onClick={handleClose}>Delete Container</MenuItem>
-                                            </Menu>
-                                        </Grid>
-                                    </Grid>
-                                    <Droppable droppableId={container._id} key={container._id}>
-                                        {(provided, snapshot) => {
-                                            return (
-                                                <Grid
-                                                    {...provided.droppableProps}
-                                                    ref={provided.innerRef}
-                                                    style={{
-                                                        backgroundColor: snapshot.isDraggingOver ? "#cfd8dc": "#eeeeee",
-                                                    }}
-                                                    className={classes.containerContent}
+                {(emptyContainer)? (<Grid container item className={classes.emptyCard} justify='center' alignContent='center'
+                >{emptyCard(projectId)}</Grid>): (
+                    <DragDropContext onDragEnd={result => onDragEnd(result,containers, setContainers)} >
+                        <Grid container direction='row'  wrap='nowrap'className={classes.containersArea}>
+                            {containers && Object.entries(containers).map(([id, container]) => {
+                                return (
+                                    <Grid key={id} item className={classes.containerArea} >
+                                        <Grid container  alignItems='center' className={classes.containerHead}>
+                                            <Avatar className={classes.taskCount} variant='circular'><Typography variant='body2'>{container.taskCount}</Typography></Avatar>
+                                            <Grid container item xs alignItems='center'className={classes.containerTitle}>
+                                                <Typography variant='subtitle1'>{container.containerName}</Typography>
+                                            </Grid>
+                                            <Grid container item xs={3} alignItems='flex-end' justify='flex-end'>
+                                                <IconButton size='small'><AddIcon/></IconButton>
+                                                <IconButton size='small' onClick={handleOpenContainerMore}><MoreVertIcon/></IconButton>
+                                                <Menu
+                                                    id={container._id}
+                                                    anchorEl={anchorEl}
+                                                    keepMounted
+                                                    open={Boolean(anchorEl)}
+                                                    onClose={handleClose}
                                                 >
-                                                    {container.tasks && container.tasks.map((task, index) => {
-                                                        return (
-                                                            <Draggable key={task.id} draggableId={task.id} index={index}>
-                                                                {(provided, snapshot) => {
-                                                                    return (
-                                                                        <div
-                                                                            ref={provided.innerRef}
-                                                                            {...provided.draggableProps}
-                                                                            {...provided.dragHandleProps}
-                                                                            style={{
-                                                                                backgroundColor: snapshot.isDragging ? 'lightblue' : '#ffecb3',
-                                                                                ...provided.draggableProps.style
-                                                                            }}
-                                                                            className={classes.task}
-                                                                        >
-                                                                            {task.content}
-                                                                        </div>
-                                                                    )
-                                                                }}
-                                                            </Draggable>
-                                                        )
-                                                    })}
-                                                    {provided.placeholder}
-                                                </Grid>
-                                            )
-                                        }}
-                                    </Droppable>
-                                </Grid>
-                            )
-                        })}
-                    </Grid>
+                                                    {/*<MenuItem onClick={handleClose}>Edit Container</MenuItem>*/}
+                                                    <EditContainer value={container._id}/>
+                                                    {/*<MenuItem onClick={handleClose}>Delete Container</MenuItem>*/}
+                                                    <DeleteContainer value={container._id} projectId={projectId}/>
+                                                </Menu>
+                                            </Grid>
+                                        </Grid>
+                                        <Droppable droppableId={container._id} key={container._id}>
+                                            {(provided, snapshot) => {
+                                                return (
+                                                    <Grid
+                                                        {...provided.droppableProps}
+                                                        ref={provided.innerRef}
+                                                        style={{
+                                                            backgroundColor: snapshot.isDraggingOver ? "#cfd8dc": "#eeeeee",
+                                                        }}
+                                                        className={classes.containerContent}
+                                                    >
+                                                        {container.tasks && container.tasks.map((task, index) => {
+                                                            return (
+                                                                <Draggable key={task.id} draggableId={task.id} index={index}>
+                                                                    {(provided, snapshot) => {
+                                                                        return (
+                                                                            <div
+                                                                                ref={provided.innerRef}
+                                                                                {...provided.draggableProps}
+                                                                                {...provided.dragHandleProps}
+                                                                                style={{
+                                                                                    backgroundColor: snapshot.isDragging ? 'lightblue' : '#ffecb3',
+                                                                                    ...provided.draggableProps.style
+                                                                                }}
+                                                                                className={classes.task}
+                                                                            >
+                                                                                {task.content}
+                                                                            </div>
+                                                                        )
+                                                                    }}
+                                                                </Draggable>
+                                                            )
+                                                        })}
+                                                        {provided.placeholder}
+                                                    </Grid>
+                                                )
+                                            }}
+                                        </Droppable>
+                                    </Grid>
+                                )
+                            })}
+                        </Grid>
 
-                </DragDropContext>
+                    </DragDropContext>
+                )}
 
             </Grid>
         </div>

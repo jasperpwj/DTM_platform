@@ -8,31 +8,26 @@ function createProject(project) {
         return res;
     })
 }
-
 function getOpenProjects() {
     return axios.get(API_URL + "open_projects", {headers:authHeader()}).then(res => {
         return res;
     })
 }
-
 function getClosedProjects() {
     return axios.get(API_URL + "closed_projects", {headers:authHeader()}).then(res => {
         return res;
     })
 }
-
 function changeProjectStatus(operation) {
     return axios.patch(API_URL + "change_project_status", operation, {headers:authHeader()}).then(res => {
         return res;
     })
 }
-
 function editProjectInfo(project) {
     return axios.patch(API_URL + "edit_project", project, {headers: authHeader()}).then(res => {
         return res;
     })
 }
-
 export {
     createProject,
     getOpenProjects,
