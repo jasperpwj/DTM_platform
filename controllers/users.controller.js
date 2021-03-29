@@ -68,7 +68,6 @@ async function resetPassword(req, res) {
         const updatedStatus = await userCollection.updateOne({_id: objId}, {$set:updateInfo});
         if(updatedStatus.modifiedCount === 0) throw "fail to change password";
     }
-    // return res.status(200).send({message: "User password change successfully."})
     return res.status(200).json({
         status: true
     })
