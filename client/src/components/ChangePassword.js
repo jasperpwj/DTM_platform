@@ -53,9 +53,8 @@ export default function ResetPasswordFormDialog() {
             setEmpty(false)
             userService.resetPassword(formInfo).then(r => { 
                 if (!r.data.status) {
-                    console.log("hi");
                     setCheckPwd(true);                 
-                } else if (formInfo.password != formInfo.password_check) {
+                } else if (formInfo.password !== formInfo.password_check) {
                     setCheckPwd(false)
                     setDiffInput(true);
                 } else {

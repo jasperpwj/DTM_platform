@@ -1,56 +1,71 @@
 const mongoCollection = require("../config/mongoCollections");
+const projects = mongoCollection.projects;
+const users = mongoCollection.users;
 const containers = mongoCollection.containers;
 const {ObjectId} = require("mongodb");
 
-async function addContainer(title, priority) {
-    if(!title || typeof title !== 'string') throw 'title is empty or invalid input type';
-    if(!priority || typeof priority !== 'string' || isNaN(Number(priority))) throw 'priority is empty or invalid input type';
 
+async function addContainer(req, res) {
+    const projectCollection = await projects();
     const containerCollection = await containers();
-    let newContainer = {
-        title: title,
-        create_date: new Date().toLocaleString(),
+    let containerObj = {
+        containerName: req.body.containerName,
+        createDate: new Date().toLocaleString(),
+        lastUpdatedTime: new Date().toLocaleString(),
         taskCount: 0,
         tasks: [],
-        priority: priority,
-        nextContainer: null
-    };
-    const insertInfo = await containerCollection.insertOne(newContainer);
-    if(insertInfo.insertedCount === 0) throw 'fail to add the new container in the database';
-    return true
+        nextContainer: "",
+        automation: req.body.automation,
+    }
+    const insertContainerStatus = await containerCollection.insertOne(containerObj);
+    if(insertContainerStatus.insertedCount === 0) throw "fail to add new container to the project";
+
+    let containerId = insertContainerStatus.insertedId;
+    const projectMongoId = ObjectId.createFromHexString(req.body.projectId);
+    const insertContainerIdToProjectStatus = await projectCollection.updateOne({_id: projectMongoId}, {$addToSet: {containers: containerId}});
+    if(!insertContainerIdToProjectStatus.modifiedCount === 0) throw "Fail to add container Id to the project"
+    res.status(200).json({message: "successfully create a container and add it to the project"});
 }
 
-async function getContainerById(id) {
-    if(!id || typeof id !== 'string')  throw 'invalid id is provided';
-    const objId = ObjectId.createFromHexString(id);
+async function getContainersByProjectId(req, res) {
+    const projectCollection = await projects();
     const containerCollection = await containers();
-    const container = await containerCollection.findOne({_id: objId});
-    if(!container) throw 'No container found';
-    return container;
+    let projectMongoId = ObjectId.createFromHexString(req.params.projectId);
+    const project = await projectCollection.findOne({_id: projectMongoId});
+    if(!project) throw `Fail to find the project with provided Id: ${req.params.projectId}`;
+    let containerList = {};
+    if(!project.containers.length) {
+        return res.status(200).send(containerList);
+    } else {
+        for(let containerId of project.containers) {
+            const container = await containerCollection.findOne({_id: containerId});
+            containerList[container._id] = container;
+        }
+    }
+    res.status(200).json(containerList);
 }
 
-async function editContainer(req, res) {
-    const objId = ObjectId.createFromHexString(req.id);
+async function editContainerByContainerId(req, res) {
     const containerCollection = await containers();
-    let editInfo = {};
-    if (req.body.title) {
-        editInfo.title = req.body.title;
+    let containerMongoId = ObjectId.createFromHexString(req.body.containerId);
+    let containerInfo = {}
+    if(req.body.containerName) {
+        containerInfo.containerName = req.body.containerName;
     }
+    containerInfo.lastUpdateTime = new Date().toLocaleString();
+    const updatedStatus = await containerCollection.updateOne({_id: containerMongoId}, {$set: containerInfo});
+    if(updatedStatus.modifiedCount === 0) throw 'Fail to update container information';
+    return res.status(200).send({message: "Update container information successfully"})
+}
 
-    if (req.body.priority) {
-        editInfo.priority = req.body.priority;
-    }
-
-    if (JSON.stringify(editInfo) !== '{}') {
-        const editStatus = await containerCollection.updateOne({_id: objId}, {$set: editInfo});
-        if (editStatus.modifiedCount === 0) throw "Edit failed!";
-    }
-
-    return res.status(200).send({message: "Edit succeeded!"})
+async function deleteContainer(req, res) {
+    console.log(req.body);
+    return;
 }
 
 module.exports = {
     addContainer,
-    getContainerById,
-    editContainer,
+    getContainersByProjectId,
+    editContainerByContainerId,
+    deleteContainer,
 };
