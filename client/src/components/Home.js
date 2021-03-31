@@ -1,12 +1,13 @@
 import React, {useState, useEffect}from "react";
 import TopNavBar from "./navigation/TopNavBar";
 import UnauthNavBar from "./navigation/UnauthNavBar";
-import {createMuiTheme, makeStyles,ThemeProvider } from "@material-ui/core";
+import {createMuiTheme, makeStyles,ThemeProvider, CardMedia, CardActionArea } from "@material-ui/core";
 import Typography from "@material-ui/core/Typography";
 import Paper from '@material-ui/core/Paper';
 // import Background from '../test.png';
 // import Background from '../pink.jpg';
 import Background from '../blue.jpg';
+import test from '../hhh.gif';
 
 
 const authService = require("../services/auth.service");
@@ -32,10 +33,16 @@ const useStyles = makeStyles((theme) => ({
 
     paper: {
         // display: "inline-block",
-        width: '50%',
-        marginLeft: '25%',
+        width: '33%',
+        marginLeft: '33%',
         fontSize: '50px',
-        fontFamily: 'Times New Roman',
+        fontFamily: 'Old Times American',
+        fontSize: 40,
+        // fontFamily: 'New Tegomin',
+    },
+
+    media: {
+        height: 140,
     }
 
 }));
@@ -98,23 +105,41 @@ export default function Home(props) {
                 <ThemeProvider theme={zhuti}>
                 <div className={classes.toolbar}>
                     <Typography paragraph>
-                        This is home page
+                        {/* This is home page */}
                     </Typography>
                 </div>
-                    <font color="red" >
-                        <Typography variant="h3">{currentdate}</Typography>
-                        <b>{currentdate}test</b>
-                        <Paper elevation={3}></Paper>
-                    </font>
-                        <Typography variant="h3">{currentdate}</Typography>
-                   
-                        <Paper elevation={3} className={classes.paper}> 
+                        <font color="010913">
+                            <Typography variant="h3"> Today: {currentdate}</Typography>
+                        </font>
                         
-                            This is our test 
+                        <br></br>
+                        <br></br>
+                        <Paper elevation={20} className={classes.paper}> 
+                            <br></br>  
+                            <b>What is DTM ? </b>
                             <br></br>
-                            <b>hihihi</b>
-                        
+                            <Typography variant="h6" component="p">
+                            <br></br>
+                            kan-ban style, <br></br>
+                            more interactive, <br></br>
+                            power devop team, <br></br>
+                            customizable features, <br></br>
+                            customer involvement<br></br>
+                            <br></br>
+                            "ALL WITH A DRAG !!"        <br></br>                       
+                            <img src={test} width="200" height="100"/>           
+                            </Typography>
+
+                            
                         </Paper>
+                        <br></br>
+                        <br></br>
+                        <br></br>
+                        {/* <img src={test} /> */}
+
+
+
+
                 </ThemeProvider>
             </main>
         </div>
