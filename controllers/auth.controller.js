@@ -21,6 +21,7 @@ async function signUp(req, res) {
         phoneNumber:"",
         password: hashPwd,
         projects: [],
+        head: req.body.head,
     };
     // console.log("auth.control");
     // console.log(newUser)

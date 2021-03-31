@@ -10,7 +10,8 @@ import CloudUploadIcon from '@material-ui/icons/CloudUpload';
 import EditAccountFormDialog from "./EditAccount";
 import ResetPasswordFormDialog from "./ChangePassword";
 import PhoneAndroidOutlinedIcon from '@material-ui/icons/PhoneAndroidOutlined';
-
+import IconButton from "@material-ui/core/IconButton";
+import PhotoCamera from "@material-ui/icons/PhotoCamera";
 
 const UserService = require("../services/user.service");
 
@@ -65,6 +66,15 @@ export default function AccountPage() {
         });
     }, []);
 
+    const submit = (e) => {
+        e.preventDefault();
+        // if(!inputInfo === "") {
+            
+        //     window.location.reload()
+        // }
+    }
+
+
     return (
         <div className={classes.root}>
 
@@ -78,14 +88,26 @@ export default function AccountPage() {
                     <Avatar alt="user image" src ="/public/logo192.png" className={classes.img}>
                     </Avatar>
                     <Grid item xs={12} className={classes.button}>
-                        <Button
+                        
+                        {/* <Button
                             variant="contained"
                             color="primary"
                             size="small"
                             startIcon={<CloudUploadIcon />}
                         >
                             Upload
-                        </Button>
+                        </Button> */}
+                        <form action="/profile" method="post" enctype="multipart/form-data">
+                            <input type="file" name="avatar" />
+                        </form>
+                        <label htmlFor="contained-button-file">
+                            <Button 
+                            onClick={submit}
+                            variant="contained" color="primary" component="span">
+                            Upload
+                            </Button>
+                        </label>
+
                     </Grid>
                 </Grid>
                 <Grid container className={classes.content} direction="column" justify="flex-start">
