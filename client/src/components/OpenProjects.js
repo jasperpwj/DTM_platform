@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
@@ -14,7 +14,6 @@ import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
 import AddProject from "./AddProject";
 import EditProjectFormDialog from "./EditProject";
-
 import { Link } from "react-router-dom";
 const projectService = require("../services/projects.service");
 
@@ -31,9 +30,11 @@ const useStyles = makeStyles({
 export default function OpenProjects(props) {
     const [openProject, setOpenProjects] = useState([]);
     const [isEmptyProject, setIsEmptyProject] = useState(false);
-    const [anchorEl, setAnchorEl] = React.useState(null);
+    const [anchorEl, setAnchorEl] = useState(null);
+    const [targetId, setTargetId] = useState(null);
     const open = Boolean(anchorEl);
     const classes = useStyles();
+    const tapRef = useRef(anchorEl);
 
     useEffect(()=> {
         projectService.getOpenProjects().then(res => {
@@ -42,6 +43,7 @@ export default function OpenProjects(props) {
                 console.log("empty");
                 setOpenProjects(res.data);
             } else {
+                console.log("re");
                 setIsEmptyProject(false);
                 setOpenProjects(res.data);
             }
@@ -49,6 +51,8 @@ export default function OpenProjects(props) {
     }, []);
     const handleClickMore = (event) => {
         setAnchorEl(event.currentTarget);
+        setTargetId(event.currentTarget.attributes.id.value);
+
     };
 
     const handleCloseMore = () => {
@@ -58,63 +62,12 @@ export default function OpenProjects(props) {
     const handleProjectStatusChange = (event) => {
         let changeStatus = {};
         changeStatus.operation = event.target.attributes.name && event.target.attributes.name.value;
-        changeStatus.projectId = event.target.attributes.id && event.target.attributes.id.value;
+        changeStatus.projectid = event.target.attributes.id && event.target.attributes.id.value;
         projectService.changeProjectStatus(changeStatus).then(res => {
+            console.log(res);
         });
         window.location.reload();
     };
-
-    const buildProjectRow = (project) => {
-        return (
-            <TableRow key={project._id}>
-                <TableCell component="th" scope="row"><Link
-                    to={{pathname:`/projects/${project.projectName}`,
-                        state: {projectId: project._id}
-                    }}
-                >{project.projectName}</Link></TableCell>
-                <TableCell align="center" width={50}>{project.visibility}</TableCell>
-                <TableCell align="center" width={150}>{project.lastUpdateTime}</TableCell>
-                <TableCell align="center">{project.description}</TableCell>
-                <TableCell align="right">
-                    <IconButton
-                        aria-label="more"
-                        aria-controls="project-menu"
-                        aria-haspopup="true"
-                        onClick={handleClickMore}
-                    >
-                        <MoreVertIcon/>
-                    </IconButton>
-                    <Menu
-                        id="project-menu"
-                        anchorEl={anchorEl}
-                        keepMounted
-                        open={open}
-                        onClose={handleCloseMore}
-
-                    >
-                        <EditProjectFormDialog projectId={project._id}/>
-                        <MenuItem
-                            key={project._id + "edit"}
-                            id={project._id}
-                        >
-                            Setting
-                        </MenuItem>
-                        <MenuItem
-                            key={project._id + "close_project"}
-                            id={project._id}
-                            name="closed"
-                            onClick={handleProjectStatusChange}
-                        >
-                            Close Project
-                        </MenuItem>
-                    </Menu>
-                </TableCell>
-            </TableRow>
-        )
-    };
-    let openProjectList = openProject && openProject.map((project) => {
-        return buildProjectRow(project);
-    });
 
     return (
         <React.Fragment>
@@ -132,7 +85,54 @@ export default function OpenProjects(props) {
                                 </TableRow>
                             </TableHead>
                             <TableBody>
-                                {openProjectList}
+                                {openProject && openProject.map((project, index) => {
+                                    return (
+                                        <TableRow key={project._id}>
+                                            <TableCell component="th" scope="row"><Link
+                                                to={{pathname:`/projects/${project.projectName}`,
+                                                    state: {projectId: project._id}
+                                                }}
+                                            >{project.projectName}</Link></TableCell>
+                                            <TableCell align="center" width={50}>{project.visibility}</TableCell>
+                                            <TableCell align="center" width={150}>{project.lastUpdateTime}</TableCell>
+                                            <TableCell align="center">{project.description}</TableCell>
+                                            <TableCell align="right">
+                                                <IconButton
+                                                    aria-label="more"
+                                                    aria-controls="project-menu"
+                                                    aria-haspopup="true"
+                                                    id={project._id}
+                                                    tabIndex={index}
+                                                    onClick={handleClickMore}
+                                                >
+                                                    <MoreVertIcon/>
+                                                </IconButton>
+                                            </TableCell>
+                                        </TableRow>
+                                    )
+                                })}
+                                <Menu
+                                    id="project-more-menu"
+                                    anchorEl={anchorEl}
+                                    keepMounted
+                                    open={open}
+                                    onClose={handleCloseMore}
+                                >
+                                    {open && (
+                                        <MenuItem
+                                            key={targetId}
+                                            id={targetId}
+                                            name="closed"
+                                            onClick={handleProjectStatusChange}
+                                        >
+                                            Close Project
+                                        </MenuItem>
+                                    )}
+                                    {open && (
+
+                                        <EditProjectFormDialog id={targetId} ref={tapRef}/>
+                                    )}
+                                </Menu>
                             </TableBody>
                         </React.Fragment>
                     ):(

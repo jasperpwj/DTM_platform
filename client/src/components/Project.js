@@ -31,8 +31,8 @@ const useStyles = makeStyles( (theme) => ({
         // height: '100vh',
     },
     title: {
-        padding: theme.spacing(1),
-        backgroundColor: "lightblue",
+        // padding: theme.spacing(1),
+        // backgroundColor: "lightblue",
         padding: theme.spacing(2,2,1,2),
         spacing: theme.spacing(1),
         backgroundColor: "white",

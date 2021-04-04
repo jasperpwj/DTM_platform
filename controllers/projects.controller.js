@@ -64,9 +64,8 @@ async function getClosedProjects(req, res) {
 }
 
 async function changeProjectStatus(req, res) {
-    console.log(req.body)
     const projectCollection = await projects();
-    const projectMongoId = await ObjectId.createFromHexString(req.body.projectId);
+    const projectMongoId = await ObjectId.createFromHexString(req.body.projectid);
     const changeStatus = projectCollection.updateOne({_id:projectMongoId},{$set: {status: req.body.operation}});
     if(changeStatus.modifiedCount === 0) throw "Fail to change project status";
     res.status(200).json({message: "Project Status changes successfully."})

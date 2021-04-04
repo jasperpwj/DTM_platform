@@ -107,8 +107,6 @@ TabContent.propTypes = {
 export default function Projects() {
     const classes = useStyles();
     const [value, setValue] = useState(0);
-    const [openProjects, setOpenProjects] = useState("");
-    const [closedProjects, setClosedProjects] = useState("");
 
 
     const handleContentChange = (event, newValue) =>{

@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useState, forwardRef} from "react";
 import Dialog from "@material-ui/core/Dialog";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import DialogContent from "@material-ui/core/DialogContent";
@@ -9,7 +9,7 @@ import Grid from "@material-ui/core/Grid";
 import MenuItem from "@material-ui/core/MenuItem";
 const projectService = require("../services/projects.service");
 
-export default function EditProjectFormDialog(props) {
+const EditProjectFormDialog = (props, ref) => {
     const [open, setOpen] = useState(false);
     const initialInfo = Object.freeze({
         projectName:"",
@@ -26,13 +26,12 @@ export default function EditProjectFormDialog(props) {
     };
     const handleSubmit = (e) => {
         e.preventDefault();
-
         if(!(formInfo.projectName === "" && formInfo.description === "")) {
             const info = {
                 projectName: formInfo.projectName,
                 description: formInfo.description,
-                projectId: props.projectId
-            }
+                projectId: props && props.id,
+            };
             projectService.editProjectInfo(info).then(r => {return r;});
             window.location.reload()
         }
@@ -48,11 +47,12 @@ export default function EditProjectFormDialog(props) {
     return (
         <React.Fragment >
             <MenuItem
-
+                type="button"
                 onClick={handleClickOpen}
+                ref={ref}
+                {...props}
             >
                 Settings
-
             </MenuItem>
             <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-editAccount-title" fullWidth={true}>
                 <DialogTitle id="form-dialog-editAccount-title">Edit Profile Information</DialogTitle>
@@ -91,4 +91,6 @@ export default function EditProjectFormDialog(props) {
             </Dialog>
         </React.Fragment>
     )
-}
+};
+
+export default forwardRef(EditProjectFormDialog);
