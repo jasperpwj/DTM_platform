@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, forwardRef} from 'react';
 import MenuItem from "@material-ui/core/MenuItem";
 import Dialog from "@material-ui/core/Dialog";
 import DialogTitle from "@material-ui/core/DialogTitle";
@@ -9,8 +9,8 @@ import Grid from "@material-ui/core/Grid";
 import Button from "@material-ui/core/Button";
 const containerService = require('../services/container.service');
 
-export default function EditContainer(props) {
-    const [containerId, setContainerId] = useState(props.value);
+const EditContainer = (props, ref) => {
+    const containerId = props.id;
     const [open, setOpen] = useState(false);
     const [emptyInput, setEmptyInput] = useState(false);
     const initialContainer = Object.freeze( {
@@ -35,30 +35,36 @@ export default function EditContainer(props) {
     };
     const handleSubmit = (e) => {
         containerService.editContainer(containerInfo).then(res => {
-            console.log(res);
             window.location.reload();
         })
-    }
+    };
     useEffect(() => {
         if(containerInfo.containerName === "") {
             setEmptyInput(true);
         } else {
             setEmptyInput(false);
         }
-    },[containerInfo])
+    },[containerInfo]);
 
     return (
         <React.Fragment>
             <MenuItem
                 key={"id"}
                 name='editContainer'
+                ref={ref}
+                {...props}
                 onClick={handleClickOpen}
             >
                 Edit Container
             </MenuItem>
-            <Dialog open={open} onClose={handleClose} aria-labelledby='edit-container-dialog'>
+            <Dialog
+                open={open}
+                onClose={handleClose}
+                aria-labelledby='edit-container-dialog'
+                fullWidth
+            >
                 <DialogTitle id='edit-container-dialog'>Edit Container Information</DialogTitle>
-                <DialogContent>
+                <DialogContent >
                     <form>
                         <Grid container item xs={12} spacing={2}>
                             <TextField
@@ -82,7 +88,7 @@ export default function EditContainer(props) {
                     </Button>
                 </DialogActions>
             </Dialog>
-
         </React.Fragment>
     )
-}
+};
+export default forwardRef(EditContainer);

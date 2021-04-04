@@ -14,16 +14,17 @@ async function addContainer(req, res) {
         lastUpdatedTime: new Date().toLocaleString(),
         taskCount: 0,
         tasks: [],
+        status: 'active', // active or deleted
         nextContainer: "",
         automation: req.body.automation,
-    }
+    };
     const insertContainerStatus = await containerCollection.insertOne(containerObj);
     if(insertContainerStatus.insertedCount === 0) throw "fail to add new container to the project";
 
     let containerId = insertContainerStatus.insertedId;
     const projectMongoId = ObjectId.createFromHexString(req.body.projectId);
     const insertContainerIdToProjectStatus = await projectCollection.updateOne({_id: projectMongoId}, {$addToSet: {containers: containerId}});
-    if(!insertContainerIdToProjectStatus.modifiedCount === 0) throw "Fail to add container Id to the project"
+    if(insertContainerIdToProjectStatus.modifiedCount === 0) throw "Fail to add container Id to the project";
     res.status(200).json({message: "successfully create a container and add it to the project"});
 }
 
@@ -59,8 +60,25 @@ async function editContainerByContainerId(req, res) {
 }
 
 async function deleteContainer(req, res) {
+    /*
+    params in req: projectId, containerId
+    1. change container's status into deleted
+    2. remove container id from corresponding project's container array
+     */
     console.log(req.body);
-    return;
+    const containerCollection = await containers();
+    let containerMongoId = ObjectId.createFromHexString(req.body.containerId);
+    let updateInfo = {
+        status: 'deleted',
+        lastUpdatedTime: new Date().toLocaleString(),
+    };
+    const updateStatus = await containerCollection.updateOne({_id: containerMongoId}, {$set:updateInfo});
+    if(updateStatus.modifiedCount === 0) throw "Fail to change the container status into deleted";
+    const projectCollection = await projects();
+    const projectMongoId = ObjectId.createFromHexString(req.body.projectId);
+    const deleteContainerIdFromProject = await projectCollection.updateOne({_id:projectMongoId}, {$pull:{containers: containerMongoId}});
+    if(deleteContainerIdFromProject.modifiedCount === 0) throw "Fail to remove container id from project";
+    return res.status(200).send({message:"Delete container successfully"});
 }
 
 module.exports = {
