@@ -10,15 +10,14 @@ import DashboardPage from "./components/Dashboard";
 import Projects from "./components/Projects";
 import TopNavBar from "./components/navigation/TopNavBar";
 import Project from "./components/Project";
-// import Test from "./components/Test";
 import NotFoundPage from "./components/NotFoundPage";
 const authService = require("./services/auth.service");
 
 
 function App() {
     const currentUser = authService.getCurrentUser();
-    console.log("App.js")
-    console.log(currentUser);
+    // console.log("App.js")
+    // console.log(currentUser);
     const [authToken, setAuthToken] = useState(!!(currentUser && currentUser.accessToken));
 
     useEffect(() => {
@@ -36,7 +35,7 @@ function App() {
                               <Route exact path="/account" component={AccountPage}/>
                               <Route exact path="/projects" component={Projects}/>
                               <Route exact path="/dashboard" component={DashboardPage}/>
-                              <Route exact path='/projects/:projectName' component={Project}/>
+                              <Route exact path='/projects/:projectId' component={Project}/>
                               <Route path="*" component={NotFoundPage}/>
 
                           </Switch>

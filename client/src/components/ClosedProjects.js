@@ -14,13 +14,10 @@ import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
 import EditProjectFormDialog from "./EditProject";
 import {Link} from "react-router-dom";
-
 const projectService = require("../services/projects.service");
-
 const useStyles = makeStyles({
     table: {
         minWidth: 650,
-
     },
     emptyRow: {
         height: 300,
@@ -45,7 +42,6 @@ export default function ClosedProjects(props) {
                 setIsEmptyProject(false);
                 setClosedProjects(res.data);
             }
-
         })
     }, []);
 
@@ -60,7 +56,7 @@ export default function ClosedProjects(props) {
     const handleProjectStatusChange = (event) => {
         let changeStatus = {};
         changeStatus.operation = event.target.attributes.name && event.target.attributes.name.value;
-        changeStatus.projectid = event.target.attributes.id && event.target.attributes.id.value;
+        changeStatus.projectId = event.target.attributes.id && event.target.attributes.id.value;
         projectService.changeProjectStatus(changeStatus).then(res => {
             console.log(res);
         });

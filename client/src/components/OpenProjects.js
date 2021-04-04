@@ -16,16 +16,14 @@ import AddProject from "./AddProject";
 import EditProjectFormDialog from "./EditProject";
 import { Link } from "react-router-dom";
 const projectService = require("../services/projects.service");
-
-const useStyles = makeStyles({
+const useStyles = makeStyles((theme) => ({
     table: {
         minWidth: 650,
-
     },
     emptyRow: {
         height: 300,
     }
-});
+}));
 
 export default function OpenProjects(props) {
     const [openProject, setOpenProjects] = useState([]);
@@ -40,10 +38,8 @@ export default function OpenProjects(props) {
         projectService.getOpenProjects().then(res => {
             if(!(res.data.length)) {
                 setIsEmptyProject(true);
-                console.log("empty");
                 setOpenProjects(res.data);
             } else {
-                console.log("re");
                 setIsEmptyProject(false);
                 setOpenProjects(res.data);
             }
@@ -52,7 +48,6 @@ export default function OpenProjects(props) {
     const handleClickMore = (event) => {
         setAnchorEl(event.currentTarget);
         setTargetId(event.currentTarget.attributes.id.value);
-
     };
 
     const handleCloseMore = () => {
@@ -62,7 +57,7 @@ export default function OpenProjects(props) {
     const handleProjectStatusChange = (event) => {
         let changeStatus = {};
         changeStatus.operation = event.target.attributes.name && event.target.attributes.name.value;
-        changeStatus.projectid = event.target.attributes.id && event.target.attributes.id.value;
+        changeStatus.projectId = event.target.attributes.id && event.target.attributes.id.value;
         projectService.changeProjectStatus(changeStatus).then(res => {
             console.log(res);
         });
@@ -71,7 +66,7 @@ export default function OpenProjects(props) {
 
     return (
         <React.Fragment>
-            <TableContainer component={Paper}>
+            <TableContainer component={Paper} >
                 <Table className={classes.table} aria-label="project table">
                     {(!isEmptyProject)?(
                         <React.Fragment>
@@ -88,18 +83,21 @@ export default function OpenProjects(props) {
                                 {openProject && openProject.map((project, index) => {
                                     return (
                                         <TableRow key={project._id}>
-                                            <TableCell component="th" scope="row"><Link
-                                                to={{pathname:`/projects/${project.projectName}`,
-                                                    state: {projectId: project._id}
+                                            <TableCell component="th" scope="row">
+
+                                                <Link
+                                                to={{pathname:`/projects/${project._id}`
                                                 }}
-                                            >{project.projectName}</Link></TableCell>
+                                                >{project.projectName}
+                                                </Link>
+                                            </TableCell>
                                             <TableCell align="center" width={50}>{project.visibility}</TableCell>
                                             <TableCell align="center" width={150}>{project.lastUpdateTime}</TableCell>
                                             <TableCell align="center">{project.description}</TableCell>
                                             <TableCell align="right">
                                                 <IconButton
                                                     aria-label="more"
-                                                    aria-controls="project-menu"
+                                                    aria-controls="project-more-menu"
                                                     aria-haspopup="true"
                                                     id={project._id}
                                                     tabIndex={index}
@@ -129,7 +127,6 @@ export default function OpenProjects(props) {
                                         </MenuItem>
                                     )}
                                     {open && (
-
                                         <EditProjectFormDialog id={targetId} ref={tapRef}/>
                                     )}
                                 </Menu>
