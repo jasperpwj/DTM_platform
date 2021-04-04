@@ -19,7 +19,7 @@ function editContainer(containerInfo) {
 }
 
 function deleteContainer(containerInfo) {
-    return axios.delete(API_URL + containerInfo.containerId + "/deleteContainer", {data: containerInfo}, {headers:authHeader()}).then(res => {
+    return axios.delete(API_URL + containerInfo.containerId + "/deleteContainer", {headers:authHeader(),data: containerInfo}).then(res => {
         return res;
     })
 }

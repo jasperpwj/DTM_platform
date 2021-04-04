@@ -64,7 +64,6 @@ async function getClosedProjects(req, res) {
 }
 
 async function changeProjectStatus(req, res) {
-    console.log(req.body)
     const projectCollection = await projects();
     const projectMongoId = await ObjectId.createFromHexString(req.body.projectId);
     const changeStatus = projectCollection.updateOne({_id:projectMongoId},{$set: {status: req.body.operation}});
@@ -115,4 +114,4 @@ module.exports = {
     changeProjectStatus,
     getProjectById,
     editProject,
-}
+};

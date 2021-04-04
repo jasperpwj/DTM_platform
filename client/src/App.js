@@ -16,8 +16,8 @@ const authService = require("./services/auth.service");
 
 function App() {
     const currentUser = authService.getCurrentUser();
-    console.log("App.js")
-    console.log(currentUser);
+    // console.log("App.js")
+    // console.log(currentUser);
     const [authToken, setAuthToken] = useState(!!(currentUser && currentUser.accessToken));
 
     useEffect(() => {
@@ -35,8 +35,9 @@ function App() {
                               <Route exact path="/account" component={AccountPage}/>
                               <Route exact path="/projects" component={Projects}/>
                               <Route exact path="/dashboard" component={DashboardPage}/>
-                              <Route exact path='/projects/:projectName' component={Project}/>
+                              <Route exact path='/projects/:projectId' component={Project}/>
                               <Route path="*" component={NotFoundPage}/>
+
                           </Switch>
                       </div>):(
                       <div className="App">

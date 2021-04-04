@@ -21,8 +21,15 @@ function resetPassword(password) {
     })
 }
 
+function uploadHead(head) {
+    return axios.patch(API_URL + "reset_password", head, {headers: authHeader()}).then(res => {
+        return res;
+    })
+}
+
 export {
     getUserProfile,
     updateUserAccount,
     resetPassword,
+    uploadHead,
 };

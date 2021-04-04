@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import {makeStyles} from "@material-ui/core";
 import Typography from "@material-ui/core/Typography";
 import Grid from "@material-ui/core/Grid";
@@ -12,13 +12,13 @@ import SettingsIcon from '@material-ui/icons/Settings';
 import AppBar from "@material-ui/core/AppBar";
 import AddIcon from '@material-ui/icons/Add';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
-import Badge from '@material-ui/core/Badge';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import {DragDropContext, Droppable, Draggable} from 'react-beautiful-dnd';
 import AddContainer from "./AddContainer";
 import EditContainer from "./EditContainer";
 import DeleteContainer from "./DeleteContainer";
+import Link from "@material-ui/core/Link";
 const containerService = require("../services/container.service");
 
 
@@ -31,8 +31,8 @@ const useStyles = makeStyles( (theme) => ({
         // height: '100vh',
     },
     title: {
-        padding: theme.spacing(1),
-        backgroundColor: "lightblue",
+        // padding: theme.spacing(1),
+        // backgroundColor: "lightblue",
         padding: theme.spacing(2,2,1,2),
         spacing: theme.spacing(1),
         backgroundColor: "white",
@@ -129,8 +129,6 @@ const columns = {
     },
 };
 
-
-
 // drop and drag effect function
 const onDragEnd = (result, containers, setContainers) => {
     if(!result.destination) return;
@@ -141,6 +139,8 @@ const onDragEnd = (result, containers, setContainers) => {
         const sourceTasks = [...sourceContainer.tasks];
         const destTasks = [...destContainer.tasks];
         const [removed] = sourceTasks.splice(source.index, 1);
+
+
         destTasks.splice(destination.index, 0, removed);
         setContainers({
             ...containers,
@@ -166,7 +166,8 @@ const onDragEnd = (result, containers, setContainers) => {
             }
         })
     }
-}
+};
+
 const emptyCard = (projectId) => {
     return (
         <React.Fragment>
@@ -174,21 +175,27 @@ const emptyCard = (projectId) => {
             <AddContainer  value={projectId}/>
         </React.Fragment>
     )
-}
-
+};
 
 
 export default function Project(props) {
+    const pathArray = props.location.pathname.split('/');
     const [project, setProject] = useState("");
     const [containers, setContainers] = useState("");
     const classes = useStyles();
     const [anchorEl, setAnchorEl] = React.useState(null);
     const [emptyContainer, setEmptyContainer] = useState(false);
-    const [projectId, setProjectId] = useState(props.location.state.projectId);
+    const [projectId, setProjectId] = useState(pathArray[pathArray.length - 1]);
+    const [targetContainerId, setTargetContainerId] = useState(null);
+    const containerRef = useRef(anchorEl);
+    const open = Boolean(anchorEl);
 
 
     const handleOpenContainerMore= (event) => {
         setAnchorEl(event.currentTarget);
+        console.log("here")
+        console.log(event.currentTarget.attributes)
+        setTargetContainerId(event.currentTarget.attributes.id.value);
     };
     const handleClose = () => {
         setAnchorEl(null);
@@ -196,6 +203,8 @@ export default function Project(props) {
 
     useEffect(() => {
         console.log("run")
+        console.log(projectId)
+
         containerService.getContainers(projectId).then(res => {
             if(Object.entries(res).length === 0) {
                 setEmptyContainer(true);
@@ -234,7 +243,7 @@ export default function Project(props) {
                 </Grid>
             </Grid>
             <Grid container className={classes.button_group}>
-                <Button size="small">Project</Button>
+                <Button size="small"><Link to={{pathname: `/projects/${projectId}`}}>Project</Link></Button>
                 <Button size="small">Tasks</Button>
                 <Button size="small">Dashboard</Button>
                 <Button size="small">Timeline</Button>
@@ -251,7 +260,7 @@ export default function Project(props) {
                 {(emptyContainer)? (<Grid container item className={classes.emptyCard} justify='center' alignContent='center'
                 >{emptyCard(projectId)}</Grid>): (
                     <DragDropContext onDragEnd={result => onDragEnd(result,containers, setContainers)} >
-                        <Grid container direction='row'  wrap='nowrap'className={classes.containersArea}>
+                        <Grid container direction='row'  wrap='nowrap' className={classes.containersArea}>
                             {containers && Object.entries(containers).map(([id, container]) => {
                                 return (
                                     <Grid key={id} item className={classes.containerArea} >
@@ -262,19 +271,12 @@ export default function Project(props) {
                                             </Grid>
                                             <Grid container item xs={3} alignItems='flex-end' justify='flex-end'>
                                                 <IconButton size='small'><AddIcon/></IconButton>
-                                                <IconButton size='small' onClick={handleOpenContainerMore}><MoreVertIcon/></IconButton>
-                                                <Menu
-                                                    id={container._id}
-                                                    anchorEl={anchorEl}
-                                                    keepMounted
-                                                    open={Boolean(anchorEl)}
-                                                    onClose={handleClose}
-                                                >
-                                                    {/*<MenuItem onClick={handleClose}>Edit Container</MenuItem>*/}
-                                                    <EditContainer value={container._id}/>
-                                                    {/*<MenuItem onClick={handleClose}>Delete Container</MenuItem>*/}
-                                                    <DeleteContainer value={container._id} projectId={projectId}/>
-                                                </Menu>
+                                                <IconButton
+                                                    size='small'
+                                                    aria-label='container-more'
+                                                    id={id}
+                                                    onClick={handleOpenContainerMore}
+                                                ><MoreVertIcon/></IconButton>
                                             </Grid>
                                         </Grid>
                                         <Droppable droppableId={container._id} key={container._id}>
@@ -318,6 +320,17 @@ export default function Project(props) {
                                     </Grid>
                                 )
                             })}
+                            <Menu
+                                id={targetContainerId}
+                                anchorEl={anchorEl}
+                                keepMounted
+                                open={open}
+                                onClose={handleClose}
+                            >
+                                {open &&  (<EditContainer id={targetContainerId} ref={containerRef}/>)}
+                                {open && <DeleteContainer value={{containerId: targetContainerId, projectId: projectId}} ref={containerRef}/>}
+
+                            </Menu>
                         </Grid>
 
                     </DragDropContext>
