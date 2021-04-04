@@ -45,11 +45,13 @@ export default function SignUp() {
         firstName: "",
         lastName: "",
         email: "",
-        password: ""
+        password: "",
+        confirmPassword:"",
     });
     const [registered, setRegistered] = useState(false);
     const [isError, setIsError] = useState(false);
     const [emptyInout, setEmptyInput] = useState(false);
+    const [samePassword, setSamePassword] = useState(false);
     const [errorMsg, setErrorMsg] =useState([]);
 
     const navInfo = {
@@ -67,12 +69,13 @@ export default function SignUp() {
     const handleSubmit = (e) => {
         e.preventDefault();
         setErrorMsg([]);
-        if(userInfo.username === "" || userInfo.firstName === "" || userInfo.lastName === "" || userInfo.email === "" || userInfo.password === "") {
+        if(userInfo.username === "" || userInfo.firstName === "" || userInfo.lastName === "" || userInfo.email === "" || userInfo.password === "" || userInfo.confirmPassword === "") {
             setEmptyInput(true);
         } else {
             setEmptyInput(false);
             try {
-                if(userInfo.password) {
+                if(userInfo.password && userInfo.confirmPassword === userInfo.password) {
+                    setSamePassword(false);
                     const user = {
                         username: userInfo.username,
                         firstName: userInfo.firstName,
@@ -94,6 +97,8 @@ export default function SignUp() {
                     } catch(error) {
                         console.log(error);
                     }
+                }else {
+                    setSamePassword(true);
                 }
             } catch(e) {
                 console.log({error: e})
@@ -120,6 +125,7 @@ export default function SignUp() {
                         </Typography>
                         {emptyInout? (<Alert severity="error">Each field cannot be empty</Alert>):(<div><br/><br/></div>)}
                         {isError? (errorMsg.map(message => <Alert severity="error"> {message}</Alert>)):(<div><br/><br/></div>)}
+                        {samePassword? (<Alert severity="error">Password entered not match</Alert>):(<div><br/><br/></div>)}
                         <form className={classes.form} noValidate>
                             <Grid container spacing={2}>
                                 <Grid item xs={12}>
@@ -186,6 +192,20 @@ export default function SignUp() {
                                         label="Password"
                                         type="password"
                                         value={userInfo.password}
+                                        onChange={handleChange}
+                                    />
+                                </Grid>
+                                <Grid item xs={12}>
+                                    <TextField
+                                        autoComplete="confirm-password"
+                                        name="confirmPassword"
+                                        variant="outlined"
+                                        required
+                                        fullWidth
+                                        id="confirmPassword"
+                                        label="Confirm Password"
+                                        type="password"
+                                        value={userInfo.confirmPassword}
                                         onChange={handleChange}
                                     />
                                 </Grid>

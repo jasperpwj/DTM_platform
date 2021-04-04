@@ -37,7 +37,6 @@ function App() {
                               <Route exact path="/projects" component={Projects}/>
                               <Route exact path="/dashboard" component={DashboardPage}/>
                               <Route exact path='/projects/:projectName' component={Project}/>
-//                               <Route exact path='/test' component={Test}/>
                               <Route path="*" component={NotFoundPage}/>
 
                           </Switch>
