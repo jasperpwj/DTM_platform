@@ -107,6 +107,38 @@ async function editProject(req, res) {
 
     return res.status(200).send({message: "Edition of project info succeeded!"})
 }
+
+async function getSearchProjects(req, res) {
+    // req input
+    // req.body.searchWords
+    console.log(req.body)
+    const projectList = await projectHelper.getProjectListByUserId(req.id);
+    const projectSearchedList = [];
+    if(!projectList.length) {
+        
+        for (i = 0; i < projectList.length; i++){
+            if (projectList[i].includes(req.body.inPut)) {
+                projectSearchedList.push(projectList[i]);
+            }
+        }
+        if (projectSearchedList.length !== 0){
+            res.status(200).send(projectSearchedList);
+        }
+    } else {
+        const projectCollection = await projects();
+        let openProjects = [];
+        for(let project of projectList) {
+            const openProject = await projectCollection.findOne({_id: project._id, status: "open"});
+            if(openProject !== null) {
+                openProjects.push(openProject);
+            }
+        }
+        res.status(200).json(openProjects);
+    }
+
+
+}
+
 module.exports = {
     addProject,
     getOpenProjects,
@@ -114,4 +146,5 @@ module.exports = {
     changeProjectStatus,
     getProjectById,
     editProject,
+    getSearchProjects,
 };

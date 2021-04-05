@@ -14,4 +14,7 @@ router.get("/closed_projects", [authJwt.verifyToken], projectController.getClose
 router.patch("/change_project_status", [authJwt.verifyToken], projectController.changeProjectStatus);
 
 router.patch("/edit_project", [authJwt.verifyToken], projectController.editProject);
+
+router.post("/search_projects", [authJwt.verifyToken], projectController.getSearchProjects);
+
 module.exports = router;

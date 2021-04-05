@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {fade, makeStyles} from "@material-ui/core";
+import {fade, IconButton, makeStyles} from "@material-ui/core";
 import Typography from "@material-ui/core/Typography";
 import AppBar from '@material-ui/core/AppBar';
 import Tabs from '@material-ui/core/Tabs';
@@ -13,6 +13,8 @@ import Box from "@material-ui/core/Box";
 import AddProject from "./AddProject";
 import OpenProjects from "./OpenProjects";
 import ClosedProjects from "./ClosedProjects";
+import SearchedProjects from "./SearchedProjects";
+const projectService = require("../services/projects.service");
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -56,7 +58,7 @@ const useStyles = makeStyles((theme) => ({
     inputInput: {
         padding: theme.spacing(1, 1, 1, 0),
         // vertical padding + font size from searchIcon
-        paddingLeft: `calc(1em + ${theme.spacing(4)}px)`,
+        paddingLeft: `calc(1em + ${theme.spacing(1)}px)`,
         transition: theme.transitions.create('width'),
         width: '100%',
         [theme.breakpoints.up('sm')]: {
@@ -107,12 +109,33 @@ TabContent.propTypes = {
 export default function Projects() {
     const classes = useStyles();
     const [value, setValue] = useState(0);
-
+    const initialInfo = Object.freeze({
+        inPut:"",
+    });
+    const [inputInfo, setInputInfo] = useState(initialInfo);
 
     const handleContentChange = (event, newValue) =>{
         setValue(newValue)
     };
 
+    const handleClick = (e) => {
+        e.preventDefault();
+        if(inputInfo.inPut !== ""){
+            console.log(inputInfo.inPut);
+            projectService.getSearchProjects(inputInfo).then(r => {return r;});
+            // window.location.reload()
+        }
+    }
+    const handleChange = (e) => {
+        if(e.target.id && e.target.value) {
+            setInputInfo({
+                ...inputInfo,
+                [e.target.id]: e.target.value
+            })
+        } else {
+            setInputInfo(initialInfo);
+        }
+    };
 
     return (
         <div className={classes.root}>
@@ -125,18 +148,20 @@ export default function Projects() {
                             <AddProject/>
                         </Tabs>
                         <div className={classes.search}>
-                            <div className={classes.searchIcon}>
-                                <SearchIcon />
-                            </div>
                             <InputBase
+                                id="inPut" 
                                 placeholder="Search…"
                                 classes={{
                                     root: classes.inputRoot,
                                     input: classes.inputInput,
                                 }}
                                 inputProps={{ 'aria-label': 'search' }}
+                                onChange={handleChange}
                             />
                         </div>
+                        <IconButton onClick={handleClick} >
+                            <SearchIcon style={{fill:"white"}}/>
+                        </IconButton>
                     </Toolbar>
                 </AppBar>
                 <TabContent value={value} index={0}>
@@ -149,6 +174,11 @@ export default function Projects() {
                         <ClosedProjects/>
                     </Grid>
                 </TabContent>
+                {/* <TabContent >
+                    <Grid className={classes.content}>
+                        <SearchedProjects/>
+                    </Grid>
+                </TabContent> */}
 
             </Grid>
 
