@@ -1,7 +1,7 @@
 const mongoCollection = require("../config/mongoCollections");
 const projects = mongoCollection.projects;
-const users = mongoCollection.users;
 const containers = mongoCollection.containers;
+const tasks = mongoCollection.tasks;
 const {ObjectId} = require("mongodb");
 
 
@@ -31,6 +31,8 @@ async function addContainer(req, res) {
 async function getContainersByProjectId(req, res) {
     const projectCollection = await projects();
     const containerCollection = await containers();
+    const taskCollection = await tasks();
+
     let projectMongoId = ObjectId.createFromHexString(req.params.projectId);
     const project = await projectCollection.findOne({_id: projectMongoId});
     if(!project) throw `Fail to find the project with provided Id: ${req.params.projectId}`;
@@ -40,6 +42,9 @@ async function getContainersByProjectId(req, res) {
     } else {
         for(let containerId of project.containers) {
             const container = await containerCollection.findOne({_id: containerId});
+            if(container.tasks.length) {
+                container.tasks = await taskCollection.find({_id:{$in: container.tasks}}).toArray();
+            }
             containerList[container._id] = container;
         }
     }
@@ -49,7 +54,7 @@ async function getContainersByProjectId(req, res) {
 async function editContainerByContainerId(req, res) {
     const containerCollection = await containers();
     let containerMongoId = ObjectId.createFromHexString(req.body.containerId);
-    let containerInfo = {}
+    let containerInfo = {};
     if(req.body.containerName) {
         containerInfo.containerName = req.body.containerName;
     }

@@ -37,7 +37,7 @@ const useStyles = makeStyles((theme) => ({
         marginLeft: '33%',
         fontSize: '50px',
         fontFamily: 'Old Times American',
-        fontSize: 40,
+        // fontSize: 40,
         // fontFamily: 'New Tegomin',
     },
 
