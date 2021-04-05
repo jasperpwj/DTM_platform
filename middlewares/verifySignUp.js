@@ -8,8 +8,8 @@ checkExistedUsernameOrEmail = async (req, res, next) => {
     try {
         const user = await userCollection.findOne({username: req.body.username});
         if(user) {
-            res.status(400).send({message:"Username is already registered"});
-            return;
+            return res.status(400).send({message:"Username is already registered"});
+
         }
     } catch (error) {
         console.log({message:error});
@@ -22,8 +22,8 @@ checkExistedUsernameOrEmail = async (req, res, next) => {
         }
         const user = await userCollection.findOne({email: req.body.email});
         if(user) {
-            res.status(400).send({message:"Email is already registered"});
-            return;
+            return res.status(400).send({message:"Email is already registered"});
+
         }
     } catch (error) {
         console.log({message:error});
