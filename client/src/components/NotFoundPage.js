@@ -18,6 +18,7 @@ export default function NotFoundPage() {
 
   return (
       <div>
+          <br></br><br></br><br></br><br></br><br></br><br></br>
           <h1>404: Page Not Found</h1>
           <p>Sorry, you are not allowed to access this page or the page does not exist</p>
           <Button
