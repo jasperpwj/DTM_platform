@@ -13,15 +13,14 @@ import AppBar from "@material-ui/core/AppBar";
 import AddIcon from '@material-ui/icons/Add';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import Menu from '@material-ui/core/Menu';
-import MenuItem from '@material-ui/core/MenuItem';
 import {DragDropContext, Droppable, Draggable} from 'react-beautiful-dnd';
 import AddContainer from "./AddContainer";
 import EditContainer from "./EditContainer";
 import DeleteContainer from "./DeleteContainer";
 import Link from "@material-ui/core/Link";
+import TextField from "@material-ui/core/TextField";
 const containerService = require("../services/container.service");
-
-
+const taskService = require("../services/tasks.service");
 
 const useStyles = makeStyles( (theme) => ({
     root: {
@@ -31,8 +30,6 @@ const useStyles = makeStyles( (theme) => ({
         // height: '100vh',
     },
     title: {
-        // padding: theme.spacing(1),
-        // backgroundColor: "lightblue",
         padding: theme.spacing(2,2,1,2),
         spacing: theme.spacing(1),
         backgroundColor: "white",
@@ -79,7 +76,7 @@ const useStyles = makeStyles( (theme) => ({
     },
     task: {
         userSelect: 'none',
-        padding: theme.spacing(3),
+        padding: theme.spacing(1),
         margin: theme.spacing(0,1,2,1),
         minHeight: '50px',
         borderRadius: '8px',
@@ -95,39 +92,14 @@ const useStyles = makeStyles( (theme) => ({
     },
     test: {
         backgroundColor: "lightblue",
+        height: '100%',
     },
+    taskForm: {
+        backgroundColor: 'lightyellow',
+        borderRadius: '8px',
+        border: "2px solid #e0e0e0",
+    }
 }));
-
-//mock project data
-const taskF = [
-    {id: "001", content: "first task"},
-    {id: "002", content: "second task"},
-    {id: "003", content: "thrid task"},
-    {id: "004", content: "fourth task"},
-];
-
-const columns = {
-    "101": {
-        _id: "101",
-        name: "Todo",
-        tasks: taskF,
-    },
-    "102": {
-        _id: "102",
-        name: "onProgress",
-        tasks: [{id: "005", content: "fifth task"},]
-    },
-    "103": {
-        _id: "103",
-        name: "onProgress2",
-        tasks: [{id: "006", content: "sixth task"},]
-    },
-    "104": {
-        _id: "104",
-        name: "onProgress3",
-        tasks: []
-    },
-};
 
 // drop and drag effect function
 const onDragEnd = (result, containers, setContainers) => {
@@ -139,8 +111,6 @@ const onDragEnd = (result, containers, setContainers) => {
         const sourceTasks = [...sourceContainer.tasks];
         const destTasks = [...destContainer.tasks];
         const [removed] = sourceTasks.splice(source.index, 1);
-
-
         destTasks.splice(destination.index, 0, removed);
         setContainers({
             ...containers,
@@ -177,34 +147,64 @@ const emptyCard = (projectId) => {
     )
 };
 
-
 export default function Project(props) {
     const pathArray = props.location.pathname.split('/');
-    const [project, setProject] = useState("");
     const [containers, setContainers] = useState("");
     const classes = useStyles();
     const [anchorEl, setAnchorEl] = React.useState(null);
     const [emptyContainer, setEmptyContainer] = useState(false);
     const [projectId, setProjectId] = useState(pathArray[pathArray.length - 1]);
     const [targetContainerId, setTargetContainerId] = useState(null);
+    const [openTask, setOpenTask] = useState(false);
+    const [emptyInput, setEmptyInput] = useState(true);
     const containerRef = useRef(anchorEl);
     const open = Boolean(anchorEl);
-
+    const initTaskInfo = Object.freeze({
+        containerId: "",
+        title: "",
+        content: "",
+    });
+    const [newTask, setNewTask] = useState(initTaskInfo);
 
     const handleOpenContainerMore= (event) => {
         setAnchorEl(event.currentTarget);
-        console.log("here")
-        console.log(event.currentTarget.attributes)
         setTargetContainerId(event.currentTarget.attributes.id.value);
     };
     const handleClose = () => {
         setAnchorEl(null);
     };
+    const handleAddTask = (e) => {
+        setOpenTask(true);
+        setTargetContainerId(e.currentTarget.attributes.id.value);
+    };
+    const handleTaskInputChange = (e) => {
+        if(e.target.id){
+            setNewTask(prevState => ({
+                ...prevState,
+                containerId: targetContainerId,
+                [e.target.id]: e.target.value
+            }))
+        }
+    };
+    const handleCancelNewTask = () => {
+        setOpenTask(false);
+        setNewTask(initTaskInfo);
+    };
+    const handleSubmitNewTask = (e) => {
+        e.preventDefault();
+        console.log(newTask);
+        taskService.createTask(newTask).then(res => {return res;}).catch(err => {console.log(err)});
+        window.location.reload();
+    };
 
+    useEffect(()=> {
+        if(newTask.content !== "" && newTask.title !== "") {
+            setEmptyInput(false);
+        } else {
+            setEmptyInput(true);
+        }
+    },[newTask]);
     useEffect(() => {
-        console.log("run")
-        console.log(projectId)
-
         containerService.getContainers(projectId).then(res => {
             if(Object.entries(res).length === 0) {
                 setEmptyContainer(true);
@@ -213,8 +213,7 @@ export default function Project(props) {
                 setContainers(res);
             }
         })
-    }, [projectId])
-
+    }, [projectId]);
 
     return (
         <div className={classes.root}>
@@ -249,7 +248,6 @@ export default function Project(props) {
                 <Button size="small">Timeline</Button>
             </Grid>
             <Divider/>
-
             <Grid container justify="center" className={classes.dragDropArea}>
                 <Grid item xs={12}>
                     <AddContainer value={projectId} />
@@ -264,22 +262,17 @@ export default function Project(props) {
                             {containers && Object.entries(containers).map(([id, container]) => {
                                 return (
                                     <Grid key={id} item className={classes.containerArea} >
-                                        <Grid container  alignItems='center' className={classes.containerHead}>
+                                        <Grid container alignItems='center' className={classes.containerHead}>
                                             <Avatar className={classes.taskCount} variant='circular'><Typography variant='body2'>{container.taskCount}</Typography></Avatar>
                                             <Grid container item xs alignItems='center'className={classes.containerTitle}>
                                                 <Typography variant='subtitle1'>{container.containerName}</Typography>
                                             </Grid>
                                             <Grid container item xs={3} alignItems='flex-end' justify='flex-end'>
-                                                <IconButton size='small'><AddIcon/></IconButton>
-                                                <IconButton
-                                                    size='small'
-                                                    aria-label='container-more'
-                                                    id={id}
-                                                    onClick={handleOpenContainerMore}
-                                                ><MoreVertIcon/></IconButton>
+                                                <IconButton size='small' aria-label='add-task' id={id} onClick={handleAddTask}><AddIcon/></IconButton>
+                                                <IconButton size='small' aria-label='container-more' id={id} onClick={handleOpenContainerMore}><MoreVertIcon/></IconButton>
                                             </Grid>
                                         </Grid>
-                                        <Droppable droppableId={container._id} key={container._id}>
+                                        <Droppable droppableId={id} key={container._id}>
                                             {(provided, snapshot) => {
                                                 return (
                                                     <Grid
@@ -288,14 +281,56 @@ export default function Project(props) {
                                                         style={{
                                                             backgroundColor: snapshot.isDraggingOver ? "#cfd8dc": "#eeeeee",
                                                         }}
+                                                        key={id}
                                                         className={classes.containerContent}
                                                     >
+                                                        {(openTask && targetContainerId === provided.droppableProps["data-rbd-droppable-id"])? (
+                                                            <form className={classes.taskForm} key={id}>
+                                                                <Grid item xs={12} style={{padding: 10}}>
+                                                                    <TextField
+                                                                        required
+                                                                        fullWidth
+                                                                        multiline
+                                                                        margin="dense"
+                                                                        label='Title'
+                                                                        id="title"
+                                                                        value={newTask.title}
+                                                                        variant='outlined'
+                                                                        onChange={handleTaskInputChange}
+                                                                    />
+                                                                    <TextField
+                                                                        required
+                                                                        fullWidth
+                                                                        multiline
+                                                                        label='Content'
+                                                                        margin="dense"
+                                                                        id="content"
+                                                                        value={newTask.content}
+                                                                        rows={4}
+                                                                        variant='outlined'
+                                                                        onChange={handleTaskInputChange}
+                                                                    />
+                                                                </Grid>
+                                                                <Grid container item justify='space-evenly' style={{paddingBottom: 10}}>
+                                                                    <Button variant='outlined' color='primary' onClick={handleCancelNewTask}>Cancel</Button>
+                                                                    <Button
+                                                                        variant='contained'
+                                                                        disabled={emptyInput}
+                                                                        style={{
+                                                                            backgroundColor: emptyInput? '#81c784':'#2e7d32',
+                                                                            color:emptyInput? '#e8f5e9': 'white',
+                                                                        }}
+                                                                        onClick={handleSubmitNewTask}
+                                                                    >Submit</Button>
+                                                                </Grid>
+                                                            </form>
+                                                        ): null}
                                                         {container.tasks && container.tasks.map((task, index) => {
                                                             return (
-                                                                <Draggable key={task.id} draggableId={task.id} index={index}>
+                                                                <Draggable key={task._id} draggableId={task._id} index={index}>
                                                                     {(provided, snapshot) => {
                                                                         return (
-                                                                            <div
+                                                                            <Grid item
                                                                                 ref={provided.innerRef}
                                                                                 {...provided.draggableProps}
                                                                                 {...provided.dragHandleProps}
@@ -305,8 +340,12 @@ export default function Project(props) {
                                                                                 }}
                                                                                 className={classes.task}
                                                                             >
-                                                                                {task.content}
-                                                                            </div>
+                                                                                <Grid container item justify='space-between' alignItems='center'>
+                                                                                    <Typography>{task.title}</Typography>
+                                                                                    <IconButton size='small' aria-label= {`task-more-${task._id}`}  id={task._id} onClick={()=> alert(task._id)}><MoreVertIcon/></IconButton>
+                                                                                </Grid>
+                                                                                <div style={{wordWrap: 'break-word'}}>{task.content}</div>
+                                                                            </Grid>
                                                                         )
                                                                     }}
                                                                 </Draggable>
@@ -329,7 +368,6 @@ export default function Project(props) {
                             >
                                 {open &&  (<EditContainer id={targetContainerId} ref={containerRef}/>)}
                                 {open && <DeleteContainer value={{containerId: targetContainerId, projectId: projectId}} ref={containerRef}/>}
-
                             </Menu>
                         </Grid>
 
