@@ -90,7 +90,7 @@ export default function SignUp() {
                                 setErrorMsg([])
                             })
                             .catch(error => {
-                                console.log({Error: error.response.data});
+                                // console.log({Error: error.response});
                                 setIsError(true);
                                 setErrorMsg(preMsg => ([...preMsg, error.response.data.message]));
                             });
