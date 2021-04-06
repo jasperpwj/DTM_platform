@@ -109,22 +109,25 @@ async function editProject(req, res) {
 }
 
 async function getSearchProjects(req, res) {
-    // req input
-    // req.body.searchWords
-    console.log(req.body)
-    const projectList = await projectHelper.getProjectListByUserId(req.id);
+    // console.log(req.body) // input
+    // console.log(req.id); // user id
+    const projectId = await projectHelper.getProjectListByUserId(req.id);
+    const projects=[];
+    for(let i=0; i<projectId.length; i++) {
+        projects.push(await projectHelper.getProjectById(projectId[i].toString()));
+    }
     const projectSearchedList = [];
-    if(!projectList.length) {
-        
-        for (i = 0; i < projectList.length; i++){
-            if (projectList[i].includes(req.body.inPut)) {
-                projectSearchedList.push(projectList[i]);
+    if(projects.length !== 0 ) {        
+        for (i = 0; i < projects.length; i++){
+            if (projects[i].projectName.includes(req.body.inPut)) {
+                projectSearchedList.push(projects[i]);
             }
         }
         if (projectSearchedList.length !== 0){
             res.status(200).send(projectSearchedList);
         }
     } else {
+        return null;
         const projectCollection = await projects();
         let openProjects = [];
         for(let project of projectList) {

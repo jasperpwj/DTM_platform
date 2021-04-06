@@ -1,5 +1,5 @@
-import React, {useState} from 'react';
-import {fade, IconButton, makeStyles} from "@material-ui/core";
+import React, {useState, useEffect} from 'react';
+import {fade, IconButton, makeStyles, Menu, MenuItem} from "@material-ui/core";
 import Typography from "@material-ui/core/Typography";
 import AppBar from '@material-ui/core/AppBar';
 import Tabs from '@material-ui/core/Tabs';
@@ -14,8 +14,11 @@ import AddProject from "./AddProject";
 import OpenProjects from "./OpenProjects";
 import ClosedProjects from "./ClosedProjects";
 import SearchedProjects from "./SearchedProjects";
+import { Link } from "react-router-dom";
+import TextField from '@material-ui/core/TextField';
+import Autocomplete from '@material-ui/lab/Autocomplete';
 const projectService = require("../services/projects.service");
-
+const ITEM_HEIGHT = 48;
 const useStyles = makeStyles((theme) => ({
     root: {
         display: 'block',
@@ -113,29 +116,94 @@ export default function Projects() {
         inPut:"",
     });
     const [inputInfo, setInputInfo] = useState(initialInfo);
-
+    const [anchorEl, setAnchorEl] = useState(null);
     const handleContentChange = (event, newValue) =>{
         setValue(newValue)
     };
+    const initialOp =({
+        op:[],
+    });
+    const [options, setOptions] = useState(initialOp);
+    const [zhi, setZhi] = useState('');
+
+    // get the whole list
+    const ProjectList = [];
+    const [openProject, setOpenProjects] = useState([]);
+    const [closeProject, setClosedProjects] = useState([]);
+    const [isEmptyProject, setIsEmptyProject] = useState(false);
+    useEffect(()=> {
+        projectService.getOpenProjects().then(res => {
+            if(!(res.data.length)) {
+                setIsEmptyProject(true);
+                setOpenProjects(res.data);
+            } else {
+                setIsEmptyProject(false);
+                setOpenProjects(res.data);
+            }
+        })
+    }, []);
+    useEffect(()=> {
+        projectService.getClosedProjects().then(res => {
+            if(!(res.data.length)) {
+                setIsEmptyProject(true);
+                setClosedProjects(res.data);
+            } else {
+                setIsEmptyProject(false);
+                setClosedProjects(res.data);
+            }
+        })
+    }, []);
+    // console.log(openProject)
+    for (let i = 0; i < openProject.length; i++){
+        ProjectList.push({ title: openProject[i].projectName})
+    }
+    for (let i = 0; i < closeProject.length; i++){
+        ProjectList.push({ title: closeProject[i].projectName})
+    }
+
 
     const handleClick = (e) => {
         e.preventDefault();
+        console.log("1")
         if(inputInfo.inPut !== ""){
             console.log(inputInfo.inPut);
-            projectService.getSearchProjects(inputInfo).then(r => {return r;});
-            // window.location.reload()
+
+
+
+            // projectService.getSearchProjects(inputInfo).then(r => {
+            //     // console.log(r.data);
+            //     // options = [];
+            //     for(let i = 0; i<r.data.length; i++) {
+            //         // console.log(r.data[i].projectName);
+            //         // setOptions(initialOp);
+            //         if (!options.op.includes(r.data[i].projectName)) {
+            //             options.op.push(r.data[i].projectName);
+            //             console.log(options)
+            //             console.log(options.op)
+            //         }
+                    
+            //     }
+
+            // });
+
+            // setAnchorEl(e.currentTarget);
         }
+        
     }
-    const handleChange = (e) => {
-        if(e.target.id && e.target.value) {
-            setInputInfo({
-                ...inputInfo,
-                [e.target.id]: e.target.value
-            })
-        } else {
-            setInputInfo(initialInfo);
-        }
-    };
+
+    // const handleChange = (e) => {
+    //     if(e.target.id && e.target.value) {
+    //         setInputInfo({
+    //             ...inputInfo,
+    //             [e.target.id]: e.target.value
+    //         })
+    //     }
+    // };
+
+    // const handleClose = () => {
+    //     setAnchorEl(null);
+    // };
+    
 
     return (
         <div className={classes.root}>
@@ -148,7 +216,7 @@ export default function Projects() {
                             <AddProject/>
                         </Tabs>
                         <div className={classes.search}>
-                            <InputBase
+                            {/* <InputBase
                                 id="inPut" 
                                 placeholder="Search…"
                                 classes={{
@@ -157,11 +225,39 @@ export default function Projects() {
                                 }}
                                 inputProps={{ 'aria-label': 'search' }}
                                 onChange={handleChange}
+                            /> */}
+                            <Autocomplete
+                                id="inPut"
+                                options={ProjectList}
+                                getOptionLabel={(option) => option.title}
+                                style={{ width: 300 }}
+                                renderInput={(params) => <TextField {...params} id="inPut" variant="outlined" color="secondary" />}
                             />
+                            
                         </div>
-                        <IconButton onClick={handleClick} >
+                        <IconButton onClick={handleClick}>
                             <SearchIcon style={{fill:"white"}}/>
                         </IconButton>
+                            {/* <Menu
+                                id="simple-menu"
+                                anchorEl={anchorEl}
+                                keepMounted
+                                open={Boolean(anchorEl)}
+                                onClose={handleClose}
+                                PaperProps={{
+                                    style: {
+                                    maxHeight: ITEM_HEIGHT * 4.5,
+                                    width: '20ch',
+                                    },
+                                }}
+                            >
+                                {options.op.map((option) => (
+                                    <MenuItem key={option}>{option}</MenuItem>
+                                    ))}
+                                <Link></Link>
+                                <MenuItem>...</MenuItem>
+                            </Menu> */}
+                        
                     </Toolbar>
                 </AppBar>
                 <TabContent value={value} index={0}>
@@ -174,7 +270,7 @@ export default function Projects() {
                         <ClosedProjects/>
                     </Grid>
                 </TabContent>
-                {/* <TabContent >
+                {/* <TabContent value={value} index={1}>
                     <Grid className={classes.content}>
                         <SearchedProjects/>
                     </Grid>
