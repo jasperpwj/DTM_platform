@@ -18,12 +18,15 @@ const useStyles = makeStyles((theme) => ({
         // backgroundColor: "#64b5f6",
         backgroundImage: `url(${Background})`,
         backgroundSize: 'cover',
+        minWidth:1000
     },
 
     content: {
         flexGrow: 1,
         marginTop: theme.spacing(8),
         padding: theme.spacing(2),
+        // minWidth: 1500,
+
         // backgroundColor: "#64b5f6",
         // backgroundImage: `url(${Background})`,
         // backgroundSize: 'cover',
@@ -33,6 +36,7 @@ const useStyles = makeStyles((theme) => ({
         // display: "inline-block",
         width: '33%',
         marginLeft: '33%',
+        // minWidth: 200,
         fontSize: '50px',
         fontFamily: 'Old Times American',
         // fontSize: 40,
@@ -105,7 +109,7 @@ export default function Home(props) {
                         
                         <br></br>
                         <br></br>
-                        <Paper elevation={20} className={classes.paper}> 
+                        <Paper elevation={20} className={classes.paper} minWidth="200"> 
                             <br></br>  
                             <b>What is DTM ? </b>
                             <br></br>

@@ -164,12 +164,22 @@ export default function Projects() {
     for (let i = 0; i < closeProject.length; i++){
         ProjectList.push({name: closeProject[i].projectName, id: closeProject[i]._id})
     }
-    const [zhi, setZhi] = useState(options[0]);
+    const [zhi, setZhi] = useState(0);
+    // console.log(zhi)
+
     const handleClick = (e) => {
         e.preventDefault();
-        let path = 'projects/'+ zhi.id
-        history.push(path)
-        
+        if (zhi === 0) {
+            console.log(zhi)
+            console.log("zheer")
+            setZhi(0)
+        } else {
+            console.log(zhi)
+            let path = 'projects/'+ zhi.id
+            history.push(path)
+            console.log("Cool")
+            setZhi(0)
+        }
     }
 
 
