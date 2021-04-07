@@ -19,6 +19,7 @@ import EditContainer from "./EditContainer";
 import DeleteContainer from "./DeleteContainer";
 import Link from "@material-ui/core/Link";
 import TextField from "@material-ui/core/TextField";
+import AddPerson from "./AddPerson";
 const containerService = require("../services/container.service");
 const taskService = require("../services/tasks.service");
 
@@ -204,6 +205,7 @@ export default function Project(props) {
             setEmptyInput(true);
         }
     },[newTask]);
+
     useEffect(() => {
         containerService.getContainers(projectId).then(res => {
             if(Object.entries(res).length === 0) {
@@ -234,7 +236,9 @@ export default function Project(props) {
                         </AvatarGroup>
                     </Grid>
                     <Grid item>
-                        <IconButton size="small"><PersonAddIcon/></IconButton>
+                        {/* <IconButton size="small" onClick = {handleClickPerson}><PersonAddIcon/></IconButton> */}
+                        {/* <AddPerson id = {targetId} ref = {tapRef}> */}
+                        <AddPerson/>
                     </Grid>
                     <Grid item>
                         <Button size="small" startIcon={<SettingsIcon/>}>Setting</Button>
