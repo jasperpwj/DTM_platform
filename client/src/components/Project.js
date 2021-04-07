@@ -24,6 +24,7 @@ import DeleteContainer from "./DeleteContainer";
 import EditTaskForm from "./EditTaskForm";
 import DeleteTask from "./DeleteTask";
 
+const projectService = require("../services/projects.service");
 const containerService = require("../services/container.service");
 const taskService = require("../services/tasks.service");
 
@@ -217,6 +218,7 @@ export default function Project(props) {
     const [taskAnchorEl, setTaskAnchorEL] = useState(null);
     const [emptyContainer, setEmptyContainer] = useState(false);
     const [projectId, setProjectId] = useState(pathArray[pathArray.length - 1]);
+    const [projectContent, setProjectContent] = useState(null);
     const [targetContainerId, setTargetContainerId] = useState(null);
     const [targetTaskId, setTargetTaskId] = useState(null);
     const [openTask, setOpenTask] = useState(false);
@@ -276,6 +278,9 @@ export default function Project(props) {
         }
     },[newTask]);
     useEffect(() => {
+        projectService.getProjectContent(projectId).then(res => {
+            setProjectContent(res.data);
+        });
         containerService.getContainers(projectId).then(res => {
             if(Object.entries(res).length === 0) {
                 setEmptyContainer(true);
@@ -290,7 +295,7 @@ export default function Project(props) {
             <Grid container className={classes.title}>
                 <Grid item xs>
                     <Typography align="left" variant='h6'>
-                        Project Name
+                        {projectContent && projectContent.projectName}
                     </Typography>
                 </Grid>
                 <Grid container item xs justify="flex-end" spacing={1}>

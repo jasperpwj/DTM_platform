@@ -13,6 +13,14 @@ function getOpenProjects() {
         return res;
     })
 }
+function getProjectContent(projectId) {
+    let projectObj = {
+        projectId: projectId,
+    };
+    return axios.post(API_URL + "/getProjectContent", projectObj, {headers:authHeader()})
+        .then(res => {return res});
+}
+
 function getClosedProjects() {
     return axios.get(API_URL + "closed_projects", {headers:authHeader()}).then(res => {
         return res;
@@ -41,4 +49,5 @@ export {
     changeProjectStatus,
     editProjectInfo,
     getSearchProjects,
+    getProjectContent,
 }

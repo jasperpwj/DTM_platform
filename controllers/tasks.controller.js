@@ -39,10 +39,18 @@ async function createTask(req, res) {
 
 async function editTask(req, res) {
     /*
-    params in the req.body: containerId, taskId
+    params in the req.body: taskId, title, content
      */
-    console.log(req.body)
-    return;
+    const tasksCollection = await tasks();
+    let taskObjToBeUpdated = {
+        title: req.body.title,
+        content: req.body.content,
+        lastUpdatedTime: new Date().toLocaleString(),
+        editor: ObjectId.createFromHexString(req.id),
+    };
+    const updatedStatus = await tasksCollection.updateOne({_id: ObjectId.createFromHexString(req.body.taskId)}, {$set: taskObjToBeUpdated});
+    if(updatedStatus.modifiedCount === 0) throw `Fail to update task of id: ${req.body.taskId}`;
+    return res.status(200).send({message: "update task information successfully"});
 }
 
 async function updateDraggingTask(req, res) {
