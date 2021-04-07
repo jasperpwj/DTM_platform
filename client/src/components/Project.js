@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useRef} from 'react';
-import {makeStyles} from "@material-ui/core";
+import {fade, makeStyles} from "@material-ui/core";
 import Typography from "@material-ui/core/Typography";
 import Grid from "@material-ui/core/Grid";
 import Divider from "@material-ui/core/Divider";
@@ -13,12 +13,17 @@ import AppBar from "@material-ui/core/AppBar";
 import AddIcon from '@material-ui/icons/Add';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import Menu from '@material-ui/core/Menu';
+import Link from "@material-ui/core/Link";
+import TextField from "@material-ui/core/TextField";
+import SearchIcon from "@material-ui/icons/Search";
+import InputBase from "@material-ui/core/InputBase";
 import {DragDropContext, Droppable, Draggable} from 'react-beautiful-dnd';
 import AddContainer from "./AddContainer";
 import EditContainer from "./EditContainer";
 import DeleteContainer from "./DeleteContainer";
-import Link from "@material-ui/core/Link";
-import TextField from "@material-ui/core/TextField";
+import EditTaskForm from "./EditTaskForm";
+import DeleteTask from "./DeleteTask";
+
 const containerService = require("../services/container.service");
 const taskService = require("../services/tasks.service");
 
@@ -38,6 +43,50 @@ const useStyles = makeStyles( (theme) => ({
         width: theme.spacing(3),
         height: theme.spacing(3),
     },
+    toolbar: {
+        backgroundColor: 'lightblue',
+        margin: theme.spacing(1, 1, 2, 1),
+    },
+    search: {
+        position: 'relative',
+        borderRadius: theme.shape.borderRadius,
+        backgroundColor: fade(theme.palette.common.white, 0.15),
+        '&:hover': {
+            backgroundColor: fade(theme.palette.common.white, 0.25),
+        },
+        marginLeft: 0,
+        width: '100%',
+        [theme.breakpoints.up('sm')]: {
+            marginLeft: theme.spacing(1),
+            width: 'auto',
+        },
+        border: "1px solid #e0e0e0",
+    },
+    searchIcon: {
+        padding: theme.spacing(0, 2),
+        height: '100%',
+        position: 'absolute',
+        pointerEvents: 'none',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    inputRoot: {
+        color: 'inherit',
+    },
+    inputInput: {
+        padding: theme.spacing(1, 1, 1, 0),
+        // vertical padding + font size from searchIcon
+        paddingLeft: `calc(1em + ${theme.spacing(4)}px)`,
+        transition: theme.transitions.create('width'),
+        width: '100%',
+        [theme.breakpoints.up('sm')]: {
+            width: '12ch',
+            '&:focus': {
+                width: '20ch',
+            },
+        },
+    },
     taskCount: {
         width: theme.spacing(2) + 4,
         height: theme.spacing(2) + 4,
@@ -55,7 +104,7 @@ const useStyles = makeStyles( (theme) => ({
     },
     containerArea: {
         height: '100vh',
-        width: 350,
+        minWidth: 350,
         margin: theme.spacing(1,1,2,1),
         borderRadius: '8px',
         border: "2px solid #bdbdbd",
@@ -108,10 +157,17 @@ const onDragEnd = (result, containers, setContainers) => {
     if(source.droppableId !== destination.droppableId) {
         const sourceContainer = containers[source.droppableId];
         const destContainer = containers[destination.droppableId];
+        sourceContainer.taskCount -= 1;
+        destContainer.taskCount += 1;
         const sourceTasks = [...sourceContainer.tasks];
         const destTasks = [...destContainer.tasks];
         const [removed] = sourceTasks.splice(source.index, 1);
         destTasks.splice(destination.index, 0, removed);
+        taskService.updateDraggingTask(sourceContainer._id, destContainer._id,removed._id, source.index, destination.index)
+            .then(res => {
+                console.log(res)
+            })
+            .catch(e => console.log(e));
         setContainers({
             ...containers,
             [source.droppableId]: {
@@ -128,6 +184,9 @@ const onDragEnd = (result, containers, setContainers) => {
         const copiedTasks = [...container.tasks];
         const [removed] = copiedTasks.splice(source.index, 1);
         copiedTasks.splice(destination.index, 0, removed);
+        taskService.updateDraggingTask(container._id, container._id, removed._id, source.index, destination.index)
+            .then(res => console.log(res))
+            .catch(e => console.log(e));
         setContainers({
             ...containers,
             [source.droppableId]: {
@@ -151,14 +210,18 @@ export default function Project(props) {
     const pathArray = props.location.pathname.split('/');
     const [containers, setContainers] = useState("");
     const classes = useStyles();
-    const [anchorEl, setAnchorEl] = React.useState(null);
+    const [anchorEl, setAnchorEl] = useState(null);
+    const [taskAnchorEl, setTaskAnchorEL] = useState(null);
     const [emptyContainer, setEmptyContainer] = useState(false);
     const [projectId, setProjectId] = useState(pathArray[pathArray.length - 1]);
     const [targetContainerId, setTargetContainerId] = useState(null);
+    const [targetTaskId, setTargetTaskId] = useState(null);
     const [openTask, setOpenTask] = useState(false);
     const [emptyInput, setEmptyInput] = useState(true);
     const containerRef = useRef(anchorEl);
+    const taskRef = useRef(taskAnchorEl);
     const open = Boolean(anchorEl);
+    const openTaskMore = Boolean(taskAnchorEl);
     const initTaskInfo = Object.freeze({
         containerId: "",
         title: "",
@@ -172,6 +235,7 @@ export default function Project(props) {
     };
     const handleClose = () => {
         setAnchorEl(null);
+        setTaskAnchorEL(null);
     };
     const handleAddTask = (e) => {
         setOpenTask(true);
@@ -192,9 +256,13 @@ export default function Project(props) {
     };
     const handleSubmitNewTask = (e) => {
         e.preventDefault();
-        console.log(newTask);
         taskService.createTask(newTask).then(res => {return res;}).catch(err => {console.log(err)});
         window.location.reload();
+    };
+    const handleOpenTaskMore = (e) => {
+        setTaskAnchorEL(e.currentTarget);
+        setTargetTaskId(e.currentTarget.attributes.id.value);
+        setTargetContainerId(e.currentTarget.attributes.value.value);
     };
 
     useEffect(()=> {
@@ -214,7 +282,6 @@ export default function Project(props) {
             }
         })
     }, [projectId]);
-
     return (
         <div className={classes.root}>
             <Grid container className={classes.title}>
@@ -249,11 +316,22 @@ export default function Project(props) {
             </Grid>
             <Divider/>
             <Grid container justify="center" className={classes.dragDropArea}>
-                <Grid item xs={12}>
+                <Grid container item xs={12} justify='space-evenly' alignItems='center' className={classes.toolbar}>
                     <AddContainer value={projectId} />
-                    <Typography >
-                        Page
-                    </Typography>
+                    <div className={classes.search}>
+                        <div className={classes.searchIcon}>
+                            <SearchIcon />
+                        </div>
+                        <InputBase
+                            placeholder="Search…"
+                            classes={{
+                                root: classes.inputRoot,
+                                input: classes.inputInput,
+                            }}
+                            inputProps={{ 'aria-label': 'search' }}
+                        />
+                    </div>
+
                 </Grid>
                 {(emptyContainer)? (<Grid container item className={classes.emptyCard} justify='center' alignContent='center'
                 >{emptyCard(projectId)}</Grid>): (
@@ -342,7 +420,7 @@ export default function Project(props) {
                                                                             >
                                                                                 <Grid container item justify='space-between' alignItems='center'>
                                                                                     <Typography>{task.title}</Typography>
-                                                                                    <IconButton size='small' aria-label= {`task-more-${task._id}`}  id={task._id} onClick={()=> alert(task._id)}><MoreVertIcon/></IconButton>
+                                                                                    <IconButton size='small' aria-label= {`task-more-${task._id}`} value={container._id} id={task._id} onClick={handleOpenTaskMore}><MoreVertIcon/></IconButton>
                                                                                 </Grid>
                                                                                 <div style={{wordWrap: 'break-word'}}>{task.content}</div>
                                                                             </Grid>
@@ -368,6 +446,16 @@ export default function Project(props) {
                             >
                                 {open &&  (<EditContainer id={targetContainerId} ref={containerRef}/>)}
                                 {open && <DeleteContainer value={{containerId: targetContainerId, projectId: projectId}} ref={containerRef}/>}
+                            </Menu>
+                            <Menu
+                                id={targetTaskId}
+                                anchorEl={taskAnchorEl}
+                                keepMounted
+                                open={openTaskMore}
+                                onClose={handleClose}
+                            >
+                                {openTaskMore && (<EditTaskForm id={targetTaskId} ref={taskRef}/>)}
+                                {openTaskMore && (<DeleteTask value={{containerId: targetContainerId, taskId: targetTaskId}} ref={taskRef}/>)}
                             </Menu>
                         </Grid>
 
