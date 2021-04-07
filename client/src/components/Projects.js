@@ -17,6 +17,8 @@ import SearchedProjects from "./SearchedProjects";
 import { Link } from "react-router-dom";
 import TextField from '@material-ui/core/TextField';
 import Autocomplete from '@material-ui/lab/Autocomplete';
+import { useHistory } from "react-router-dom";
+
 const projectService = require("../services/projects.service");
 const ITEM_HEIGHT = 48;
 const useStyles = makeStyles((theme) => ({
@@ -124,10 +126,12 @@ export default function Projects() {
         op:[],
     });
     const [options, setOptions] = useState(initialOp);
-    
+    const history = useHistory();
 
     // get the whole list
-    const ProjectList = [];
+    const ProjectList = [
+        // { name: 'The Shawshank Redemption', id: 1994 },
+    ];
     const [openProject, setOpenProjects] = useState([]);
     const [closeProject, setClosedProjects] = useState([]);
     const [isEmptyProject, setIsEmptyProject] = useState(false);
@@ -155,19 +159,17 @@ export default function Projects() {
     }, []);
 
     for (let i = 0; i < openProject.length; i++){
-        ProjectList.push(openProject[i].projectName)
+        ProjectList.push({name: openProject[i].projectName, id: openProject[i]._id})
     }
     for (let i = 0; i < closeProject.length; i++){
-        ProjectList.push(closeProject[i].projectName)
+        ProjectList.push({name: closeProject[i].projectName, id: closeProject[i]._id})
     }
-    console.log(ProjectList)
-
     const [zhi, setZhi] = useState(options[0]);
-
     const handleClick = (e) => {
         e.preventDefault();
-        console.log(zhi)
-        // Link
+        let path = 'projects/'+ zhi.id
+        history.push(path)
+        
     }
 
 
@@ -189,15 +191,16 @@ export default function Projects() {
                                 onChange={(event, newValue) => {
                                     setZhi(newValue);
                                 }}
-                                
                                 id="inPut"
                                 options={ProjectList}
+                                getOptionLabel={(option) => option.name}
                                 style={{ width: 300 }}
                                 renderInput={(params) => <TextField {...params} id="inPut" variant="outlined" color="secondary" />}
                             />
                             
                         </div>
-                        <IconButton onClick={handleClick} >
+                        <IconButton 
+                            onClick={handleClick} >
                             <SearchIcon style={{fill:"white"}}/>
                         </IconButton>                        
                     </Toolbar>
