@@ -25,7 +25,7 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-export default function OpenProjects(props) {
+export default function SearchedProjects(props) {
     const [openProject, setOpenProjects] = useState([]);
     const [isEmptyProject, setIsEmptyProject] = useState(false);
     const [anchorEl, setAnchorEl] = useState(null);
@@ -36,7 +36,7 @@ export default function OpenProjects(props) {
     const [searchProject, setSearchProjects] = useState([]);
 
     useEffect(()=> {
-        projectService.getOpenProjects().then(res => {
+        projectService.getSearchProjects().then(res => {
             if(!(res.data.length)) {
                 setIsEmptyProject(true);
                 setOpenProjects(res.data);
@@ -47,14 +47,14 @@ export default function OpenProjects(props) {
         })
     }, []);
 
-    const handleClickMore = (event) => {
-        setAnchorEl(event.currentTarget);
-        setTargetId(event.currentTarget.attributes.id.value);
-    };
+    // const handleClickMore = (event) => {
+    //     setAnchorEl(event.currentTarget);
+    //     setTargetId(event.currentTarget.attributes.id.value);
+    // };
 
-    const handleCloseMore = () => {
-        setAnchorEl(null);
-    };
+    // const handleCloseMore = () => {
+    //     setAnchorEl(null);
+    // };
 
     const handleProjectStatusChange = (event) => {
         let changeStatus = {};
@@ -103,7 +103,7 @@ export default function OpenProjects(props) {
                                                     aria-haspopup="true"
                                                     id={project._id}
                                                     tabIndex={index}
-                                                    onClick={handleClickMore}
+                                                    // onClick={handleClickMore}
                                                 >
                                                     <MoreVertIcon/>
                                                 </IconButton>
@@ -116,7 +116,7 @@ export default function OpenProjects(props) {
                                     anchorEl={anchorEl}
                                     keepMounted
                                     open={open}
-                                    onClose={handleCloseMore}
+                                    // onClose={handleCloseMore}
                                 >
                                     {open && (
                                         <MenuItem

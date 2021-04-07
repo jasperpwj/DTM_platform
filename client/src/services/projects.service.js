@@ -28,10 +28,17 @@ function editProjectInfo(project) {
         return res;
     })
 }
+function getSearchProjects(searchWords) {
+    return axios.post(API_URL + "search_projects", searchWords, {headers:authHeader()}).then(res => {
+        return res;
+    })
+}
+
 export {
     createProject,
     getOpenProjects,
     getClosedProjects,
     changeProjectStatus,
     editProjectInfo,
+    getSearchProjects,
 }

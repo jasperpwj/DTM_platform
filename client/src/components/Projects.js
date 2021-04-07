@@ -1,5 +1,5 @@
-import React, {useState} from 'react';
-import {fade, makeStyles} from "@material-ui/core";
+import React, {useState, useEffect} from 'react';
+import {fade, IconButton, makeStyles, Menu, MenuItem} from "@material-ui/core";
 import Typography from "@material-ui/core/Typography";
 import AppBar from '@material-ui/core/AppBar';
 import Tabs from '@material-ui/core/Tabs';
@@ -13,7 +13,14 @@ import Box from "@material-ui/core/Box";
 import AddProject from "./AddProject";
 import OpenProjects from "./OpenProjects";
 import ClosedProjects from "./ClosedProjects";
+import SearchedProjects from "./SearchedProjects";
+import { Link } from "react-router-dom";
+import TextField from '@material-ui/core/TextField';
+import Autocomplete from '@material-ui/lab/Autocomplete';
+import { useHistory } from "react-router-dom";
 
+const projectService = require("../services/projects.service");
+const ITEM_HEIGHT = 48;
 const useStyles = makeStyles((theme) => ({
     root: {
         display: 'block',
@@ -56,7 +63,7 @@ const useStyles = makeStyles((theme) => ({
     inputInput: {
         padding: theme.spacing(1, 1, 1, 0),
         // vertical padding + font size from searchIcon
-        paddingLeft: `calc(1em + ${theme.spacing(4)}px)`,
+        paddingLeft: `calc(1em + ${theme.spacing(1)}px)`,
         transition: theme.transitions.create('width'),
         width: '100%',
         [theme.breakpoints.up('sm')]: {
@@ -107,12 +114,66 @@ TabContent.propTypes = {
 export default function Projects() {
     const classes = useStyles();
     const [value, setValue] = useState(0);
-
-
+    const initialInfo = Object.freeze({
+        inPut:"",
+    });
+    const [inputInfo, setInputInfo] = useState(initialInfo);
+    const [anchorEl, setAnchorEl] = useState(null);
     const handleContentChange = (event, newValue) =>{
         setValue(newValue)
     };
+    const initialOp =({
+        op:[],
+    });
+    const [options, setOptions] = useState(initialOp);
+    const history = useHistory();
 
+    // get the whole list
+    const ProjectList = [
+        // { name: 'The Shawshank Redemption', id: 1994 },
+    ];
+    const [openProject, setOpenProjects] = useState([]);
+    const [closeProject, setClosedProjects] = useState([]);
+    const [isEmptyProject, setIsEmptyProject] = useState(false);
+    useEffect(()=> {
+        projectService.getOpenProjects().then(res => {
+            if(!(res.data.length)) {
+                setIsEmptyProject(true);
+                setOpenProjects(res.data);
+            } else {
+                setIsEmptyProject(false);
+                setOpenProjects(res.data);
+            }
+        })
+    }, []);
+    useEffect(()=> {
+        projectService.getClosedProjects().then(res => {
+            if(!(res.data.length)) {
+                setIsEmptyProject(true);
+                setClosedProjects(res.data);
+            } else {
+                setIsEmptyProject(false);
+                setClosedProjects(res.data);
+            }
+        })
+    }, []);
+
+    for (let i = 0; i < openProject.length; i++){
+        ProjectList.push({name: openProject[i].projectName, id: openProject[i]._id})
+    }
+    for (let i = 0; i < closeProject.length; i++){
+        ProjectList.push({name: closeProject[i].projectName, id: closeProject[i]._id})
+    }
+    const [zhi, setZhi] = useState(options[0]);
+    const handleClick = (e) => {
+        e.preventDefault();
+        let path = 'projects/'+ zhi.id
+        history.push(path)
+        
+    }
+
+
+    
 
     return (
         <div className={classes.root}>
@@ -125,18 +186,23 @@ export default function Projects() {
                             <AddProject/>
                         </Tabs>
                         <div className={classes.search}>
-                            <div className={classes.searchIcon}>
-                                <SearchIcon />
-                            </div>
-                            <InputBase
-                                placeholder="Search…"
-                                classes={{
-                                    root: classes.inputRoot,
-                                    input: classes.inputInput,
+                            <Autocomplete
+                                value={zhi}
+                                onChange={(event, newValue) => {
+                                    setZhi(newValue);
                                 }}
-                                inputProps={{ 'aria-label': 'search' }}
+                                id="inPut"
+                                options={ProjectList}
+                                getOptionLabel={(option) => option.name}
+                                style={{ width: 300 }}
+                                renderInput={(params) => <TextField {...params} id="inPut" variant="outlined" color="secondary" />}
                             />
+                            
                         </div>
+                        <IconButton 
+                            onClick={handleClick} >
+                            <SearchIcon style={{fill:"white"}}/>
+                        </IconButton>                        
                     </Toolbar>
                 </AppBar>
                 <TabContent value={value} index={0}>
