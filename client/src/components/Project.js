@@ -237,8 +237,7 @@ export default function Project(props) {
                     </Grid>
                     <Grid item>
                         {/* <IconButton size="small" onClick = {handleClickPerson}><PersonAddIcon/></IconButton> */}
-                        {/* <AddPerson id = {targetId} ref = {tapRef}> */}
-                        <AddPerson/>
+                        <AddPerson id={projectId} />
                     </Grid>
                     <Grid item>
                         <Button size="small" startIcon={<SettingsIcon/>}>Setting</Button>

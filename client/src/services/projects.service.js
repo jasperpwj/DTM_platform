@@ -28,10 +28,16 @@ function editProjectInfo(project) {
         return res;
     })
 }
+function getProjectOwner(project) {
+    return axios.post(API_URL + "project_owner", project, {headers:authHeader()}).then(res => {
+        return res;
+    })
+}
 export {
     createProject,
     getOpenProjects,
     getClosedProjects,
     changeProjectStatus,
     editProjectInfo,
+    getProjectOwner,
 }

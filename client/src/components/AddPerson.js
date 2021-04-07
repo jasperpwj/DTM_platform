@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Dialog from "@material-ui/core/Dialog";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import DialogContent from "@material-ui/core/DialogContent";
@@ -13,17 +13,32 @@ import IconButton from "@material-ui/core/IconButton";
 import PersonAddIcon from '@material-ui/icons/PersonAdd';
 import Grid from "@material-ui/core/Grid";
 import AddIcon from '@material-ui/icons/Add';
-const userService = require("../services/user.service");
+const projectService = require("../services/projects.service");
 
-export default function AddPerson() {
+export default function AddPerson(props) {
     const [open, setOpen] = useState(false);
     const [scroll, setScroll] = React.useState('paper');
+    const [author, setAuthor] = useState({});
+    const [developers, setDevelopers] = useState([]);
+    const [clients, setClients] = useState([]);
 
-    // const useStyles = makeStyles((theme) => ({
-    //     listItem: {
-    //         margin: 10px 0;
-    //     },
-    // }));
+    useEffect(()=> {
+        if (props && props.id) {
+            projectService.getProjectOwner({projectId: props.id}).then(res =>{
+                if (res) {
+                    setAuthor(res.data);
+                }
+                else {
+                    alert("Error: project has no author");
+                }
+            })
+
+
+        }
+        else {
+            alert("Error: project id failed to pass in");
+        }
+    }, []);
 
     const handleClickOpen = (scrollType) => {
         setOpen(true);
@@ -33,9 +48,14 @@ export default function AddPerson() {
         setOpen(false);
     };
 
-    const authors = ["xxx", "sss"];
-    const authorList = authors.map((author) =>
-        <ListItem button key={author}><ListItemIcon><PersonIcon /></ListItemIcon>{author}</ListItem>);
+    // const authorList = authors.map((author) =>
+    //     <ListItem button key={author}><ListItemIcon><PersonIcon /></ListItemIcon>{author}</ListItem>);
+
+    const developerList = developers.map((developer) =>
+        <ListItem button key={developer}><ListItemIcon><PersonIcon /></ListItemIcon>{developer}</ListItem>);
+
+    const clientList = clients.map((client) =>
+        <ListItem button key={client}><ListItemIcon><PersonIcon /></ListItemIcon>{client}</ListItem>);
 
     return (
         <div>
@@ -47,25 +67,24 @@ export default function AddPerson() {
                         <Grid item xs={4}>
                             <List>
                                 <h4>Author</h4>
-                                {authorList}
+                                <ListItem button key={author.owner}><ListItemIcon><PersonIcon /></ListItemIcon>{author.owner}</ListItem>
                             </List>
                         </Grid>
                         <Grid item xs={4}>
                             <List>
                                 <h4>Developer</h4>
-                                {authorList}
+                                {developerList}
                             </List>
                             <Button startIcon={<AddIcon />} ></Button>
                         </Grid>
                         <Grid item xs={4}>
                             <List>
                                 <h4>Client</h4>
-                                {authorList}
+                                {clientList}
                             </List>
                             <Button startIcon={<AddIcon />} ></Button>
                         </Grid>
                     </Grid>
-
                 </DialogContent>
                 <DialogActions>
                     <Button

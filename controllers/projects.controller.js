@@ -107,6 +107,24 @@ async function editProject(req, res) {
 
     return res.status(200).send({message: "Edition of project info succeeded!"})
 }
+
+async function getProjectOwner(req, res) {
+    const objId = ObjectId.createFromHexString(req.body.projectId);
+    const projectCollection = await projects();
+    const project = await projectCollection.findOne({_id: objId});
+    if (!project) {
+        res.status(400).send({message: "Project not found"});
+    }
+    const projectOwner = await projectHelper.getUserById(project.owner);
+    if (projectOwner) {
+        const ownerName = projectOwner.username;
+        return res.status(200).json({owner: ownerName});
+    }
+    else {
+        res.status(400).send({message: "User not found"});
+    }
+}
+
 module.exports = {
     addProject,
     getOpenProjects,
@@ -114,4 +132,5 @@ module.exports = {
     changeProjectStatus,
     getProjectById,
     editProject,
+    getProjectOwner,
 };
