@@ -14,13 +14,13 @@ function createTask(containerId, title, content) {
     })
 }
 
-function editTask(containerId, title, content) {
-    let newTask = {
-        containerId: containerId,
+function editTask(taskId, title, content) {
+    let taskObj = {
+        taskId: taskId,
         title: title,
         content: content,
     };
-    return axios.patch(API_URL + containerId + "/editTask", newTask, {headers: authHeader()})
+    return axios.patch(API_URL + taskId + "/editTask", taskObj, {headers: authHeader()})
         .then(res => {
         return res;
     })

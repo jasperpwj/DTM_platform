@@ -138,8 +138,17 @@ async function getSearchProjects(req, res) {
         }
         res.status(200).json(openProjects);
     }
+}
 
-
+async function getProjectContent(req, res) {
+    console.log(req.body)
+    const projectsCollection = await projects();
+    const project = await projectsCollection.findOne({_id: ObjectId.createFromHexString(req.body.projectId)});
+    if(!project) throw `Fail to find the project with id: ${req.body.projectId}`;
+    let returnInfo = {
+        projectName: project.projectName,
+    };
+    return res.status(200).json(returnInfo);
 }
 
 module.exports = {
@@ -150,4 +159,5 @@ module.exports = {
     getProjectById,
     editProject,
     getSearchProjects,
+    getProjectContent,
 };
