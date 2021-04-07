@@ -99,7 +99,7 @@ async function editProject(req, res) {
         editInfo.status = req.body.status;
     }
 
-    editInfo.lastUpdateTime = new Date().toLocaleString();
+    editInfo.lastUpdateTime = new Date().toLocaleDateString();
     if (JSON.stringify(editInfo) !== '{}') {
         const editStatus = await projectCollection.updateOne({_id: objId}, {$set: editInfo});
         if (editStatus.modifiedCount === 0) throw "Failed to edit project's info";
