@@ -124,7 +124,7 @@ export default function Projects() {
         op:[],
     });
     const [options, setOptions] = useState(initialOp);
-    const [zhi, setZhi] = useState('');
+    
 
     // get the whole list
     const ProjectList = [];
@@ -153,56 +153,24 @@ export default function Projects() {
             }
         })
     }, []);
-    // console.log(openProject)
+
     for (let i = 0; i < openProject.length; i++){
-        ProjectList.push({ title: openProject[i].projectName})
+        ProjectList.push(openProject[i].projectName)
     }
     for (let i = 0; i < closeProject.length; i++){
-        ProjectList.push({ title: closeProject[i].projectName})
+        ProjectList.push(closeProject[i].projectName)
     }
+    console.log(ProjectList)
 
+    const [zhi, setZhi] = useState(options[0]);
 
     const handleClick = (e) => {
         e.preventDefault();
-        console.log("1")
-        if(inputInfo.inPut !== ""){
-            console.log(inputInfo.inPut);
-
-
-
-            // projectService.getSearchProjects(inputInfo).then(r => {
-            //     // console.log(r.data);
-            //     // options = [];
-            //     for(let i = 0; i<r.data.length; i++) {
-            //         // console.log(r.data[i].projectName);
-            //         // setOptions(initialOp);
-            //         if (!options.op.includes(r.data[i].projectName)) {
-            //             options.op.push(r.data[i].projectName);
-            //             console.log(options)
-            //             console.log(options.op)
-            //         }
-                    
-            //     }
-
-            // });
-
-            // setAnchorEl(e.currentTarget);
-        }
-        
+        console.log(zhi)
+        // Link
     }
 
-    // const handleChange = (e) => {
-    //     if(e.target.id && e.target.value) {
-    //         setInputInfo({
-    //             ...inputInfo,
-    //             [e.target.id]: e.target.value
-    //         })
-    //     }
-    // };
 
-    // const handleClose = () => {
-    //     setAnchorEl(null);
-    // };
     
 
     return (
@@ -216,48 +184,22 @@ export default function Projects() {
                             <AddProject/>
                         </Tabs>
                         <div className={classes.search}>
-                            {/* <InputBase
-                                id="inPut" 
-                                placeholder="Search…"
-                                classes={{
-                                    root: classes.inputRoot,
-                                    input: classes.inputInput,
-                                }}
-                                inputProps={{ 'aria-label': 'search' }}
-                                onChange={handleChange}
-                            /> */}
                             <Autocomplete
+                                value={zhi}
+                                onChange={(event, newValue) => {
+                                    setZhi(newValue);
+                                }}
+                                
                                 id="inPut"
                                 options={ProjectList}
-                                getOptionLabel={(option) => option.title}
                                 style={{ width: 300 }}
                                 renderInput={(params) => <TextField {...params} id="inPut" variant="outlined" color="secondary" />}
                             />
                             
                         </div>
-                        <IconButton onClick={handleClick}>
+                        <IconButton onClick={handleClick} >
                             <SearchIcon style={{fill:"white"}}/>
-                        </IconButton>
-                            {/* <Menu
-                                id="simple-menu"
-                                anchorEl={anchorEl}
-                                keepMounted
-                                open={Boolean(anchorEl)}
-                                onClose={handleClose}
-                                PaperProps={{
-                                    style: {
-                                    maxHeight: ITEM_HEIGHT * 4.5,
-                                    width: '20ch',
-                                    },
-                                }}
-                            >
-                                {options.op.map((option) => (
-                                    <MenuItem key={option}>{option}</MenuItem>
-                                    ))}
-                                <Link></Link>
-                                <MenuItem>...</MenuItem>
-                            </Menu> */}
-                        
+                        </IconButton>                        
                     </Toolbar>
                 </AppBar>
                 <TabContent value={value} index={0}>
@@ -270,11 +212,6 @@ export default function Projects() {
                         <ClosedProjects/>
                     </Grid>
                 </TabContent>
-                {/* <TabContent value={value} index={1}>
-                    <Grid className={classes.content}>
-                        <SearchedProjects/>
-                    </Grid>
-                </TabContent> */}
 
             </Grid>
 
