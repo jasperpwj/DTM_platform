@@ -83,7 +83,7 @@ export default function ClosedProjects(props) {
                                     return (
                                         <TableRow key={project._id}>
                                             <TableCell component="th" scope="row"><Link
-                                                to={{pathname:`/projects/${project.projectName}`,
+                                                to={{pathname:`/projects/${project._id}`,
                                                     state: {projectId: project._id}
                                                 }}
                                             >{project.projectName}</Link></TableCell>
