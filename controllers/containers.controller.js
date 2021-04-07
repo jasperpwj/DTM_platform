@@ -42,9 +42,13 @@ async function getContainersByProjectId(req, res) {
     } else {
         for(let containerId of project.containers) {
             const container = await containerCollection.findOne({_id: containerId});
+            let taskObj = [];
             if(container.tasks.length) {
-                container.tasks = await taskCollection.find({_id:{$in: container.tasks}}).toArray();
+                for(let task of container.tasks) {
+                    taskObj.push(await taskCollection.findOne({_id: task._id}))
+                }
             }
+            container.tasks = taskObj;
             containerList[container._id] = container;
         }
     }
