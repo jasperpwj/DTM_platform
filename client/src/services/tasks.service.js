@@ -2,15 +2,25 @@ import axios from "axios";
 import authHeader from "./authHeader";
 const API_URL = "http://localhost:4000/tasks/";
 
-function createTask(taskInfo) {
-    return axios.post(API_URL + taskInfo.containerId + "/createTask", taskInfo, {headers: authHeader()})
+function createTask(containerId, title, content) {
+    let newTask = {
+        containerId: containerId,
+        title: title,
+        content: content,
+    };
+    return axios.post(API_URL + containerId + "/createTask", newTask, {headers: authHeader()})
         .then(res => {
         return res;
     })
 }
 
-function editTask(taskInfo) {
-    return axios.patch(API_URL + taskInfo.containerId + "/editTask", taskInfo, {headers: authHeader()})
+function editTask(containerId, title, content) {
+    let newTask = {
+        containerId: containerId,
+        title: title,
+        content: content,
+    };
+    return axios.patch(API_URL + containerId + "/editTask", newTask, {headers: authHeader()})
         .then(res => {
         return res;
     })

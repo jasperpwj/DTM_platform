@@ -108,12 +108,14 @@ const useStyles = makeStyles( (theme) => ({
         margin: theme.spacing(1,1,2,1),
         borderRadius: '8px',
         border: "2px solid #bdbdbd",
+
     },
     containerHead: {
         padding: theme.spacing(0,0,0,1),
         height: 50,
         borderRadius: '8px 8px 0 0',
         backgroundColor: '#eeeeee',
+
     },
     containerTitle: {
         marginLeft: theme.spacing(1),
@@ -122,6 +124,7 @@ const useStyles = makeStyles( (theme) => ({
         height: 'calc(100% - 53px)',
         width: 'calc(100%)',
         borderRadius: '0 0 8px 8px',
+        overflow: 'auto',
     },
     task: {
         userSelect: 'none',
@@ -256,7 +259,7 @@ export default function Project(props) {
     };
     const handleSubmitNewTask = (e) => {
         e.preventDefault();
-        taskService.createTask(newTask).then(res => {return res;}).catch(err => {console.log(err)});
+        taskService.createTask(newTask.containerId, newTask.title, newTask.content).then(res => {return res;}).catch(err => {console.log(err)});
         window.location.reload();
     };
     const handleOpenTaskMore = (e) => {
@@ -422,7 +425,11 @@ export default function Project(props) {
                                                                                     <Typography>{task.title}</Typography>
                                                                                     <IconButton size='small' aria-label= {`task-more-${task._id}`} value={container._id} id={task._id} onClick={handleOpenTaskMore}><MoreVertIcon/></IconButton>
                                                                                 </Grid>
-                                                                                <div style={{wordWrap: 'break-word'}}>{task.content}</div>
+                                                                                <Grid container wrap='nowrap' justify='center'>
+                                                                                    <Grid item xs>
+                                                                                        <Typography style={{wordWrap: 'break-word'}} >{task.content}</Typography>
+                                                                                    </Grid>
+                                                                                </Grid>
                                                                             </Grid>
                                                                         )
                                                                     }}
