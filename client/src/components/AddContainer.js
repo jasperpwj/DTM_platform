@@ -24,18 +24,16 @@ export default function AddContainer(props) {
     };
     const handleClickOpen = () => {
         setOpen(true);
-    }
+    };
     const handleClose = () => {
         setOpen(false);
         setContainer(initialContainer)
-    }
+    };
     const handleSubmit = (e) => {
         e.preventDefault();
-
-        console.log(container)
         containerService.addContainer(container).then(res => {return res;});
         window.location.reload();
-    }
+    };
     useEffect(() => {
         if(container.containerName === "") {
             setError(true);
@@ -46,7 +44,7 @@ export default function AddContainer(props) {
 
     return (
         <Paper >
-            <Button variant='outlined' startIcon={<AddIcon/>} onClick={handleClickOpen}>Add Container</Button>
+            <Button  startIcon={<AddIcon/>} onClick={handleClickOpen}>Add Container</Button>
             <Dialog
                 open={open}
                 onClose={handleClose}

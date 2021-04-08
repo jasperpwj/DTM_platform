@@ -1,4 +1,4 @@
-import React, {useState, forwardRef, useEffect} from "react";
+import React, {useState, useEffect, forwardRef} from "react";
 import Dialog from "@material-ui/core/Dialog";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import DialogContent from "@material-ui/core/DialogContent";
@@ -6,10 +6,11 @@ import TextField from "@material-ui/core/TextField";
 import DialogActions from "@material-ui/core/DialogActions";
 import Button from "@material-ui/core/Button";
 import Grid from "@material-ui/core/Grid";
-import MenuItem from "@material-ui/core/MenuItem";
+import SettingsIcon from "@material-ui/icons/Settings";
+import Typography from "@material-ui/core/Typography";
 const projectService = require("../services/projects.service");
 
-const EditProjectFormDialog = (props, ref) => {
+const ProjectSettingButton = (props, ref) => {
     const [open, setOpen] = useState(false);
     const [project, setProject] = useState(null);
     const [emptyInput, setEmptyInput] = useState(false);
@@ -24,16 +25,17 @@ const EditProjectFormDialog = (props, ref) => {
     };
     const handleClose = () => {
         setOpen(false);
+        setFormInfo(initialInfo);
     };
     const handleSubmit = (e) => {
         e.preventDefault();
         const info = {
             projectName: formInfo.projectName,
             description: formInfo.description,
-            projectId: props && props.id,
+            projectId: props && props.value,
         };
         projectService.editProjectInfo(info).then(r => {return r;});
-        window.location.reload()
+        window.location.reload();
     };
     const handleChange = (e) => {
         if(e.target.id) {
@@ -44,6 +46,7 @@ const EditProjectFormDialog = (props, ref) => {
         }
     };
 
+
     useEffect(() => {
         if(formInfo.projectName === "") {
             setEmptyInput(true);
@@ -52,48 +55,41 @@ const EditProjectFormDialog = (props, ref) => {
         }
     },[formInfo.projectName]);
     useEffect(()=> {
-        projectService.getProjectContent(props.id)
+        projectService.getProjectContent(props.value)
             .then(res => {
                 setProject(res)
             })
             .catch(err => {console.log(err)});
-    },[props.id]);
-
+    },[props.value]);
     return (
-        <React.Fragment >
-            <MenuItem
-                type="button"
-                onClick={handleClickOpen}
-                ref={ref}
-                {...props}
-            >
-                Settings
-            </MenuItem>
+        <Grid item>
+            <Button size="small" startIcon={<SettingsIcon/>} onClick={handleClickOpen}>Setting</Button>
             <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-editAccount-title" fullWidth={true}>
                 <DialogTitle id="form-dialog-editAccount-title">Edit Project Information</DialogTitle>
                 <DialogContent>
                     <form>
                         <Grid container spacing={3}>
                             <Grid item xs={12}>
+                                <Typography>Project Name</Typography>
                                 <TextField
                                     autoFocus
+                                    required
                                     margin="dense"
                                     id="projectName"
-                                    label="Project Name"
-                                    defaultValue={project && project.projectName}
                                     fullWidth
+                                    defaultValue={project && project.projectName}
                                     onChange={handleChange}
                                 />
                             </Grid>
                         </Grid>
                         <br/>
+                        <Typography>Descriptions</Typography>
                         <TextField
                             margin="dense"
                             id="description"
-                            label="Description"
                             fullWidth
-                            variant='outlined'
                             multiline
+                            variant='outlined'
                             rows={4}
                             defaultValue={project && project.description}
                             onChange={handleChange}
@@ -104,12 +100,13 @@ const EditProjectFormDialog = (props, ref) => {
                     <Button onClick={handleClose} color="primary">
                         Cancel
                     </Button>
-                    <Button onClick={handleSubmit}  disabled={emptyInput} color="primary">
+                    <Button onClick={handleSubmit} disabled={emptyInput} color="primary">
                         Submit
                     </Button>
                 </DialogActions>
             </Dialog>
-        </React.Fragment>
+        </Grid>
     )
 };
-export default forwardRef(EditProjectFormDialog);
+
+export default forwardRef(ProjectSettingButton);
