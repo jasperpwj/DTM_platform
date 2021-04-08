@@ -2,18 +2,14 @@ import React, {useState, useEffect, useRef} from 'react';
 import {fade, makeStyles} from "@material-ui/core";
 import Typography from "@material-ui/core/Typography";
 import Grid from "@material-ui/core/Grid";
-import Divider from "@material-ui/core/Divider";
 import Avatar from "@material-ui/core/Avatar";
 import Button from "@material-ui/core/Button";
-import PersonAddIcon from '@material-ui/icons/PersonAdd';
 import IconButton from "@material-ui/core/IconButton";
-import AvatarGroup from "@material-ui/lab/AvatarGroup";
 import SettingsIcon from '@material-ui/icons/Settings';
 import AppBar from "@material-ui/core/AppBar";
 import AddIcon from '@material-ui/icons/Add';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import Menu from '@material-ui/core/Menu';
-import Link from "@material-ui/core/Link";
 import TextField from "@material-ui/core/TextField";
 import SearchIcon from "@material-ui/icons/Search";
 import InputBase from "@material-ui/core/InputBase";
@@ -23,7 +19,9 @@ import EditContainer from "./EditContainer";
 import DeleteContainer from "./DeleteContainer";
 import EditTaskForm from "./EditTaskForm";
 import DeleteTask from "./DeleteTask";
-import ProjectSettingButton from "./projectSettingButton";
+import ProjectMenuBar from "./ProjectMenuBar";
+import TaskCompleted from "./TaskCompleted";
+import TurnIntoIssues from "./TurnIntoIssues";
 const projectService = require("../services/projects.service");
 const containerService = require("../services/container.service");
 const taskService = require("../services/tasks.service");
@@ -35,15 +33,6 @@ const useStyles = makeStyles( (theme) => ({
         margin: theme.spacing(8,0,0,9),
         backgroundColor: "white",
         // height: '100vh',
-    },
-    title: {
-        padding: theme.spacing(2,2,1,2),
-        spacing: theme.spacing(1),
-        backgroundColor: "white",
-    },
-    avatar: {
-        width: theme.spacing(3),
-        height: theme.spacing(3),
     },
     toolbar: {
         padding: theme.spacing(2,2,1,2),
@@ -95,19 +84,14 @@ const useStyles = makeStyles( (theme) => ({
         height: theme.spacing(2) + 4,
         backgroundColor: '#bf360c',
     },
-    button_group: {
-        backgroundColor: "white",
-        padding: theme.spacing(0,0,0,1),
-    },
     containersArea: {
         overflow: 'auto',
         height: '100vh',
         marginLeft: theme.spacing(2),
-        // backgroundColor: 'lightgrey',
     },
     containerArea: {
         height: '100vh',
-        minWidth: 350,
+        width: 350,
         margin: theme.spacing(1,1,2,1),
         borderRadius: '8px',
         border: "2px solid #bdbdbd",
@@ -143,7 +127,6 @@ const useStyles = makeStyles( (theme) => ({
         marginTop: 50,
         borderRadius: '8px 8px 8px 8px',
         border: "2px dashed black",
-        // backgroundColor: "#f5f5f5",
     },
     test: {
         // backgroundColor: "lightblue",
@@ -214,13 +197,12 @@ const emptyCard = (projectId) => {
 };
 
 export default function Project(props) {
-    const pathArray = props.location.pathname.split('/');
     const [containers, setContainers] = useState("");
     const classes = useStyles();
     const [anchorEl, setAnchorEl] = useState(null);
     const [taskAnchorEl, setTaskAnchorEL] = useState(null);
     const [emptyContainer, setEmptyContainer] = useState(false);
-    const [projectId, setProjectId] = useState(pathArray[pathArray.length - 1]);
+    const [projectId, setProjectId] = useState(props.match.params.projectId);
     const [projectContent, setProjectContent] = useState(null);
     const [targetContainerId, setTargetContainerId] = useState(null);
     const [targetTaskId, setTargetTaskId] = useState(null);
@@ -268,7 +250,6 @@ export default function Project(props) {
         window.location.reload();
     };
     const handleOpenTaskMore = (e) => {
-        console.log(e.currentTarget)
         setTaskAnchorEL(e.currentTarget);
         setTargetTaskId(e.currentTarget.attributes.id.value);
         setTargetContainerId(e.currentTarget.attributes.value.value);
@@ -296,38 +277,7 @@ export default function Project(props) {
     }, [projectId]);
     return (
         <div className={classes.root}>
-            <Grid container className={classes.title}>
-                <Grid item xs>
-                    <Typography align="left" variant='h6'>
-                        {projectContent && projectContent.projectName}
-                    </Typography>
-                </Grid>
-                <Grid container item xs justify="flex-end" spacing={1}>
-                    <Grid item>
-                        <AvatarGroup spacing={2}>
-                            <Avatar className={classes.avatar}>M</Avatar>
-                            <Avatar className={classes.avatar}>M</Avatar>
-                            <Avatar className={classes.avatar}>M</Avatar>
-                            <Avatar className={classes.avatar}>M</Avatar>
-                            <Avatar className={classes.avatar}>M</Avatar>
-                        </AvatarGroup>
-                    </Grid>
-                    <Grid item>
-                        <IconButton size="small"><PersonAddIcon/></IconButton>
-                    </Grid>
-                    <Grid item>
-                        <ProjectSettingButton value={projectId}/>
-
-                    </Grid>
-                </Grid>
-            </Grid>
-            <Grid container className={classes.button_group}>
-                <Button size="small"><Link to={{pathname: `/projects/${projectId}`}}>Project</Link></Button>
-                <Button size="small">Tasks</Button>
-                <Button size="small">Dashboard</Button>
-                <Button size="small">Timeline</Button>
-            </Grid>
-            <Divider/>
+            <ProjectMenuBar value={{projectName: projectContent && projectContent.projectName, projectId: projectId}}/>
             <Grid container className={classes.toolbar}>
                 <AddContainer value={projectId}/>
                 <Grid item style={{flexGrow: 1}}>
@@ -465,8 +415,12 @@ export default function Project(props) {
                                 open={open}
                                 onClose={handleClose}
                             >
-                                {open &&  (<EditContainer id={targetContainerId} ref={containerRef}/>)}
-                                {open && <DeleteContainer value={{containerId: targetContainerId, projectId: projectId}} ref={containerRef}/>}
+                                {open && (
+                                    <div>
+                                        <EditContainer id={targetContainerId} ref={containerRef}/>
+                                        <DeleteContainer value={{containerId: targetContainerId, projectId: projectId}} ref={containerRef}/>
+                                    </div>
+                                )}
                             </Menu>
                             <Menu
                                 id={targetTaskId}
@@ -475,8 +429,14 @@ export default function Project(props) {
                                 open={openTaskMore}
                                 onClose={handleClose}
                             >
-                                {openTaskMore && (<EditTaskForm id={targetTaskId} ref={taskRef}/>)}
-                                {openTaskMore && (<DeleteTask value={{containerId: targetContainerId, taskId: targetTaskId}} ref={taskRef}/>)}
+                                {openTaskMore && (
+                                    <div>
+                                        <EditTaskForm id={targetTaskId} ref={taskRef}/>
+                                        <TaskCompleted value={{containerId: targetContainerId, taskId: targetTaskId}} ref={taskRef}/>
+                                        <DeleteTask value={{containerId: targetContainerId, taskId: targetTaskId}} ref={taskRef}/>
+                                        <TurnIntoIssues value={{containerId: targetContainerId, taskId: targetTaskId}} ref={taskRef}/>
+                                    </div>
+                                )}
                             </Menu>
                         </Grid>
 
