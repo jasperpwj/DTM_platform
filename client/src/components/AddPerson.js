@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, forwardRef } from "react";
 import Dialog from "@material-ui/core/Dialog";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import DialogContent from "@material-ui/core/DialogContent";
@@ -15,7 +15,7 @@ import Grid from "@material-ui/core/Grid";
 import AddIcon from '@material-ui/icons/Add';
 const projectService = require("../services/projects.service");
 
-export default function AddPerson(props) {
+const AddPerson = (props, ref) => {
     const [open, setOpen] = useState(false);
     const [scroll, setScroll] = React.useState('paper');
     const [author, setAuthor] = useState({});
@@ -100,3 +100,5 @@ export default function AddPerson(props) {
         </div>
     )
 }
+
+export default forwardRef(AddPerson);

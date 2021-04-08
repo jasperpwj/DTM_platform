@@ -160,6 +160,7 @@ export default function Project(props) {
     const [emptyInput, setEmptyInput] = useState(true);
     const containerRef = useRef(anchorEl);
     const open = Boolean(anchorEl);
+    const tapRef = useRef(anchorEl);
     const initTaskInfo = Object.freeze({
         containerId: "",
         title: "",
@@ -237,7 +238,7 @@ export default function Project(props) {
                     </Grid>
                     <Grid item>
                         {/* <IconButton size="small" onClick = {handleClickPerson}><PersonAddIcon/></IconButton> */}
-                        <AddPerson id={projectId} />
+                        <AddPerson id={projectId} ref={tapRef}/>
                     </Grid>
                     <Grid item>
                         <Button size="small" startIcon={<SettingsIcon/>}>Setting</Button>
