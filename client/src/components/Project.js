@@ -23,7 +23,7 @@ import EditContainer from "./EditContainer";
 import DeleteContainer from "./DeleteContainer";
 import EditTaskForm from "./EditTaskForm";
 import DeleteTask from "./DeleteTask";
-
+import ProjectSettingButton from "./projectSettingButton";
 const projectService = require("../services/projects.service");
 const containerService = require("../services/container.service");
 const taskService = require("../services/tasks.service");
@@ -31,6 +31,7 @@ const taskService = require("../services/tasks.service");
 const useStyles = makeStyles( (theme) => ({
     root: {
         display: 'block',
+        minWidth: 800,
         margin: theme.spacing(8,0,0,9),
         backgroundColor: "white",
         // height: '100vh',
@@ -45,8 +46,9 @@ const useStyles = makeStyles( (theme) => ({
         height: theme.spacing(3),
     },
     toolbar: {
-        backgroundColor: 'lightblue',
-        margin: theme.spacing(1, 1, 2, 1),
+        padding: theme.spacing(2,2,1,2),
+        spacing: theme.spacing(1) - 2,
+
     },
     search: {
         position: 'relative',
@@ -144,8 +146,9 @@ const useStyles = makeStyles( (theme) => ({
         // backgroundColor: "#f5f5f5",
     },
     test: {
-        backgroundColor: "lightblue",
-        height: '100%',
+        // backgroundColor: "lightblue",
+        flexGrow: 1,
+
     },
     taskForm: {
         backgroundColor: 'lightyellow',
@@ -265,6 +268,7 @@ export default function Project(props) {
         window.location.reload();
     };
     const handleOpenTaskMore = (e) => {
+        console.log(e.currentTarget)
         setTaskAnchorEL(e.currentTarget);
         setTargetTaskId(e.currentTarget.attributes.id.value);
         setTargetContainerId(e.currentTarget.attributes.value.value);
@@ -279,7 +283,7 @@ export default function Project(props) {
     },[newTask]);
     useEffect(() => {
         projectService.getProjectContent(projectId).then(res => {
-            setProjectContent(res.data);
+            setProjectContent(res);
         });
         containerService.getContainers(projectId).then(res => {
             if(Object.entries(res).length === 0) {
@@ -312,7 +316,8 @@ export default function Project(props) {
                         <IconButton size="small"><PersonAddIcon/></IconButton>
                     </Grid>
                     <Grid item>
-                        <Button size="small" startIcon={<SettingsIcon/>}>Setting</Button>
+                        <ProjectSettingButton value={projectId}/>
+
                     </Grid>
                 </Grid>
             </Grid>
@@ -323,24 +328,28 @@ export default function Project(props) {
                 <Button size="small">Timeline</Button>
             </Grid>
             <Divider/>
-            <Grid container justify="center" className={classes.dragDropArea}>
-                <Grid container item xs={12} justify='space-evenly' alignItems='center' className={classes.toolbar}>
-                    <AddContainer value={projectId} />
-                    <div className={classes.search}>
-                        <div className={classes.searchIcon}>
-                            <SearchIcon />
-                        </div>
-                        <InputBase
-                            placeholder="Search…"
-                            classes={{
-                                root: classes.inputRoot,
-                                input: classes.inputInput,
-                            }}
-                            inputProps={{ 'aria-label': 'search' }}
-                        />
-                    </div>
-
+            <Grid container className={classes.toolbar}>
+                <AddContainer value={projectId}/>
+                <Grid item style={{flexGrow: 1}}>
                 </Grid>
+                <div className={classes.search}>
+                    <div className={classes.searchIcon}>
+                        <SearchIcon />
+                    </div>
+                    <InputBase
+                        placeholder="Search…"
+                        classes={{
+                            root: classes.inputRoot,
+                            input: classes.inputInput,
+                        }}
+                        inputProps={{ 'aria-label': 'search' }}
+                    />
+                </div>
+                <Button size="small" startIcon={<SettingsIcon/>}>Fun 1</Button>
+                <Button size="small" startIcon={<SettingsIcon/>}>Fun 2</Button>
+                <Button size="small" startIcon={<SettingsIcon/>}>Fun 3</Button>
+            </Grid>
+            <Grid container justify='center' className={classes.dragDropArea}>
                 {(emptyContainer)? (<Grid container item className={classes.emptyCard} justify='center' alignContent='center'
                 >{emptyCard(projectId)}</Grid>): (
                     <DragDropContext onDragEnd={result => onDragEnd(result,containers, setContainers)} >

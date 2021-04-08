@@ -36,6 +36,15 @@ async function createTask(req, res) {
     if(updatedStatus.modifiedCount === 0) throw "Fail to add task id to the container";
     return res.status(200).send({message: "Create task successfully"})
 }
+async function getTaskById(req, res) {
+    const tasksCollection = await tasks();
+    const task = await tasksCollection.findOne({_id: ObjectId.createFromHexString(req.params.taskId)});
+    let taskContent = {
+        title: task.title,
+        content: task.content,
+    };
+    return res.status(200).json(taskContent);
+}
 
 async function editTask(req, res) {
     /*
@@ -124,6 +133,7 @@ async function deleteTask(req, res) {
 
 module.exports = {
     createTask,
+    getTaskById,
     editTask,
     updateDraggingTask,
     deleteTask,

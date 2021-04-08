@@ -18,7 +18,7 @@ function getProjectContent(projectId) {
         projectId: projectId,
     };
     return axios.post(API_URL + "/getProjectContent", projectObj, {headers:authHeader()})
-        .then(res => {return res});
+        .then(res => {return res.data});
 }
 
 function getClosedProjects() {
