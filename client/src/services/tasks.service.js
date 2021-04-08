@@ -53,6 +53,14 @@ function deleteTask(containerId, taskId) {
         return res;
     })
 }
+function completeTask(containerId, taskId) {
+    let taskToBeComplete = {
+        containerId: containerId,
+        taskId: taskId,
+    };
+    return axios.post(API_URL + "/completeTask", taskToBeComplete, {headers:authHeader()})
+        .then(res => {return res})
+}
 
 
 export {
@@ -61,4 +69,5 @@ export {
     editTask,
     updateDraggingTask,
     deleteTask,
+    completeTask,
 }

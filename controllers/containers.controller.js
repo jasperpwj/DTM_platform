@@ -45,7 +45,10 @@ async function getContainersByProjectId(req, res) {
             let taskObj = [];
             if(container.tasks.length) {
                 for(let task of container.tasks) {
-                    taskObj.push(await taskCollection.findOne({_id: task._id}))
+                    let taskResult = await taskCollection.findOne({_id: task._id, status: "active"});
+                    if(taskResult !== null) {
+                        taskObj.push(taskResult)
+                    }
                 }
             }
             container.tasks = taskObj;
