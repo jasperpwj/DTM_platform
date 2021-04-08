@@ -1,7 +1,7 @@
 import React, {useState, useEffect}from "react";
 import TopNavBar from "./navigation/TopNavBar";
 import UnauthNavBar from "./navigation/UnauthNavBar";
-import {createMuiTheme, makeStyles,ThemeProvider, CardMedia, CardActionArea } from "@material-ui/core";
+import {makeStyles,ThemeProvider} from "@material-ui/core";
 import Typography from "@material-ui/core/Typography";
 import Paper from '@material-ui/core/Paper';
 import Background from '../bkg.jpg';

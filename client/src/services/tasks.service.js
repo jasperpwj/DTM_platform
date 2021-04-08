@@ -13,7 +13,12 @@ function createTask(containerId, title, content) {
         return res;
     })
 }
-
+function getTaskById(taskId) {
+    return axios.get(API_URL + "/getTask/" + taskId, {headers:authHeader()})
+        .then(res => {
+        return res.data;
+    })
+}
 function editTask(taskId, title, content) {
     let taskObj = {
         taskId: taskId,
@@ -25,7 +30,6 @@ function editTask(taskId, title, content) {
         return res;
     })
 }
-
 function updateDraggingTask(sourceContainerId, destContainerId, sourceTaskId, sourceTaskIndex, destTaskIndex) {
     let taskToBeUpdated = {
         sourceContainerId: sourceContainerId,
@@ -39,7 +43,6 @@ function updateDraggingTask(sourceContainerId, destContainerId, sourceTaskId, so
         return res;
     })
 }
-
 function deleteTask(containerId, taskId) {
     let taskToBeDeleted = {
         containerId: containerId,
@@ -50,11 +53,21 @@ function deleteTask(containerId, taskId) {
         return res;
     })
 }
+function completeTask(containerId, taskId) {
+    let taskToBeComplete = {
+        containerId: containerId,
+        taskId: taskId,
+    };
+    return axios.post(API_URL + "/completeTask", taskToBeComplete, {headers:authHeader()})
+        .then(res => {return res})
+}
 
 
 export {
     createTask,
+    getTaskById,
     editTask,
     updateDraggingTask,
     deleteTask,
+    completeTask,
 }

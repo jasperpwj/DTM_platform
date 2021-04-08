@@ -1,12 +1,10 @@
 import React, {useState, useEffect} from 'react';
-import {fade, IconButton, makeStyles, Menu, MenuItem} from "@material-ui/core";
-import Typography from "@material-ui/core/Typography";
+import {fade, IconButton, makeStyles} from "@material-ui/core";
 import AppBar from '@material-ui/core/AppBar';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import Grid from "@material-ui/core/Grid";
 import SearchIcon from '@material-ui/icons/Search';
-import InputBase from '@material-ui/core/InputBase';
 import Toolbar from "@material-ui/core/Toolbar";
 import PropTypes from 'prop-types';
 import Box from "@material-ui/core/Box";
@@ -109,8 +107,6 @@ TabContent.propTypes = {
     value: PropTypes.any.isRequired,
     index: PropTypes.any.isRequired,
 };
-
-
 export default function Projects() {
     const classes = useStyles();
     const [value, setValue] = useState(0);
@@ -182,9 +178,6 @@ export default function Projects() {
         }
     }
 
-
-    
-
     return (
         <div className={classes.root}>
             <Grid container justify="center">
@@ -207,7 +200,6 @@ export default function Projects() {
                                 style={{ width: 300 }}
                                 renderInput={(params) => <TextField {...params} id="inPut" variant="outlined" color="secondary" />}
                             />
-                            
                         </div>
                         <IconButton 
                             onClick={handleClick} >

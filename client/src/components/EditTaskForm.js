@@ -1,27 +1,24 @@
 import React, {useState, forwardRef, useEffect} from 'react';
-import {makeStyles} from "@material-ui/core";
-import {Modal} from "@material-ui/core";
 import{Typography, Button, MenuItem} from "@material-ui/core";
-import Paper from "@material-ui/core/Paper";
 import Grid from "@material-ui/core/Grid";
 import Dialog from "@material-ui/core/Dialog";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import DialogContent from "@material-ui/core/DialogContent";
 import TextField from "@material-ui/core/TextField";
 import DialogActions from "@material-ui/core/DialogActions";
-
 const taskService = require("../services/tasks.service");
-
 const EditTask = (props, ref) => {
     const taskId = props.id;
+    const [task, setTask] = useState(null);
     const initialTaskContent = Object.freeze( {
         taskId: taskId,
-        title: "",
-        content: "",
+        title: task && task.title,
+        content: task && task.content,
     });
     const [taskContent, setTaskContent] = useState(initialTaskContent);
     const [openDialog, setOpenDialog] =useState(false);
     const [emptyInput, setEmptyInput] = useState(false);
+
 
     const handleClickOpen = () => {
         setOpenDialog(true);
@@ -45,6 +42,12 @@ const EditTask = (props, ref) => {
             setEmptyInput(false);
         }
     });
+
+    useEffect(()=> {
+        taskService.getTaskById(taskId).then(res => {
+            setTask(res);
+        }).catch(err => console.log(err))
+    },[taskId]);
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -82,6 +85,7 @@ const EditTask = (props, ref) => {
                                 margin='dense'
                                 id='title'
                                 fullWidth
+                                defaultValue={task && task.title}
                                 variant='outlined'
                                 onChange={handleContentChange}
 
@@ -93,6 +97,7 @@ const EditTask = (props, ref) => {
                                 margin='dense'
                                 id='content'
                                 fullWidth
+                                defaultValue={task && task.content}
                                 rows='4'
                                 multiline
                                 variant='outlined'

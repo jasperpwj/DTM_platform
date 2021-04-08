@@ -17,6 +17,7 @@ async function createTask(req, res) {
         requester: ObjectId.createFromHexString(req.id),
         assignee:"",
         editor: ObjectId.createFromHexString(req.id),
+        status: "active", // active OR completed OR issue
         image: "",
         priority:"",
         container: containerMongoId,
@@ -35,6 +36,16 @@ async function createTask(req, res) {
     const updatedStatus = await containerCollection.updateOne({_id: containerMongoId},{$set: containerInfoToBeUpdated});
     if(updatedStatus.modifiedCount === 0) throw "Fail to add task id to the container";
     return res.status(200).send({message: "Create task successfully"})
+}
+
+async function getTaskById(req, res) {
+    const tasksCollection = await tasks();
+    const task = await tasksCollection.findOne({_id: ObjectId.createFromHexString(req.params.taskId)});
+    let taskContent = {
+        title: task.title,
+        content: task.content,
+    };
+    return res.status(200).json(taskContent);
 }
 
 async function editTask(req, res) {
@@ -120,11 +131,32 @@ async function deleteTask(req, res) {
     if(containerUpdatedStatus.modifiedCount === 0) throw "Fail to remove task id from container";
     const deleteStatus = await tasksCollection.deleteOne({_id: taskMongoId});
     if(deleteStatus.deletedCount === 0) throw "Fail to delete task from the task database";
+    return res.status(200).send({message: "delete task successfully"});
+}
+
+async function completeTask(req, res) {
+    /*
+    params in req.boy: taskId, projectId
+    Steps: 1. change task status into completed
+     */
+    console.log(req.body)
+    const tasksCollection = await tasks();
+    let taskToBeUpdated = {
+        lastUpdatedTime: new Date().toLocaleString(),
+        status: "completed",
+        editor: ObjectId.createFromHexString(req.id),
+    };
+    const updatedStatus = await tasksCollection.updateOne({_id: ObjectId.createFromHexString(req.body.taskId)},{$set: taskToBeUpdated});
+    if(updatedStatus.modifiedCount === 0) throw "Fail to change the task status into completed";
+    return res.status(200).send({message: "Change the task status into completed successfully"});
+
 }
 
 module.exports = {
     createTask,
+    getTaskById,
     editTask,
     updateDraggingTask,
     deleteTask,
+    completeTask,
 };

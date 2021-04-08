@@ -141,12 +141,12 @@ async function getSearchProjects(req, res) {
 }
 
 async function getProjectContent(req, res) {
-    console.log(req.body)
     const projectsCollection = await projects();
     const project = await projectsCollection.findOne({_id: ObjectId.createFromHexString(req.body.projectId)});
     if(!project) throw `Fail to find the project with id: ${req.body.projectId}`;
     let returnInfo = {
         projectName: project.projectName,
+        description: project.description,
     };
     return res.status(200).json(returnInfo);
 }
