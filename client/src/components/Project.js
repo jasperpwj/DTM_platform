@@ -86,6 +86,7 @@ const useStyles = makeStyles( (theme) => ({
     },
     containersArea: {
         overflow: 'auto',
+
         height: '100vh',
         marginLeft: theme.spacing(2),
     },
@@ -95,17 +96,17 @@ const useStyles = makeStyles( (theme) => ({
         margin: theme.spacing(1,1,2,1),
         borderRadius: '8px',
         border: "2px solid #bdbdbd",
-
     },
     containerHead: {
         padding: theme.spacing(0,0,0,1),
         height: 50,
+        width: "100%",
         borderRadius: '8px 8px 0 0',
         backgroundColor: '#eeeeee',
-
     },
     containerTitle: {
         marginLeft: theme.spacing(1),
+        width: 330,
     },
     containerContent: {
         height: 'calc(100% - 53px)',
@@ -115,6 +116,7 @@ const useStyles = makeStyles( (theme) => ({
     },
     task: {
         userSelect: 'none',
+
         padding: theme.spacing(1),
         margin: theme.spacing(0,1,2,1),
         minHeight: '50px',
@@ -246,7 +248,7 @@ export default function Project(props) {
     };
     const handleSubmitNewTask = (e) => {
         e.preventDefault();
-        taskService.createTask(newTask.containerId, newTask.title, newTask.content).then(res => {return res;}).catch(err => {console.log(err)});
+        taskService.createTask(projectId, newTask.containerId, newTask.title, newTask.content).then(res => {return res;}).catch(err => {console.log(err)});
         window.location.reload();
     };
     const handleOpenTaskMore = (e) => {
@@ -433,7 +435,7 @@ export default function Project(props) {
                                     <div>
                                         <EditTaskForm id={targetTaskId} ref={taskRef}/>
                                         <TaskCompleted value={{containerId: targetContainerId, taskId: targetTaskId}} ref={taskRef}/>
-                                        <DeleteTask value={{containerId: targetContainerId, taskId: targetTaskId}} ref={taskRef}/>
+                                        <DeleteTask value={{projectId: projectId, containerId: targetContainerId, taskId: targetTaskId}} ref={taskRef}/>
                                         <TurnIntoIssues value={{containerId: targetContainerId, taskId: targetTaskId}} ref={taskRef}/>
                                     </div>
                                 )}

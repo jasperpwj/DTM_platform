@@ -12,10 +12,9 @@ import TopNavBar from "./components/navigation/TopNavBar";
 import Project from "./components/Project";
 import Tasks from "./components/Tasks";
 import ProjectDashboard from "./components/ProjectDashboard";
-import ProjectTimeline from "./components/ProjectTimeline";
+import ProjectHistory from "./components/ProjectHistory";
 import NotFoundPage from "./components/NotFoundPage";
 const authService = require("./services/auth.service");
-
 
 function App() {
     const currentUser = authService.getCurrentUser();
@@ -36,7 +35,7 @@ function App() {
                               <Route exact path='/projects/:projectId' component={Project}/>
                               <Route exact path='/projects/:projectId/tasks' component={Tasks}/>
                               <Route exact path='/projects/:projectId/dashboard' component={ProjectDashboard}/>
-                              <Route exact path='/projects/:projectId/timeline' component={ProjectTimeline}/>
+                              <Route exact path='/projects/:projectId/history' component={ProjectHistory}/>
                               <Route path="*" component={NotFoundPage}/>
                           </Switch>
                       </div>):(

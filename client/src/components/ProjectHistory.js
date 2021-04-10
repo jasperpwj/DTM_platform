@@ -16,7 +16,7 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-export default function ProjectTimeline(props) {
+export default function ProjectHistory(props) {
     const classes = useStyles();
     const projectId = props.match.params.projectId;
     const [projectContent, setProjectContent] = useState(null);
