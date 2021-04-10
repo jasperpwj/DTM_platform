@@ -43,7 +43,7 @@ async function getContainersByProjectId(req, res) {
         for(let containerId of project.containers) {
             const container = await containerCollection.findOne({_id: containerId});
             let taskObj = [];
-            if(container.tasks.length) {
+            if(container.tasks.length > 0) {
                 for(let task of container.tasks) {
                     let taskResult = await taskCollection.findOne({_id: task._id, status: "active"});
                     if(taskResult !== null) {
@@ -77,19 +77,37 @@ async function deleteContainer(req, res) {
     1. change container's status into deleted
     2. remove container id from corresponding project's container array
      */
-    console.log(req.body);
     const containerCollection = await containers();
     let containerMongoId = ObjectId.createFromHexString(req.body.containerId);
-    let updateInfo = {
-        status: 'deleted',
-        lastUpdatedTime: new Date().toLocaleString(),
-    };
-    const updateStatus = await containerCollection.updateOne({_id: containerMongoId}, {$set:updateInfo});
-    if(updateStatus.modifiedCount === 0) throw "Fail to change the container status into deleted";
+    const container = await containerCollection.findOne({_id: containerMongoId});
+    if(!container) throw `Fail to find container with id: ${req.body.containerId}`;
+    let taskToRemove = await container.tasks;
+    console.log("here")
+    console.log(taskToRemove)
+
+
+    // let updateInfo = {
+    //     status: 'deleted',
+    //     lastUpdatedTime: new Date().toLocaleString(),
+    // };
+    // const updateStatus = await containerCollection.updateOne({_id: containerMongoId}, {$set:updateInfo});
+    // if(updateStatus.modifiedCount === 0) throw "Fail to change the container status into deleted";
     const projectCollection = await projects();
     const projectMongoId = ObjectId.createFromHexString(req.body.projectId);
+
     const deleteContainerIdFromProject = await projectCollection.updateOne({_id:projectMongoId}, {$pull:{containers: containerMongoId}});
     if(deleteContainerIdFromProject.modifiedCount === 0) throw "Fail to remove container id from project";
+    const deleteTaskIdFromProject = await projectCollection.updateOne({_id: projectMongoId}, {$pull: {tasks: {$in: taskToRemove}}});
+    if(deleteTaskIdFromProject.modifiedCount === 0) throw "Fail to delete task if from project";
+    const taskCollection = await tasks();
+    if(taskToRemove.length > 0) {
+        for(let taskId of taskToRemove) {
+            await taskCollection.deleteOne({_id: taskId});
+        }
+    }
+
+    const deleteContainerStatus = await containerCollection.deleteOne({_id:containerMongoId});
+    if(deleteContainerStatus.deletedCount === 0) throw "Fail to delete container object";
     return res.status(200).send({message:"Delete container successfully"});
 }
 

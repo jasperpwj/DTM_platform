@@ -2,8 +2,9 @@ import axios from "axios";
 import authHeader from "./authHeader";
 const API_URL = "http://localhost:4000/tasks/";
 
-function createTask(containerId, title, content) {
+function createTask(projectId, containerId, title, content) {
     let newTask = {
+        projectId: projectId,
         containerId: containerId,
         title: title,
         content: content,
@@ -43,8 +44,9 @@ function updateDraggingTask(sourceContainerId, destContainerId, sourceTaskId, so
         return res;
     })
 }
-function deleteTask(containerId, taskId) {
+function deleteTask(projectId, containerId, taskId) {
     let taskToBeDeleted = {
+        projectId: projectId,
         containerId: containerId,
         taskId: taskId,
     };
