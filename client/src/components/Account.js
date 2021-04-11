@@ -23,7 +23,6 @@ const useStyles = makeStyles((theme) => ({
         display: 'flex',
         // margin: theme.spacing(10,3,2,15),
         // backgroundColor: "yellow",
-        height: '100vh',
         backgroundSize: 'cover',
 
     },
