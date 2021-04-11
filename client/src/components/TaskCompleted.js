@@ -1,6 +1,6 @@
-import React, {useState, forwardRef} from 'react';
+import React, {forwardRef} from 'react';
 
-import{Typography, Button, MenuItem} from "@material-ui/core";
+import{MenuItem} from "@material-ui/core";
 
 const taskService = require("../services/tasks.service");
 

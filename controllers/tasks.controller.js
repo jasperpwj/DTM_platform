@@ -1,11 +1,12 @@
 const mongoCollection = require("../config/mongoCollections");
 const tasks = mongoCollection.tasks;
+const projects = mongoCollection.projects;
 const containers = mongoCollection.containers;
 const {ObjectId} = require("mongodb");
 
 async function createTask(req, res) {
     /*
-    params in req.body: containerId, content
+    params in req.body: projectId, containerId, title, content
      */
     const taskCollection  = await tasks();
     const containerMongoId = ObjectId.createFromHexString(req.body.containerId);
@@ -35,6 +36,16 @@ async function createTask(req, res) {
     };
     const updatedStatus = await containerCollection.updateOne({_id: containerMongoId},{$set: containerInfoToBeUpdated});
     if(updatedStatus.modifiedCount === 0) throw "Fail to add task id to the container";
+    const projectsCollection = await projects();
+    const project = await projectsCollection.findOne({_id: ObjectId.createFromHexString(req.body.projectId)});
+    if(!project) throw `Fail to find the project with project Id: ${req.body.projectId}`;
+    project.tasks.push(taskId);
+    let projectContentToBeUpdated = {
+        lastUpdatedTime: new Date().toLocaleDateString(),
+        tasks: project.tasks,
+    };
+    const projectUpdatedStatus = await projectsCollection.updateOne({_id: ObjectId.createFromHexString(req.body.projectId)}, {$set: projectContentToBeUpdated});
+    if(projectUpdatedStatus.modifiedCount === 0) throw "Fail to add task Id into project task's array";
     return res.status(200).send({message: "Create task successfully"})
 }
 
@@ -111,12 +122,11 @@ async function updateDraggingTask(req, res) {
 
 async function deleteTask(req, res) {
     /*
-    params in the req.body: taskId, containerId
+    params in the req.body: projectId, taskId, containerId
     */
     const taskMongoId = ObjectId.createFromHexString(req.body.taskId);
     const containersCollection = await containers();
     const container = await containersCollection.findOne({_id: ObjectId.createFromHexString(req.body.containerId)});
-    const tasksCollection = await tasks();
     for(let [index, value] of container.tasks.entries()) {
         if(value.equals(req.body.taskId)) {
             container.tasks.splice(index, 1);
@@ -129,6 +139,20 @@ async function deleteTask(req, res) {
     };
     const containerUpdatedStatus = await containersCollection.updateOne({_id: ObjectId.createFromHexString(req.body.containerId)}, {$set:containerInfoToBeUpdated});
     if(containerUpdatedStatus.modifiedCount === 0) throw "Fail to remove task id from container";
+    const projectsCollection = await projects();
+    const project = await projectsCollection.findOne({_id: ObjectId.createFromHexString(req.body.projectId)});
+    for(let [index, value] of project.tasks.entries()) {
+        if(value.equals(req.body.taskId)) {
+            project.tasks.splice(index, 1);
+        }
+    }
+    let projectInfoToBeUpdated = {
+        lastUpdatedTime: new Date().toLocaleDateString(),
+        tasks: project.tasks,
+    };
+    const projectUpdatedStatus = await projectsCollection.updateOne({_id: ObjectId.createFromHexString(req.body.projectId)}, {$set:projectInfoToBeUpdated});
+    if(projectUpdatedStatus.modifiedCount === 0) throw "Fail to remove task id from container";
+    const tasksCollection = await tasks();
     const deleteStatus = await tasksCollection.deleteOne({_id: taskMongoId});
     if(deleteStatus.deletedCount === 0) throw "Fail to delete task from the task database";
     return res.status(200).send({message: "delete task successfully"});
@@ -136,10 +160,10 @@ async function deleteTask(req, res) {
 
 async function completeTask(req, res) {
     /*
-    params in req.boy: taskId, projectId
+    params in req.boy: containerId, taskId
     Steps: 1. change task status into completed
+           2. remove task from container
      */
-    console.log(req.body)
     const tasksCollection = await tasks();
     let taskToBeUpdated = {
         lastUpdatedTime: new Date().toLocaleString(),
@@ -148,6 +172,21 @@ async function completeTask(req, res) {
     };
     const updatedStatus = await tasksCollection.updateOne({_id: ObjectId.createFromHexString(req.body.taskId)},{$set: taskToBeUpdated});
     if(updatedStatus.modifiedCount === 0) throw "Fail to change the task status into completed";
+    const containersCollection = await containers();
+    const container = await containersCollection.findOne({_id: ObjectId.createFromHexString(req.body.containerId)});
+    for(let [index, value] of container.tasks.entries()) {
+        if(value.equals(req.body.taskId)) {
+            container.tasks.splice(index, 1);
+        }
+    }
+    let containerInfoToBeUpdated = {
+        lastUpdatedTime: new Date().toLocaleString(),
+        taskCount: container.tasks.length,
+        tasks: container.tasks,
+    };
+    const containerUpdatedStatus = await containersCollection.updateOne({_id: ObjectId.createFromHexString(req.body.containerId)}, {$set:containerInfoToBeUpdated});
+    if(containerUpdatedStatus.modifiedCount === 0) throw "Fail to remove task id from container";
+
     return res.status(200).send({message: "Change the task status into completed successfully"});
 
 }

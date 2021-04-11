@@ -12,6 +12,8 @@ import ResetPasswordFormDialog from "./ChangePassword";
 import PhoneAndroidOutlinedIcon from '@material-ui/icons/PhoneAndroidOutlined';
 import IconButton from "@material-ui/core/IconButton";
 import PhotoCamera from "@material-ui/icons/PhotoCamera";
+import myPhoto from "../myPhoto.png";
+import background from "../bkg.jpg";
 
 const UserService = require("../services/user.service");
 
@@ -21,14 +23,15 @@ const useStyles = makeStyles((theme) => ({
         display: 'flex',
         // margin: theme.spacing(10,3,2,15),
         // backgroundColor: "yellow",
+        backgroundSize: 'cover',
 
     },
     title: {
         margin: theme.spacing(10,3,2,15),
     },
     container: {
-        backgroundColor: "lightblue",
-        margin: theme.spacing(0,22,0,27),
+        backgroundColor: "white",
+        margin: theme.spacing(5,90,-5,90),
     },
     typography: {
         fontSize: 30,
@@ -38,9 +41,9 @@ const useStyles = makeStyles((theme) => ({
         flexGrow: 1,
         display: 'flex',
         padding: theme.spacing(2, 3, 4, 3),
-        margin: theme.spacing(0,22,0,27),
+        margin: theme.spacing(0,90,30,90),
         // marginTop: theme.spacing(8),
-        backgroundColor: "lightgrey"
+        backgroundColor: "white"
     },
     img: {
         width: "160px",
@@ -76,7 +79,7 @@ export default function AccountPage() {
 
 
     return (
-        <div className={classes.root}>
+        <div className={classes.root} style={{backgroundImage:`url(${background})`}}>
 
             <Grid container spacing={2} justify="center">
                 <Grid item xs={12} align="left" className={classes.title}>
@@ -85,7 +88,7 @@ export default function AccountPage() {
                     </Typography>
                 </Grid>
                 <Grid container item xs={12} justify="center" className={classes.container}>
-                    <Avatar alt="user image" src ="/public/logo192.png" className={classes.img}>
+                    <Avatar alt="user image" src ={myPhoto} className={classes.img}>
                     </Avatar>
                     <Grid item xs={12} className={classes.button}>
                         
@@ -97,16 +100,16 @@ export default function AccountPage() {
                         >
                             Upload
                         </Button> */}
-                        <form action="/profile" method="post" enctype="multipart/form-data">
-                            <input type="file" name="avatar" />
-                        </form>
-                        <label htmlFor="contained-button-file">
-                            <Button 
-                            onClick={submit}
-                            variant="contained" color="primary" component="span">
-                            Upload
-                            </Button>
-                        </label>
+                        {/*<form action="/profile" method="post" enctype="multipart/form-data">*/}
+                        {/*    <input type="file" name="avatar" />*/}
+                        {/*</form>*/}
+                        {/*<label htmlFor="contained-button-file">*/}
+                        {/*    <Button */}
+                        {/*    onClick={submit}*/}
+                        {/*    variant="contained" color="primary" component="span">*/}
+                        {/*    Upload*/}
+                        {/*    </Button>*/}
+                        {/*</label>*/}
 
                     </Grid>
                 </Grid>

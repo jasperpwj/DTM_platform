@@ -32,7 +32,7 @@ const DeleteTask = (props, ref) => {
         setOpenModal(false);
     };
     const handleDelete = (e) => {
-        taskService.deleteTask(props.value.containerId, props.value.taskId)
+        taskService.deleteTask(props.value.projectId, props.value.containerId, props.value.taskId)
             .then(res => {return res})
             .catch(e => {console.log(e)});
         window.location.reload();

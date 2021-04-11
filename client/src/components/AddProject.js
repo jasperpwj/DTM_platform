@@ -97,7 +97,6 @@ export default function AddProject() {
                                     Descriptions:
                                 </Typography>
                                 <TextField
-                                    autoFocus
                                     margin="dense"
                                     id="description"
                                     label="(optional)"
