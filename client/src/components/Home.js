@@ -125,15 +125,10 @@ export default function Home(props) {
                             <img src={test} width="200" height="100"/>           
                             </Typography>
 
-                            
                         </Paper>
                         <br></br>
                         <br></br>
                         <br></br>
-                        {/* <img src={test} /> */}
-
-
-
 
                 </ThemeProvider>
             </main>

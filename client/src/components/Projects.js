@@ -153,7 +153,7 @@ export default function Projects() {
             }
         })
     }, []);
-
+    console.log(openProject)
     for (let i = 0; i < openProject.length; i++){
         ProjectList.push({name: openProject[i].projectName, id: openProject[i]._id})
     }
