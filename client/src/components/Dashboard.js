@@ -3,11 +3,9 @@ import {makeStyles} from "@material-ui/core";
 import Typography from "@material-ui/core/Typography";
 import Paper from '@material-ui/core/Paper';
 import {
-  Chart,
-  BarSeries,
-  Title,
-  ArgumentAxis,
-  ValueAxis,
+    Chart,
+    PieSeries,
+    Title,
 } from '@devexpress/dx-react-chart-material-ui';
 
 import { Animation } from '@devexpress/dx-react-chart';
@@ -30,10 +28,9 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const example_data = [
-    { year: 'Container 1', population: 1 },
-    { year: 'Container 2', population: 0 },
-    { year: 'Container 3', population: 2 },
-    { year: 'Container 4', population: 5 },
+    { region: 'Complete tasks', val: 10 },
+    { region: 'Issue', val: 5 },
+    { region: 'Active tasks', val: 15 },
   ];
 
 export default function DashboardPage() {
@@ -41,28 +38,27 @@ export default function DashboardPage() {
     const navBarInfo = {
         title: "Account"
     };
+    const [tasks, setTasks] = useState("");
+
 
     return (
         <div className={classes.root}>
             <main className={classes.content}>
                 <div className={classes.toolbar}>
-                    <Typography paragraph>
-                        Dashboard page
-                    </Typography>
                     <Paper elevation={0} className={classes.paper}>
-                        <Chart
-                        data={example_data}
-                        >
-                        <ArgumentAxis />
-                        <ValueAxis max={7} />
-
-                        <BarSeries
-                            valueField="population"
-                            argumentField="year"
-                        />
-                        <Title text="Example" />
-                        <Animation />
-                        </Chart>
+                    <Chart
+          data={example_data}
+        >
+          <PieSeries
+            valueField="val"
+            argumentField="region"
+            innerRadius={0.5}
+          />
+          <Title
+            text="All Tasks"
+          />
+          <Animation />
+        </Chart>
                     </Paper>
                     
                 </div>

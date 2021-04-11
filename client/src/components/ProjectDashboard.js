@@ -76,7 +76,7 @@ export default function ProjectDashboard(props) {
                         <Title text="Project Dashboard" />
                     <Animation />
                 </Chart>
-                ContainerName 
+                <b>ContainerName </b>
             </Paper>
             
         </div>
