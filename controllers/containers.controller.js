@@ -4,7 +4,6 @@ const containers = mongoCollection.containers;
 const tasks = mongoCollection.tasks;
 const {ObjectId} = require("mongodb");
 
-
 async function addContainer(req, res) {
     const projectCollection = await projects();
     const containerCollection = await containers();
@@ -14,13 +13,12 @@ async function addContainer(req, res) {
         lastUpdatedTime: new Date().toLocaleString(),
         taskCount: 0,
         tasks: [],
-        status: 'active', // active or deleted
+        status: 'active',
         nextContainer: "",
         automation: req.body.automation,
     };
     const insertContainerStatus = await containerCollection.insertOne(containerObj);
     if(insertContainerStatus.insertedCount === 0) throw "fail to add new container to the project";
-
     let containerId = insertContainerStatus.insertedId;
     const projectMongoId = ObjectId.createFromHexString(req.body.projectId);
     const insertContainerIdToProjectStatus = await projectCollection.updateOne({_id: projectMongoId}, {$addToSet: {containers: containerId}});
@@ -82,16 +80,6 @@ async function deleteContainer(req, res) {
     const container = await containerCollection.findOne({_id: containerMongoId});
     if(!container) throw `Fail to find container with id: ${req.body.containerId}`;
     let taskToRemove = await container.tasks;
-    console.log("here")
-    console.log(taskToRemove)
-
-
-    // let updateInfo = {
-    //     status: 'deleted',
-    //     lastUpdatedTime: new Date().toLocaleString(),
-    // };
-    // const updateStatus = await containerCollection.updateOne({_id: containerMongoId}, {$set:updateInfo});
-    // if(updateStatus.modifiedCount === 0) throw "Fail to change the container status into deleted";
     const projectCollection = await projects();
     const projectMongoId = ObjectId.createFromHexString(req.body.projectId);
 
@@ -105,7 +93,6 @@ async function deleteContainer(req, res) {
             await taskCollection.deleteOne({_id: taskId});
         }
     }
-
     const deleteContainerStatus = await containerCollection.deleteOne({_id:containerMongoId});
     if(deleteContainerStatus.deletedCount === 0) throw "Fail to delete container object";
     return res.status(200).send({message:"Delete container successfully"});

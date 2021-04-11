@@ -14,7 +14,6 @@ import Radio from "@material-ui/core/Radio";
 import Alert from "@material-ui/lab/Alert";
 const projectService = require("../services/projects.service");
 
-
 export default function AddProject() {
     const [open, setOpen] = useState(false);
     const initialProjectInfo = Object.freeze( {
@@ -41,7 +40,6 @@ export default function AddProject() {
             })
         }
     };
-
     const handleRadioChange = (e) => {
         setProjectInfo({
             ...projectInfo,
