@@ -58,8 +58,9 @@ export default function ProjectMenuBar(props) {
             <Grid container className={classes.button_group}>
                 <Button size="small"><Link href={`/projects/${props.value.projectId}`}>Project</Link></Button>
                 <Button size="small"><Link href={`/projects/${props.value.projectId}/tasks`} >Tasks</Link></Button>
+                <Button size="small"><Link href={`/projects/${props.value.projectId}/history`} >History</Link></Button>
+                <Button size="small"><Link href={`/projects/${props.value.projectId}/issues`} >Issues</Link></Button>
                 <Button size="small"><Link href={`/projects/${props.value.projectId}/dashboard`} >Dashboard</Link></Button>
-                <Button size="small"><Link href={`/projects/${props.value.projectId}/timeline`} >History</Link></Button>
             </Grid>
             <Divider/>
         </React.Fragment>

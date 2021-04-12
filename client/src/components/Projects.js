@@ -25,6 +25,7 @@ const useStyles = makeStyles((theme) => ({
         margin: theme.spacing(8,0,0,8),
         backgroundColor: "#eeeeee",
         height: "100vh",
+        minWidth: 800,
     },
     appBar: {
         backgroundColor: "grey",

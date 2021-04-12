@@ -42,13 +42,12 @@ export default function EditAccountFormDialog() {
     return (
         <div >
             <Button
-                variant="contained"
                 color="primary"
                 size="small"
                 startIcon={<EditIcon/>}
                 onClick={handleClickOpen}
             >
-                Edit Profile
+                Edit
             </Button>
             <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-editAccount-title" fullWidth={true}>
                 <DialogTitle id="form-dialog-editAccount-title">Edit Profile Information</DialogTitle>

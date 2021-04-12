@@ -58,19 +58,21 @@ async function resetPassword(req, res) {
             status: false
         })
         
+    } else {
+        let updateInfo = {};
+        if(req.body.password) {
+            const hashPwd = await bcrypt.hash(req.body.password, 5);
+            updateInfo.password = hashPwd;
+        }
+        if(JSON.stringify(updateInfo) !== '{}') {
+            const updatedStatus = await userCollection.updateOne({_id: objId}, {$set:updateInfo});
+            if(updatedStatus.modifiedCount === 0) throw "fail to change password";
+        }
+        return res.status(200).json({
+            status: true
+        })
     }
-    let updateInfo = {};
-    if(req.body.password) {
-        const hashPwd = await bcrypt.hash(req.body.password, 5);
-        updateInfo.password = hashPwd;
-    }
-    if(JSON.stringify(updateInfo) !== '{}') {
-        const updatedStatus = await userCollection.updateOne({_id: objId}, {$set:updateInfo});
-        if(updatedStatus.modifiedCount === 0) throw "fail to change password";
-    }
-    return res.status(200).json({
-        status: true
-    })
+
 }
 
 

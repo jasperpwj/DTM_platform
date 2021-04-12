@@ -3,7 +3,6 @@ const projects = mongoCollection.projects;
 const {ObjectId} = require("mongodb");
 const projectHelper = require("./projects.helper");
 
-
 async function addProject(req, res) {
     if (!req.body.projectName || typeof req.body.projectName !== 'string') throw 'name of project is empty or invalid input type';
     const projectCollection = await projects();
@@ -71,7 +70,6 @@ async function changeProjectStatus(req, res) {
     res.status(200).json({message: "Project Status changes successfully."})
 }
 
-
 async function getProjectById(req, res) {
     // if (!id || typeof id !== "string") throw "invalid id is provided";
     const objId = ObjectId.createFromHexString(req.id);
@@ -94,17 +92,14 @@ async function editProject(req, res) {
     if (req.body.description) {
         editInfo.description = req.body.description;
     }
-
     if (req.body.status) {
         editInfo.status = req.body.status;
     }
-
     editInfo.lastUpdateTime = new Date().toLocaleDateString();
     if (JSON.stringify(editInfo) !== '{}') {
         const editStatus = await projectCollection.updateOne({_id: objId}, {$set: editInfo});
         if (editStatus.modifiedCount === 0) throw "Failed to edit project's info";
     }
-
     return res.status(200).send({message: "Edition of project info succeeded!"})
 }
 

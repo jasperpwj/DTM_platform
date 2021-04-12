@@ -6,7 +6,6 @@ import Avatar from "@material-ui/core/Avatar";
 import Button from "@material-ui/core/Button";
 import IconButton from "@material-ui/core/IconButton";
 import SettingsIcon from '@material-ui/icons/Settings';
-import AppBar from "@material-ui/core/AppBar";
 import AddIcon from '@material-ui/icons/Add';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import Menu from '@material-ui/core/Menu';
@@ -32,7 +31,6 @@ const useStyles = makeStyles( (theme) => ({
         minWidth: 800,
         margin: theme.spacing(8,0,0,9),
         backgroundColor: "white",
-        // height: '100vh',
     },
     toolbar: {
         padding: theme.spacing(2,2,1,2),
@@ -130,11 +128,6 @@ const useStyles = makeStyles( (theme) => ({
         borderRadius: '8px 8px 8px 8px',
         border: "2px dashed black",
     },
-    test: {
-        // backgroundColor: "lightblue",
-        flexGrow: 1,
-
-    },
     taskForm: {
         backgroundColor: 'lightyellow',
         borderRadius: '8px',
@@ -193,7 +186,7 @@ const emptyCard = (projectId) => {
     return (
         <React.Fragment>
             <Typography >You don' have any container yet. Create one!</Typography>
-            <AddContainer  value={projectId}/>
+            <AddContainer value={projectId}/>
         </React.Fragment>
     )
 };
@@ -204,7 +197,7 @@ export default function Project(props) {
     const [anchorEl, setAnchorEl] = useState(null);
     const [taskAnchorEl, setTaskAnchorEL] = useState(null);
     const [emptyContainer, setEmptyContainer] = useState(false);
-    const [projectId, setProjectId] = useState(props.match.params.projectId);
+    const [projectId] = useState(props.match.params.projectId);
     const [projectContent, setProjectContent] = useState(null);
     const [targetContainerId, setTargetContainerId] = useState(null);
     const [targetTaskId, setTargetTaskId] = useState(null);
@@ -297,13 +290,12 @@ export default function Project(props) {
                         inputProps={{ 'aria-label': 'search' }}
                     />
                 </div>
-                <Button size="small" startIcon={<SettingsIcon/>}>Fun 1</Button>
-                <Button size="small" startIcon={<SettingsIcon/>}>Fun 2</Button>
-                <Button size="small" startIcon={<SettingsIcon/>}>Fun 3</Button>
+                <Button size="small" startIcon={<SettingsIcon/>}>No Fun</Button>
             </Grid>
             <Grid container justify='center' className={classes.dragDropArea}>
-                {(emptyContainer)? (<Grid container item className={classes.emptyCard} justify='center' alignContent='center'
-                >{emptyCard(projectId)}</Grid>): (
+                {(emptyContainer)? (
+                    <Grid container item className={classes.emptyCard} justify='center' alignContent='center'>{emptyCard(projectId)}</Grid>
+                ): (
                     <DragDropContext onDragEnd={result => onDragEnd(result,containers, setContainers)} >
                         <Grid container direction='row'  wrap='nowrap' className={classes.containersArea}>
                             {containers && Object.entries(containers).map(([id, container]) => {
@@ -434,14 +426,13 @@ export default function Project(props) {
                                 {openTaskMore && (
                                     <div>
                                         <EditTaskForm id={targetTaskId} ref={taskRef}/>
-                                        <TaskCompleted value={{containerId: targetContainerId, taskId: targetTaskId}} ref={taskRef}/>
-                                        <DeleteTask value={{projectId: projectId, containerId: targetContainerId, taskId: targetTaskId}} ref={taskRef}/>
-                                        <TurnIntoIssues value={{containerId: targetContainerId, taskId: targetTaskId}} ref={taskRef}/>
+                                        <TaskCompleted value={{taskId: targetTaskId}} ref={taskRef}/>
+                                        <DeleteTask value={{projectId: projectId, taskId: targetTaskId}} ref={taskRef}/>
+                                        <TurnIntoIssues value={{taskId: targetTaskId}} ref={taskRef}/>
                                     </div>
                                 )}
                             </Menu>
                         </Grid>
-
                     </DragDropContext>
                 )}
 

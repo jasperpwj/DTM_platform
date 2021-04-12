@@ -15,7 +15,7 @@ function createTask(projectId, containerId, title, content) {
     })
 }
 function getTaskById(taskId) {
-    return axios.get(API_URL + "/getTask/" + taskId, {headers:authHeader()})
+    return axios.get(API_URL + "getTask/" + taskId, {headers:authHeader()})
         .then(res => {
         return res.data;
     })
@@ -39,31 +39,56 @@ function updateDraggingTask(sourceContainerId, destContainerId, sourceTaskId, so
         sourceTaskIndex: sourceTaskIndex,
         destTaskIndex: destTaskIndex,
     };
-    return axios.patch(API_URL + "/updateDraggingTask", taskToBeUpdated, {headers: authHeader()})
+    return axios.patch(API_URL + "updateDraggingTask", taskToBeUpdated, {headers: authHeader()})
         .then( res => {
         return res;
     })
 }
-function deleteTask(projectId, containerId, taskId) {
+function deleteTask(projectId, taskId) {
     let taskToBeDeleted = {
         projectId: projectId,
-        containerId: containerId,
         taskId: taskId,
     };
-    return axios.post(API_URL + "/deleteTask", taskToBeDeleted, {headers:authHeader()})
+    return axios.post(API_URL + "deleteTask", taskToBeDeleted, {headers:authHeader()})
         .then( res=> {
         return res;
     })
 }
-function completeTask(containerId, taskId) {
+function completeTask(taskId) {
     let taskToBeComplete = {
-        containerId: containerId,
         taskId: taskId,
     };
-    return axios.post(API_URL + "/completeTask", taskToBeComplete, {headers:authHeader()})
+    return axios.post(API_URL + "completeTask", taskToBeComplete, {headers:authHeader()})
         .then(res => {return res})
 }
 
+function getTasksByProjectId(projectId) {
+    return axios.get(API_URL + "getTasks/" + projectId, {headers: authHeader()})
+        .then( res => {
+        return res.data;
+    })
+}
+
+function getCompletedTasksByProjectId(projectId) {
+    return axios.get(API_URL + "getCompletedTasks/" + projectId, {headers: authHeader()})
+        .then( res => {
+            return res.data;
+        })
+}
+function getIssuesByProjectId(projectId) {
+    return axios.get(API_URL + "getIssues/" + projectId, {headers: authHeader()})
+        .then( res => {
+            return res.data;
+        })
+}
+
+function turnTaskIntoIssue(taskId) {
+    let taskObj = {
+        taskId: taskId
+    };
+    return axios.post(API_URL + "turnIntoIssue", taskObj, {headers: authHeader()})
+        .then(res => {return res})
+}
 
 export {
     createTask,
@@ -72,4 +97,8 @@ export {
     updateDraggingTask,
     deleteTask,
     completeTask,
+    getTasksByProjectId,
+    getCompletedTasksByProjectId,
+    getIssuesByProjectId,
+    turnTaskIntoIssue,
 }

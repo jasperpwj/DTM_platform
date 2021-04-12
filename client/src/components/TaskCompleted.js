@@ -6,8 +6,7 @@ const taskService = require("../services/tasks.service");
 
 const CompleteTask = (props, ref) => {
     const handleClickOpen = () => {
-        console.log(props.value);
-        taskService.completeTask(props.value.containerId, props.value.taskId)
+        taskService.completeTask(props.value.taskId)
             .then(res => { window.location.reload()})
             .catch(err => {console.log(err)})
     };

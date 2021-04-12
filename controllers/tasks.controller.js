@@ -1,5 +1,6 @@
 const mongoCollection = require("../config/mongoCollections");
 const tasks = mongoCollection.tasks;
+const users = mongoCollection.users;
 const projects = mongoCollection.projects;
 const containers = mongoCollection.containers;
 const {ObjectId} = require("mongodb");
@@ -51,12 +52,90 @@ async function createTask(req, res) {
 
 async function getTaskById(req, res) {
     const tasksCollection = await tasks();
-    const task = await tasksCollection.findOne({_id: ObjectId.createFromHexString(req.params.taskId)});
+    const taskMongoId = ObjectId.createFromHexString(req.params.taskId);
+    const task = await tasksCollection.findOne({_id: taskMongoId});
     let taskContent = {
         title: task.title,
         content: task.content,
     };
     return res.status(200).json(taskContent);
+}
+
+async function getTasksByProjectId(req, res) {
+    const projectsCollection = await projects();
+    const project = await projectsCollection.findOne({_id: ObjectId.createFromHexString(req.params.projectId)});
+    if(!project) throw `Fail to find project by project Id: ${req.body.projectId}`;
+    const tasksCollection = await tasks();
+    const usersCollection = await users()
+;    let taskArray = [];
+    if(project.tasks.length > 0) {
+        for(let taskId of project.tasks) {
+            let taskObj = await tasksCollection.findOne({_id: taskId});
+            let user = await usersCollection.findOne({_id: taskObj.requester});
+            let taskContent = {
+                _id: taskObj._id,
+                title: taskObj.title,
+                content: taskObj.content,
+                createDate: taskObj.createDate,
+                requester: user.username,
+                status: taskObj.status,
+            };
+            taskArray.push(taskContent);
+        }
+    }
+    return res.status(200).json(taskArray);
+}
+async function getCompletedTasksByProjectId(req, res) {
+    const projectsCollection = await projects();
+    const project = await projectsCollection.findOne({_id: ObjectId.createFromHexString(req.params.projectId)});
+    if(!project) throw `Fail to find project by project Id: ${req.body.projectId}`;
+    const tasksCollection = await tasks();
+    const usersCollection = await users()
+    ;    let taskArray = [];
+    if(project.tasks.length > 0) {
+        for(let taskId of project.tasks) {
+            let taskObj = await tasksCollection.findOne({_id: taskId, status: 'completed'});
+            if(taskObj) {
+                let user = await usersCollection.findOne({_id: taskObj.requester});
+                let taskContent = {
+                    _id: taskObj._id,
+                    title: taskObj.title,
+                    content: taskObj.content,
+                    createDate: taskObj.createDate,
+                    requester: user.username,
+                    status: taskObj.status,
+                };
+                taskArray.push(taskContent);
+            }
+        }
+    }
+    return res.status(200).json(taskArray);
+}
+async function getIssuesByProjectId(req, res) {
+    const projectsCollection = await projects();
+    const project = await projectsCollection.findOne({_id: ObjectId.createFromHexString(req.params.projectId)});
+    if(!project) throw `Fail to find project by project Id: ${req.body.projectId}`;
+    const tasksCollection = await tasks();
+    const usersCollection = await users()
+    ;    let taskArray = [];
+    if(project.tasks.length > 0) {
+        for(let taskId of project.tasks) {
+            let taskObj = await tasksCollection.findOne({_id: taskId, status: 'issue'});
+            if(taskObj) {
+                let user = await usersCollection.findOne({_id: taskObj.requester});
+                let taskContent = {
+                    _id: taskObj._id,
+                    title: taskObj.title,
+                    content: taskObj.content,
+                    createDate: taskObj.createDate,
+                    requester: user.username,
+                    status: taskObj.status,
+                };
+                taskArray.push(taskContent);
+            }
+        }
+    }
+    return res.status(200).json(taskArray);
 }
 
 async function editTask(req, res) {
@@ -122,11 +201,13 @@ async function updateDraggingTask(req, res) {
 
 async function deleteTask(req, res) {
     /*
-    params in the req.body: projectId, taskId, containerId
+    params in the req.body: projectId, taskId
     */
     const taskMongoId = ObjectId.createFromHexString(req.body.taskId);
+    const tasksCollection = await tasks();
     const containersCollection = await containers();
-    const container = await containersCollection.findOne({_id: ObjectId.createFromHexString(req.body.containerId)});
+    const taskObj = await tasksCollection.findOne({_id: taskMongoId});
+    const container = await containersCollection.findOne({_id: taskObj.container});
     for(let [index, value] of container.tasks.entries()) {
         if(value.equals(req.body.taskId)) {
             container.tasks.splice(index, 1);
@@ -137,7 +218,7 @@ async function deleteTask(req, res) {
         taskCount: container.tasks.length,
         tasks: container.tasks,
     };
-    const containerUpdatedStatus = await containersCollection.updateOne({_id: ObjectId.createFromHexString(req.body.containerId)}, {$set:containerInfoToBeUpdated});
+    const containerUpdatedStatus = await containersCollection.updateOne({_id: taskObj.container}, {$set:containerInfoToBeUpdated});
     if(containerUpdatedStatus.modifiedCount === 0) throw "Fail to remove task id from container";
     const projectsCollection = await projects();
     const project = await projectsCollection.findOne({_id: ObjectId.createFromHexString(req.body.projectId)});
@@ -152,7 +233,6 @@ async function deleteTask(req, res) {
     };
     const projectUpdatedStatus = await projectsCollection.updateOne({_id: ObjectId.createFromHexString(req.body.projectId)}, {$set:projectInfoToBeUpdated});
     if(projectUpdatedStatus.modifiedCount === 0) throw "Fail to remove task id from container";
-    const tasksCollection = await tasks();
     const deleteStatus = await tasksCollection.deleteOne({_id: taskMongoId});
     if(deleteStatus.deletedCount === 0) throw "Fail to delete task from the task database";
     return res.status(200).send({message: "delete task successfully"});
@@ -169,33 +249,75 @@ async function completeTask(req, res) {
         lastUpdatedTime: new Date().toLocaleString(),
         status: "completed",
         editor: ObjectId.createFromHexString(req.id),
+        container: "",
     };
     const updatedStatus = await tasksCollection.updateOne({_id: ObjectId.createFromHexString(req.body.taskId)},{$set: taskToBeUpdated});
     if(updatedStatus.modifiedCount === 0) throw "Fail to change the task status into completed";
+    const taskObj = await tasksCollection.findOne({_id: ObjectId.createFromHexString(req.body.taskId)});
     const containersCollection = await containers();
-    const container = await containersCollection.findOne({_id: ObjectId.createFromHexString(req.body.containerId)});
-    for(let [index, value] of container.tasks.entries()) {
-        if(value.equals(req.body.taskId)) {
-            container.tasks.splice(index, 1);
+    if(taskObj.container !== "") {
+        const container = await containersCollection.findOne({_id: taskObj.container});
+        for(let [index, value] of container.tasks.entries()) {
+            if(value.equals(req.body.taskId)) {
+                container.tasks.splice(index, 1);
+            }
         }
+        let containerInfoToBeUpdated = {
+            lastUpdatedTime: new Date().toLocaleString(),
+            taskCount: container.tasks.length,
+            tasks: container.tasks,
+        };
+        const containerUpdatedStatus = await containersCollection.updateOne({_id: taskObj.container}, {$set:containerInfoToBeUpdated});
+        if(containerUpdatedStatus.modifiedCount === 0) throw "Fail to remove task id from container";
     }
-    let containerInfoToBeUpdated = {
-        lastUpdatedTime: new Date().toLocaleString(),
-        taskCount: container.tasks.length,
-        tasks: container.tasks,
-    };
-    const containerUpdatedStatus = await containersCollection.updateOne({_id: ObjectId.createFromHexString(req.body.containerId)}, {$set:containerInfoToBeUpdated});
-    if(containerUpdatedStatus.modifiedCount === 0) throw "Fail to remove task id from container";
-
     return res.status(200).send({message: "Change the task status into completed successfully"});
+}
+async function turnTaskIntoIssue(req, res) {
+    /*
+params in req.boy: taskId
+Steps: 1. change task status into issue
+       2. remove task from container
+ */
+    const tasksCollection = await tasks();
+    const taskObj = await tasksCollection.findOne({_id: ObjectId.createFromHexString(req.body.taskId)});
+    if(!taskObj) throw `Fail to find the task by id: ${req.body.taskId}`;
+    const containersCollection = await containers();
+    if(taskObj.container !== "") {
+        const container = await containersCollection.findOne({_id: taskObj.container});
+        for(let [index, value] of container.tasks.entries()) {
+            if(value.equals(req.body.taskId)) {
+                container.tasks.splice(index, 1);
+            }
+        }
+        let containerInfoToBeUpdated = {
+            lastUpdatedTime: new Date().toLocaleString(),
+            taskCount: container.tasks.length,
+            tasks: container.tasks,
+        };
+        const containerUpdatedStatus = await containersCollection.updateOne({_id: taskObj.container}, {$set:containerInfoToBeUpdated});
+        if(containerUpdatedStatus.modifiedCount === 0) throw "Fail to remove task id from container";
+    }
+    let taskContentToBeUpdated = {
+        status: "issue",
+        lastUpdatedTime: new Date().toLocaleString(),
+        editor: ObjectId.createFromHexString(req.id),
+        container: "",
+    };
+    const updatedStatus = await tasksCollection.updateOne({_id: ObjectId.createFromHexString(req.body.taskId)},{$set: taskContentToBeUpdated});
+    if(updatedStatus.modifiedCount === 0) throw "Fail to change the task status into completed";
+    return res.status(200).send({message: "Turn the task status into issue successfully"});
 
 }
 
 module.exports = {
     createTask,
     getTaskById,
+    getTasksByProjectId,
+    getCompletedTasksByProjectId,
+    getIssuesByProjectId,
     editTask,
     updateDraggingTask,
     deleteTask,
     completeTask,
+    turnTaskIntoIssue,
 };
