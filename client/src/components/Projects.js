@@ -111,18 +111,12 @@ TabContent.propTypes = {
 export default function Projects() {
     const classes = useStyles();
     const [value, setValue] = useState(0);
-    const initialInfo = Object.freeze({
-        inPut:"",
-    });
-    const [inputInfo, setInputInfo] = useState(initialInfo);
+    
     const [anchorEl, setAnchorEl] = useState(null);
     const handleContentChange = (event, newValue) =>{
         setValue(newValue)
     };
-    const initialOp =({
-        op:[],
-    });
-    const [options, setOptions] = useState(initialOp);
+
     const history = useHistory();
 
     // get the whole list
@@ -154,13 +148,14 @@ export default function Projects() {
             }
         })
     }, []);
-    console.log(openProject)
+    
     for (let i = 0; i < openProject.length; i++){
         ProjectList.push({name: openProject[i].projectName, id: openProject[i]._id})
     }
     for (let i = 0; i < closeProject.length; i++){
         ProjectList.push({name: closeProject[i].projectName, id: closeProject[i]._id})
     }
+    console.log(ProjectList)
     const [zhi, setZhi] = useState(0);
     // console.log(zhi)
 

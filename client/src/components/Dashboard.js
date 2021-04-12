@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {makeStyles} from "@material-ui/core";
 import Typography from "@material-ui/core/Typography";
 import Paper from '@material-ui/core/Paper';
@@ -9,6 +9,8 @@ import {
 } from '@devexpress/dx-react-chart-material-ui';
 
 import { Animation } from '@devexpress/dx-react-chart';
+const projectService = require("../services/projects.service");
+const taskService = require("../services/tasks.service");
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -38,8 +40,29 @@ export default function DashboardPage() {
     const navBarInfo = {
         title: "Account"
     };
-    const [tasks, setTasks] = useState("");
+    const [tasks, setTasks] = useState(null);
 
+    const [openProject, setOpenProjects] = useState([]);
+    const [isEmptyProject, setIsEmptyProject] = useState(false);
+    useEffect(()=> {
+        projectService.getOpenProjects().then(res => {
+            if(!(res.data.length)) {
+                setIsEmptyProject(true);
+                setOpenProjects(res.data);
+            } else {
+                setIsEmptyProject(false);
+                setOpenProjects(res.data);
+            }
+        })
+    }, []);
+    console.log(openProject)
+    
+
+    // useEffect(() => {
+    //     taskService.getTasksByProjectId(projectId)
+    //         .then(res => {setTasks(res);})
+    //         .catch(err => {console.log(err)})
+    // },[projectId]);
 
     return (
         <div className={classes.root}>
