@@ -19,7 +19,8 @@ import EditContainer from "./EditContainer";
 import DeleteContainer from "./DeleteContainer";
 import Link from "@material-ui/core/Link";
 import TextField from "@material-ui/core/TextField";
-import AddPerson from "./AddPerson";
+import ProjectMembers from "./ProjectMembers";
+import AddMember from "./AddMember";
 const containerService = require("../services/container.service");
 const taskService = require("../services/tasks.service");
 
@@ -237,8 +238,10 @@ export default function Project(props) {
                         </AvatarGroup>
                     </Grid>
                     <Grid item>
-                        {/* <IconButton size="small" onClick = {handleClickPerson}><PersonAddIcon/></IconButton> */}
-                        <AddPerson id={projectId} ref={tapRef}/>
+                        <ProjectMembers id={projectId} ref={tapRef}/>
+                    </Grid>
+                    <Grid item>
+                        <AddMember id={projectId} ref={tapRef}/>
                     </Grid>
                     <Grid item>
                         <Button size="small" startIcon={<SettingsIcon/>}>Setting</Button>

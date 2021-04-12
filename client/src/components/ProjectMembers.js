@@ -10,12 +10,12 @@ import DialogActions from "@material-ui/core/DialogActions";
 import Button from "@material-ui/core/Button";
 import DeleteIcon from "@material-ui/icons/Delete";
 import IconButton from "@material-ui/core/IconButton";
-import PersonAddIcon from '@material-ui/icons/PersonAdd';
+import PeopleIcon from '@material-ui/icons/People';
 import Grid from "@material-ui/core/Grid";
 import AddIcon from '@material-ui/icons/Add';
 const projectService = require("../services/projects.service");
 
-const AddPerson = (props, ref) => {
+const ProjectMembers = (props, ref) => {
     const [open, setOpen] = useState(false);
     const [scroll, setScroll] = React.useState('paper');
     const [author, setAuthor] = useState({});
@@ -59,14 +59,14 @@ const AddPerson = (props, ref) => {
 
     return (
         <div>
-            <IconButton size="small" onClick={handleClickOpen}><PersonAddIcon /></IconButton>
+            <IconButton size="small" onClick={handleClickOpen}><PeopleIcon /></IconButton>
             <Dialog open={open} onClose={handleClose} aria-labelledby="Member" fullWidth={true}>
                 <DialogTitle id="Member">Member</DialogTitle>
                 <DialogContent dividers={scroll === 'paper'}>
                     <Grid container spacing={3}>
                         <Grid item xs={4}>
                             <List>
-                                <h4>Author</h4>
+                                <h4>Owner</h4>
                                 <ListItem button key={author.owner}><ListItemIcon><PersonIcon /></ListItemIcon>{author.owner}</ListItem>
                             </List>
                         </Grid>
@@ -75,14 +75,14 @@ const AddPerson = (props, ref) => {
                                 <h4>Developer</h4>
                                 {developerList}
                             </List>
-                            <Button startIcon={<AddIcon />} ></Button>
+                            {/* <Button startIcon={<AddIcon />} ></Button> */}
                         </Grid>
                         <Grid item xs={4}>
                             <List>
                                 <h4>Client</h4>
                                 {clientList}
                             </List>
-                            <Button startIcon={<AddIcon />} ></Button>
+                            {/* <Button startIcon={<AddIcon />} ></Button> */}
                         </Grid>
                     </Grid>
                 </DialogContent>
@@ -101,4 +101,4 @@ const AddPerson = (props, ref) => {
     )
 }
 
-export default forwardRef(AddPerson);
+export default forwardRef(ProjectMembers);
