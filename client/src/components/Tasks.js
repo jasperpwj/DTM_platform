@@ -92,7 +92,7 @@ export default function Tasks(props) {
             })
             .catch(err => {console.log(err)})
     },[projectId]);
-    console.log(projectId)
+    
     useEffect(() => {
         taskService.getTasksByProjectId(projectId)
             .then(res => {setTasks(res);})

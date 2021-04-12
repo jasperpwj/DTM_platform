@@ -14,5 +14,6 @@ router.patch("/updateDraggingTask", [authJwt.verifyToken], taskController.update
 router.post("/deleteTask", [authJwt.verifyToken], taskController.deleteTask);
 router.post("/completeTask", [authJwt.verifyToken], taskController.completeTask);
 router.post("/turnIntoIssue", [authJwt.verifyToken], taskController.turnTaskIntoIssue);
+router.post("/getAllTasks", [authJwt.verifyToken], taskController.getAllTasksByProjectIdList);
 
 module.exports = router;

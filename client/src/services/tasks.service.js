@@ -90,6 +90,13 @@ function turnTaskIntoIssue(taskId) {
         .then(res => {return res})
 }
 
+function getAllTasksByProjectIdList(projectId) {
+    return axios.post(API_URL + "getAllTasks", projectId, {headers: authHeader()})
+        .then( res => {
+        return res.data;
+    })
+}
+
 export {
     createTask,
     getTaskById,
@@ -101,4 +108,5 @@ export {
     getCompletedTasksByProjectId,
     getIssuesByProjectId,
     turnTaskIntoIssue,
+    getAllTasksByProjectIdList,
 }
