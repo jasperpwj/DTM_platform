@@ -207,19 +207,21 @@ async function deleteTask(req, res) {
     const tasksCollection = await tasks();
     const containersCollection = await containers();
     const taskObj = await tasksCollection.findOne({_id: taskMongoId});
-    const container = await containersCollection.findOne({_id: taskObj.container});
-    for(let [index, value] of container.tasks.entries()) {
-        if(value.equals(req.body.taskId)) {
-            container.tasks.splice(index, 1);
+    if(taskObj.container !== "") {
+        const container = await containersCollection.findOne({_id: taskObj.container});
+        for(let [index, value] of container.tasks.entries()) {
+            if(value.equals(req.body.taskId)) {
+                container.tasks.splice(index, 1);
+            }
         }
+        let containerInfoToBeUpdated = {
+            lastUpdatedTime: new Date().toLocaleString(),
+            taskCount: container.tasks.length,
+            tasks: container.tasks,
+        };
+        const containerUpdatedStatus = await containersCollection.updateOne({_id: taskObj.container}, {$set:containerInfoToBeUpdated});
+        if(containerUpdatedStatus.modifiedCount === 0) throw "Fail to remove task id from container";
     }
-    let containerInfoToBeUpdated = {
-        lastUpdatedTime: new Date().toLocaleString(),
-        taskCount: container.tasks.length,
-        tasks: container.tasks,
-    };
-    const containerUpdatedStatus = await containersCollection.updateOne({_id: taskObj.container}, {$set:containerInfoToBeUpdated});
-    if(containerUpdatedStatus.modifiedCount === 0) throw "Fail to remove task id from container";
     const projectsCollection = await projects();
     const project = await projectsCollection.findOne({_id: ObjectId.createFromHexString(req.body.projectId)});
     for(let [index, value] of project.tasks.entries()) {
@@ -245,14 +247,6 @@ async function completeTask(req, res) {
            2. remove task from container
      */
     const tasksCollection = await tasks();
-    let taskToBeUpdated = {
-        lastUpdatedTime: new Date().toLocaleString(),
-        status: "completed",
-        editor: ObjectId.createFromHexString(req.id),
-        container: "",
-    };
-    const updatedStatus = await tasksCollection.updateOne({_id: ObjectId.createFromHexString(req.body.taskId)},{$set: taskToBeUpdated});
-    if(updatedStatus.modifiedCount === 0) throw "Fail to change the task status into completed";
     const taskObj = await tasksCollection.findOne({_id: ObjectId.createFromHexString(req.body.taskId)});
     const containersCollection = await containers();
     if(taskObj.container !== "") {
@@ -270,6 +264,16 @@ async function completeTask(req, res) {
         const containerUpdatedStatus = await containersCollection.updateOne({_id: taskObj.container}, {$set:containerInfoToBeUpdated});
         if(containerUpdatedStatus.modifiedCount === 0) throw "Fail to remove task id from container";
     }
+    let taskToBeUpdated = {
+        lastUpdatedTime: new Date().toLocaleString(),
+        status: "completed",
+        editor: ObjectId.createFromHexString(req.id),
+        container: "",
+    };
+    const updatedStatus = await tasksCollection.updateOne({_id: ObjectId.createFromHexString(req.body.taskId)},{$set: taskToBeUpdated});
+    if(updatedStatus.modifiedCount === 0) throw "Fail to change the task status into completed";
+    console.log(taskObj)
+
     return res.status(200).send({message: "Change the task status into completed successfully"});
 }
 async function turnTaskIntoIssue(req, res) {

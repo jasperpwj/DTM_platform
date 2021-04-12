@@ -79,14 +79,16 @@ async function deleteContainer(req, res) {
     let containerMongoId = ObjectId.createFromHexString(req.body.containerId);
     const container = await containerCollection.findOne({_id: containerMongoId});
     if(!container) throw `Fail to find container with id: ${req.body.containerId}`;
-    let taskToRemove = await container.tasks;
+    let taskToRemove = container.tasks;
     const projectCollection = await projects();
     const projectMongoId = ObjectId.createFromHexString(req.body.projectId);
 
     const deleteContainerIdFromProject = await projectCollection.updateOne({_id:projectMongoId}, {$pull:{containers: containerMongoId}});
     if(deleteContainerIdFromProject.modifiedCount === 0) throw "Fail to remove container id from project";
-    const deleteTaskIdFromProject = await projectCollection.updateOne({_id: projectMongoId}, {$pull: {tasks: {$in: taskToRemove}}});
-    if(deleteTaskIdFromProject.modifiedCount === 0) throw "Fail to delete task if from project";
+    if(taskToRemove.length > 0) {
+        const deleteTaskIdFromProject = await projectCollection.updateOne({_id: projectMongoId}, {$pull: {tasks: {$in: taskToRemove}}});
+        if(deleteTaskIdFromProject.modifiedCount === 0) throw "Fail to delete task id from project";
+    }
     const taskCollection = await tasks();
     if(taskToRemove.length > 0) {
         for(let taskId of taskToRemove) {

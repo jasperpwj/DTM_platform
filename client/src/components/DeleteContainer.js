@@ -22,9 +22,9 @@ const EditContainer = (props, ref) => {
     };
     const handleSubmit = (e) => {
         containerService.deleteContainer(containerInfo).then(res => {
-            console.log(res);
-            window.location.reload();
-        })
+            console.log(res)
+        });
+        window.location.reload();
     };
 
     return (
