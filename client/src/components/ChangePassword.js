@@ -22,16 +22,9 @@ export default function ChangePasswordFormDialog() {
         password:"",
         password_check:"",
     });
-    const [values, setValues] = React.useState({
-        ori_password:"",
-        password:"",
-        password_check:"",
-        showPassword: false
-    });
     const [formInfo, setFormInfo] = useState(initialInfo);
-
     const handleClickOpen = () => {
-        setEmpty(false)
+        setEmpty(false);
         setWrongPwd(false);
         setDiffInput(false);
         setOpen(true);

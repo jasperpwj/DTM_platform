@@ -14,6 +14,7 @@ import Tasks from "./components/Tasks";
 import ProjectDashboard from "./components/ProjectDashboard";
 import ProjectHistory from "./components/ProjectHistory";
 import NotFoundPage from "./components/NotFoundPage";
+import ProjectIssues from "./components/ProjectIssues";
 const authService = require("./services/auth.service");
 
 function App() {
@@ -36,6 +37,7 @@ function App() {
                               <Route exact path='/projects/:projectId/tasks' component={Tasks}/>
                               <Route exact path='/projects/:projectId/dashboard' component={ProjectDashboard}/>
                               <Route exact path='/projects/:projectId/history' component={ProjectHistory}/>
+                              <Route exact path='/projects/:projectId/issues' component={ProjectIssues}/>
                               <Route path="*" component={NotFoundPage}/>
                           </Switch>
                       </div>):(

@@ -10,11 +10,12 @@ import TableHead from '@material-ui/core/TableHead';
 import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
 import Typography from "@material-ui/core/Typography";
+import EditTaskForm from "./EditTaskForm";
 import DeleteTask from "./DeleteTask";
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import Grid from "@material-ui/core/Grid";
 import Menu from "@material-ui/core/Menu";
-import TurnIntoIssues from "./TurnIntoIssues";
+import TaskCompleted from "./TaskCompleted";
 const projectService = require("../services/projects.service");
 const taskService = require("../services/tasks.service");
 
@@ -69,6 +70,7 @@ export default function CompletedTasks(props) {
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
     };
+
     const handleChangeRowsPerPage = (event) => {
         setRowsPerPage(+event.target.value);
         setPage(0);
@@ -88,7 +90,7 @@ export default function CompletedTasks(props) {
             .catch(err => {console.log(err)})
     },[projectId]);
     useEffect(() => {
-        taskService.getCompletedTasksByProjectId(projectId)
+        taskService.getIssuesByProjectId(projectId)
             .then(res => {setTasks(res);})
             .catch(err => {console.log(err)})
     },[projectId]);
@@ -147,7 +149,8 @@ export default function CompletedTasks(props) {
                     >
                         {openTaskMore && (
                             <div>
-                                <TurnIntoIssues value={{taskId: targetTaskId}} ref={taskRef}/>
+                                <EditTaskForm  id={targetTaskId} ref={taskRef}/>
+                                <TaskCompleted value={{taskId: targetTaskId}} ref={taskRef}/>
                                 <DeleteTask value={{projectId: projectId, taskId: targetTaskId}} ref={taskRef}/>
                             </div>
                         )}
@@ -156,7 +159,7 @@ export default function CompletedTasks(props) {
             ):(
                 <Grid container item justify='center' alignContent='center'>
                     <Grid container justify='center' alignContent='center' className={classes.emptyContainer}>
-                        <Typography variant="h5" align='center'>You have no completed tasks.</Typography>
+                        <Typography variant="h5" align='center'>You have no issue.</Typography>
                     </Grid>
                 </Grid>
             )}

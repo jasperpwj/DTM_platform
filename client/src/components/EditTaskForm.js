@@ -10,12 +10,24 @@ const taskService = require("../services/tasks.service");
 const EditTask = (props, ref) => {
     const taskId = props.id;
     const [task, setTask] = useState(null);
+    useEffect(()=> {
+        if(task === null) {
+            console.log("empty task")
+            taskService.getTaskById(taskId).then(res => {
+                setTask(res);
+            }).catch(err => console.log(err))
+        }
+    },[taskId]);
     const initialTaskContent = Object.freeze( {
         taskId: taskId,
         title: task && task.title,
         content: task && task.content,
     });
-    const [taskContent, setTaskContent] = useState(initialTaskContent);
+    const [taskContent, setTaskContent] = useState({
+        taskId: taskId,
+        title: task && task.title,
+        content: task && task.content,
+    });
     const [openDialog, setOpenDialog] =useState(false);
     const [emptyInput, setEmptyInput] = useState(false);
 
@@ -24,8 +36,8 @@ const EditTask = (props, ref) => {
         setOpenDialog(true);
     };
     const handleClose = () => {
-        setOpenDialog(false);setTaskContent(initialTaskContent);
-
+        setOpenDialog(false);
+        setTaskContent(initialTaskContent);
     };
     const handleContentChange = (e) => {
         if(e.target.id) {
@@ -36,27 +48,25 @@ const EditTask = (props, ref) => {
         }
     };
     useEffect(() => {
-        if(taskContent.content === "" || taskContent.title === "") {
+        if(taskContent.content === "" || taskContent.title === "" || taskContent.content === null || taskContent.title === null) {
             setEmptyInput(true);
         } else {
             setEmptyInput(false);
         }
-    });
-
-    useEffect(()=> {
-        taskService.getTaskById(taskId).then(res => {
-            setTask(res);
-        }).catch(err => console.log(err))
-    },[taskId]);
+    },[taskContent]);
 
     const handleSubmit = (e) => {
-        e.preventDefault();
+
         taskService.editTask(taskContent.taskId, taskContent.title, taskContent.content)
             .then(res => {
             return res;})
             .catch(err => {console.log(err)});
         window.location.reload();
     };
+    console.log("edit task")
+    console.log(task);
+    // console.log(initialTaskContent)
+    // console.log(taskContent)
     return (
         <React.Fragment>
             <MenuItem
@@ -85,24 +95,21 @@ const EditTask = (props, ref) => {
                                 margin='dense'
                                 id='title'
                                 fullWidth
-                                defaultValue={task && task.title}
+
                                 variant='outlined'
                                 onChange={handleContentChange}
-
                             />
                             <Typography component='h2' variant='h6'>Task Content: </Typography>
                             <TextField
-
                                 required
                                 margin='dense'
                                 id='content'
                                 fullWidth
-                                defaultValue={task && task.content}
+                                defaultValue={initialTaskContent && initialTaskContent.content}
                                 rows='4'
                                 multiline
                                 variant='outlined'
                                 onChange={handleContentChange}
-
                             />
                         </Grid>
                     </form>
