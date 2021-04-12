@@ -66,8 +66,8 @@ async function getTasksByProjectId(req, res) {
     const project = await projectsCollection.findOne({_id: ObjectId.createFromHexString(req.params.projectId)});
     if(!project) throw `Fail to find project by project Id: ${req.body.projectId}`;
     const tasksCollection = await tasks();
-    const usersCollection = await users()
-;    let taskArray = [];
+    const usersCollection = await users();    
+    let taskArray = [];
     if(project.tasks.length > 0) {
         for(let taskId of project.tasks) {
             let taskObj = await tasksCollection.findOne({_id: taskId});
@@ -272,7 +272,7 @@ async function completeTask(req, res) {
     };
     const updatedStatus = await tasksCollection.updateOne({_id: ObjectId.createFromHexString(req.body.taskId)},{$set: taskToBeUpdated});
     if(updatedStatus.modifiedCount === 0) throw "Fail to change the task status into completed";
-    console.log(taskObj)
+    // console.log(taskObj)
 
     return res.status(200).send({message: "Change the task status into completed successfully"});
 }
@@ -313,6 +313,30 @@ Steps: 1. change task status into issue
 
 }
 
+async function getAllTasksByProjectIdList(req, res) {
+    let taskArray = [];
+    for (let i = 0; i < req.body.length; i++){
+        const projectsCollection = await projects();
+        const project = await projectsCollection.findOne({_id: ObjectId.createFromHexString(req.body[i])});
+        if(!project) throw `Fail to find project by project Id`;
+        const tasksCollection = await tasks();
+        if(project.tasks.length > 0) {
+            for(let taskId of project.tasks) {
+                let taskObj = await tasksCollection.findOne({_id: taskId});
+                let taskContent = {
+                    _id: taskObj._id,
+                    title: taskObj.title,
+                    content: taskObj.content,
+                    createDate: taskObj.createDate,
+                    status: taskObj.status,
+                };
+                taskArray.push(taskContent);
+            }
+        }
+        return res.status(200).json(taskArray);
+    }
+}
+
 module.exports = {
     createTask,
     getTaskById,
@@ -324,4 +348,5 @@ module.exports = {
     deleteTask,
     completeTask,
     turnTaskIntoIssue,
+    getAllTasksByProjectIdList,
 };

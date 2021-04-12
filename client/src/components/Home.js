@@ -18,7 +18,7 @@ const useStyles = makeStyles((theme) => ({
         // backgroundColor: "#64b5f6",
         backgroundImage: `url(${Background})`,
         backgroundSize: 'cover',
-        minWidth:1000
+        minWidth:1500
     },
 
     content: {
@@ -125,15 +125,10 @@ export default function Home(props) {
                             <img src={test} width="200" height="100"/>           
                             </Typography>
 
-                            
                         </Paper>
                         <br></br>
                         <br></br>
                         <br></br>
-                        {/* <img src={test} /> */}
-
-
-
 
                 </ThemeProvider>
             </main>

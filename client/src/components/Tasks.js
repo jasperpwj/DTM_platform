@@ -92,13 +92,12 @@ export default function Tasks(props) {
             })
             .catch(err => {console.log(err)})
     },[projectId]);
-
+    
     useEffect(() => {
         taskService.getTasksByProjectId(projectId)
             .then(res => {setTasks(res);})
             .catch(err => {console.log(err)})
     },[projectId]);
-
     return (
         <div className={classes.root}>
             <ProjectMenuBar value={{projectName: projectContent && projectContent.projectName, projectId: projectId}}/>
