@@ -15,6 +15,7 @@ import FolderRoundedIcon from '@material-ui/icons/FolderRounded';
 import HomeRoundedIcon from '@material-ui/icons/HomeRounded';
 import DashboardRoundedIcon from '@material-ui/icons/DashboardRounded';
 import ExitToAppRoundedIcon from '@material-ui/icons/ExitToAppRounded';
+import NotificationsIcon from '@material-ui/icons/Notifications';
 import Link from "@material-ui/core/Link";
 const authService = require("../../services/auth.service");
 
@@ -164,6 +165,12 @@ export default function TopNavBar(props) {
                         <ListItem button key='dashboard'>
                             <ListItemIcon><DashboardRoundedIcon /> </ListItemIcon>
                             <ListItemText primary='Dashboard' />
+                        </ListItem>
+                    </Link>
+                    <Link href='/invitation'>
+                        <ListItem button key='invitation'>
+                            <ListItemIcon><NotificationsIcon /> </ListItemIcon>
+                            <ListItemText primary='Invitation' />
                         </ListItem>
                     </Link>
                     <Divider/>

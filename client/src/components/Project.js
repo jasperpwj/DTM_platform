@@ -16,6 +16,10 @@ import {DragDropContext, Droppable, Draggable} from 'react-beautiful-dnd';
 import AddContainer from "./AddContainer";
 import EditContainer from "./EditContainer";
 import DeleteContainer from "./DeleteContainer";
+import Link from "@material-ui/core/Link";
+import TextField from "@material-ui/core/TextField";
+import ProjectMembers from "./ProjectMembers";
+import AddMember from "./AddMember";
 import EditTaskForm from "./EditTaskForm";
 import DeleteTask from "./DeleteTask";
 import ProjectMenuBar from "./ProjectMenuBar";
@@ -206,6 +210,7 @@ export default function Project(props) {
     const containerRef = useRef(anchorEl);
     const taskRef = useRef(taskAnchorEl);
     const open = Boolean(anchorEl);
+    const tapRef = useRef(anchorEl);
     const openTaskMore = Boolean(taskAnchorEl);
     const initTaskInfo = Object.freeze({
         containerId: "",
@@ -257,6 +262,7 @@ export default function Project(props) {
             setEmptyInput(true);
         }
     },[newTask]);
+
     useEffect(() => {
         projectService.getProjectContent(projectId).then(res => {
             setProjectContent(res);
@@ -291,6 +297,32 @@ export default function Project(props) {
                     />
                 </div>
                 <Button size="small" startIcon={<SettingsIcon/>}>No Fun</Button>
+                <Grid container item xs justify="flex-end" spacing={1}>
+                    <Grid item>
+                        <AvatarGroup spacing={2}>
+                            <Avatar className={classes.avatar}>M</Avatar>
+                            <Avatar className={classes.avatar}>M</Avatar>
+                            <Avatar className={classes.avatar}>M</Avatar>
+                            <Avatar className={classes.avatar}>M</Avatar>
+                            <Avatar className={classes.avatar}>M</Avatar>
+                        </AvatarGroup>
+                    </Grid>
+                    <Grid item>
+                        <ProjectMembers id={projectId} ref={tapRef}/>
+                    </Grid>
+                    <Grid item>
+                        <AddMember id={projectId} ref={tapRef}/>
+                    </Grid>
+                    <Grid item>
+                        <Button size="small" startIcon={<SettingsIcon/>}>Setting</Button>
+                    </Grid>
+                </Grid>
+            </Grid>
+            <Grid container className={classes.button_group}>
+                <Button size="small"><Link to={{pathname: `/projects/${projectId}`}}>Project</Link></Button>
+                <Button size="small">Tasks</Button>
+                <Button size="small">Dashboard</Button>
+                <Button size="small">Timeline</Button>
             </Grid>
             <Grid container justify='center' className={classes.dragDropArea}>
                 {(emptyContainer)? (

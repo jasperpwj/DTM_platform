@@ -7,6 +7,7 @@ const authRoutes = require("./routes/auth.routes");
 const containerRoutes = require('./routes/containers.routes');
 const taskRoutes = require('./routes/tasks.routes');
 const projectsRoutes = require("./routes/projects.routes");
+const invitationRoutes = require("./routes/invitations.routes");
 const mongoose = require("mongoose");
 const cors = require("cors");
 
@@ -50,6 +51,7 @@ app.use("/users", userRoutes);
 app.use("/projects", projectsRoutes);
 app.use("/container", containerRoutes);
 app.use("/tasks", taskRoutes);
+app.use("/invitations", invitationRoutes);
 
 app.use("*", (req, res) => {
     res.status(404).json({error: "Page Not Found"})
