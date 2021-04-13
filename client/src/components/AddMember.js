@@ -8,8 +8,6 @@ import IconButton from "@material-ui/core/IconButton";
 import PersonAddIcon from '@material-ui/icons/PersonAdd';
 import TextField from "@material-ui/core/TextField";
 
-const projectService = require("../services/projects.service");
-const userService = require("../services/user.service");
 const invitationService = require("../services/invitations.service");
 
 const AddMember = (props, ref) => {
@@ -25,7 +23,7 @@ const AddMember = (props, ref) => {
 
     const handleChange = (e) => {
         e.preventDefault();
-        if(e.target.id && e.target.value) {
+        if (e.target.id && e.target.value) {
             setUserName(e.target.value);
         }
     }
@@ -33,16 +31,25 @@ const AddMember = (props, ref) => {
     const handleAddDeveloper = (e) => {
         e.preventDefault();
         if (props && props.id) {
-            // projectService.checkProjectMembers();
-            // userService.checkUserExist();
-            // userService.checkInvitation();
             const invitationInfo = {
                 projectId: props.id,
                 invType: "developer",
                 targetUsername: userName
             }
-            invitationService.sendInvitation(invitationInfo);
-            alert("Developer invitation sent successfully");
+            invitationService.sendInvitation(invitationInfo).then(r => {
+                if (!r.data.userExistValid) {
+                    alert("Username does not exist");
+                }
+                else if (!r.data.projMemberValid) {
+                    alert("User is already in the project members");
+                }
+                else if (!r.data.dupInvValid) {
+                    alert("Invitation has already been sent to the user");
+                }
+                else {
+                    alert("Developer invitation sent successfully");
+                }
+            });
         }
         else {
             alert("Error: project id not found");
@@ -52,16 +59,25 @@ const AddMember = (props, ref) => {
     const handleAddClient = (e) => {
         e.preventDefault();
         if (props && props.id) {
-            // projectService.checkProjectMembers();
-            // userService.checkUserExist();
-            // userService.checkInvitation();
             const invitationInfo = {
                 projectId: props.id,
                 invType: "client",
                 targetUsername: userName
             }
-            invitationService.sendInvitation(invitationInfo);
-            alert("Client invitation sent successfully");
+            invitationService.sendInvitation(invitationInfo).then(r => {
+                if (!r.data.userExistValid) {
+                    alert("Username does not exist");
+                }
+                else if (!r.data.projMemberValid) {
+                    alert("User is already in the project members");
+                }
+                else if (!r.data.dupInvValid) {
+                    alert("Invitation has already been sent to the user");
+                }
+                else {
+                    alert("Client invitation sent successfully");
+                }
+            });
         }
         else {
             alert("Error: project id not found");

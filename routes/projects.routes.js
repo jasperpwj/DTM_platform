@@ -15,5 +15,5 @@ router.patch("/change_project_status", [authJwt.verifyToken], projectController.
 
 router.patch("/edit_project", [authJwt.verifyToken], projectController.editProject);
 
-router.post("/project_owner", [authJwt.verifyToken], projectController.getProjectOwner);
+router.post("/project_member", [authJwt.verifyToken], projectController.getProjectMember);
 module.exports = router;

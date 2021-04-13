@@ -13,7 +13,10 @@ const invitationService = require("../services/invitations.service");
 
 const useStyles = makeStyles((theme) => ({
     table: {
-        minWidth: 650,
+        marginTop: 70,
+        marginLeft: 100,
+        width: 800,
+        minWidth: 600,
     },
     emptyRow: {
         height: 300,

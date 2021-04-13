@@ -12,28 +12,27 @@ import DeleteIcon from "@material-ui/icons/Delete";
 import IconButton from "@material-ui/core/IconButton";
 import PeopleIcon from '@material-ui/icons/People';
 import Grid from "@material-ui/core/Grid";
-import AddIcon from '@material-ui/icons/Add';
 const projectService = require("../services/projects.service");
 
 const ProjectMembers = (props, ref) => {
     const [open, setOpen] = useState(false);
     const [scroll, setScroll] = React.useState('paper');
-    const [author, setAuthor] = useState({});
+    const [author, setAuthor] = useState("");
     const [developers, setDevelopers] = useState([]);
     const [clients, setClients] = useState([]);
 
     useEffect(()=> {
         if (props && props.id) {
-            projectService.getProjectOwner({projectId: props.id}).then(res =>{
+            projectService.getProjectMember({projectId: props.id}).then(res =>{
                 if (res) {
-                    setAuthor(res.data);
+                    setAuthor(res.data.owner);
+                    setDevelopers(res.data.developers);
+                    setClients(res.data.clients);
                 }
                 else {
-                    alert("Error: project has no author");
+                    alert("Error: project has no members");
                 }
             })
-
-
         }
         else {
             alert("Error: project id failed to pass in");
@@ -48,9 +47,6 @@ const ProjectMembers = (props, ref) => {
         setOpen(false);
     };
 
-    // const authorList = authors.map((author) =>
-    //     <ListItem button key={author}><ListItemIcon><PersonIcon /></ListItemIcon>{author}</ListItem>);
-
     const developerList = developers.map((developer) =>
         <ListItem button key={developer}><ListItemIcon><PersonIcon /></ListItemIcon>{developer}</ListItem>);
 
@@ -61,13 +57,13 @@ const ProjectMembers = (props, ref) => {
         <div>
             <IconButton size="small" onClick={handleClickOpen}><PeopleIcon /></IconButton>
             <Dialog open={open} onClose={handleClose} aria-labelledby="Member" fullWidth={true}>
-                <DialogTitle id="Member">Member</DialogTitle>
+                <DialogTitle id="Member">Project Member</DialogTitle>
                 <DialogContent dividers={scroll === 'paper'}>
                     <Grid container spacing={3}>
                         <Grid item xs={4}>
                             <List>
                                 <h4>Owner</h4>
-                                <ListItem button key={author.owner}><ListItemIcon><PersonIcon /></ListItemIcon>{author.owner}</ListItem>
+                                <ListItem button key={author}><ListItemIcon><PersonIcon /></ListItemIcon>{author}</ListItem>
                             </List>
                         </Grid>
                         <Grid item xs={4}>
@@ -75,14 +71,12 @@ const ProjectMembers = (props, ref) => {
                                 <h4>Developer</h4>
                                 {developerList}
                             </List>
-                            {/* <Button startIcon={<AddIcon />} ></Button> */}
                         </Grid>
                         <Grid item xs={4}>
                             <List>
                                 <h4>Client</h4>
                                 {clientList}
                             </List>
-                            {/* <Button startIcon={<AddIcon />} ></Button> */}
                         </Grid>
                     </Grid>
                 </DialogContent>
