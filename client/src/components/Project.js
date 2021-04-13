@@ -1,18 +1,17 @@
 import React, {useState, useEffect, useRef} from 'react';
-import {makeStyles} from "@material-ui/core";
+import {fade, makeStyles} from "@material-ui/core";
 import Typography from "@material-ui/core/Typography";
 import Grid from "@material-ui/core/Grid";
-import Divider from "@material-ui/core/Divider";
 import Avatar from "@material-ui/core/Avatar";
 import Button from "@material-ui/core/Button";
-import PersonAddIcon from '@material-ui/icons/PersonAdd';
 import IconButton from "@material-ui/core/IconButton";
-import AvatarGroup from "@material-ui/lab/AvatarGroup";
 import SettingsIcon from '@material-ui/icons/Settings';
-import AppBar from "@material-ui/core/AppBar";
 import AddIcon from '@material-ui/icons/Add';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import Menu from '@material-ui/core/Menu';
+import TextField from "@material-ui/core/TextField";
+import SearchIcon from "@material-ui/icons/Search";
+import InputBase from "@material-ui/core/InputBase";
 import {DragDropContext, Droppable, Draggable} from 'react-beautiful-dnd';
 import AddContainer from "./AddContainer";
 import EditContainer from "./EditContainer";
@@ -21,39 +20,77 @@ import Link from "@material-ui/core/Link";
 import TextField from "@material-ui/core/TextField";
 import ProjectMembers from "./ProjectMembers";
 import AddMember from "./AddMember";
+import EditTaskForm from "./EditTaskForm";
+import DeleteTask from "./DeleteTask";
+import ProjectMenuBar from "./ProjectMenuBar";
+import TaskCompleted from "./TaskCompleted";
+import TurnIntoIssues from "./TurnIntoIssues";
+const projectService = require("../services/projects.service");
 const containerService = require("../services/container.service");
 const taskService = require("../services/tasks.service");
 
 const useStyles = makeStyles( (theme) => ({
     root: {
         display: 'block',
+        minWidth: 800,
         margin: theme.spacing(8,0,0,9),
         backgroundColor: "white",
-        // height: '100vh',
     },
-    title: {
+    toolbar: {
         padding: theme.spacing(2,2,1,2),
-        spacing: theme.spacing(1),
-        backgroundColor: "white",
+        spacing: theme.spacing(1) - 2,
+
     },
-    avatar: {
-        width: theme.spacing(3),
-        height: theme.spacing(3),
+    search: {
+        position: 'relative',
+        borderRadius: theme.shape.borderRadius,
+        backgroundColor: fade(theme.palette.common.white, 0.15),
+        '&:hover': {
+            backgroundColor: fade(theme.palette.common.white, 0.25),
+        },
+        marginLeft: 0,
+        width: '100%',
+        [theme.breakpoints.up('sm')]: {
+            marginLeft: theme.spacing(1),
+            width: 'auto',
+        },
+        border: "1px solid #e0e0e0",
+    },
+    searchIcon: {
+        padding: theme.spacing(0, 2),
+        height: '100%',
+        position: 'absolute',
+        pointerEvents: 'none',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    inputRoot: {
+        color: 'inherit',
+    },
+    inputInput: {
+        padding: theme.spacing(1, 1, 1, 0),
+        // vertical padding + font size from searchIcon
+        paddingLeft: `calc(1em + ${theme.spacing(4)}px)`,
+        transition: theme.transitions.create('width'),
+        width: '100%',
+        [theme.breakpoints.up('sm')]: {
+            width: '12ch',
+            '&:focus': {
+                width: '20ch',
+            },
+        },
     },
     taskCount: {
         width: theme.spacing(2) + 4,
         height: theme.spacing(2) + 4,
         backgroundColor: '#bf360c',
     },
-    button_group: {
-        backgroundColor: "white",
-        padding: theme.spacing(0,0,0,1),
-    },
     containersArea: {
         overflow: 'auto',
+
         height: '100vh',
         marginLeft: theme.spacing(2),
-        // backgroundColor: 'lightgrey',
     },
     containerArea: {
         height: '100vh',
@@ -65,19 +102,23 @@ const useStyles = makeStyles( (theme) => ({
     containerHead: {
         padding: theme.spacing(0,0,0,1),
         height: 50,
+        width: "100%",
         borderRadius: '8px 8px 0 0',
         backgroundColor: '#eeeeee',
     },
     containerTitle: {
         marginLeft: theme.spacing(1),
+        width: 330,
     },
     containerContent: {
         height: 'calc(100% - 53px)',
         width: 'calc(100%)',
         borderRadius: '0 0 8px 8px',
+        overflow: 'auto',
     },
     task: {
         userSelect: 'none',
+
         padding: theme.spacing(1),
         margin: theme.spacing(0,1,2,1),
         minHeight: '50px',
@@ -90,11 +131,6 @@ const useStyles = makeStyles( (theme) => ({
         marginTop: 50,
         borderRadius: '8px 8px 8px 8px',
         border: "2px dashed black",
-        // backgroundColor: "#f5f5f5",
-    },
-    test: {
-        backgroundColor: "lightblue",
-        height: '100%',
     },
     taskForm: {
         backgroundColor: 'lightyellow',
@@ -110,10 +146,17 @@ const onDragEnd = (result, containers, setContainers) => {
     if(source.droppableId !== destination.droppableId) {
         const sourceContainer = containers[source.droppableId];
         const destContainer = containers[destination.droppableId];
+        sourceContainer.taskCount -= 1;
+        destContainer.taskCount += 1;
         const sourceTasks = [...sourceContainer.tasks];
         const destTasks = [...destContainer.tasks];
         const [removed] = sourceTasks.splice(source.index, 1);
         destTasks.splice(destination.index, 0, removed);
+        taskService.updateDraggingTask(sourceContainer._id, destContainer._id,removed._id, source.index, destination.index)
+            .then(res => {
+                console.log(res)
+            })
+            .catch(e => console.log(e));
         setContainers({
             ...containers,
             [source.droppableId]: {
@@ -130,6 +173,9 @@ const onDragEnd = (result, containers, setContainers) => {
         const copiedTasks = [...container.tasks];
         const [removed] = copiedTasks.splice(source.index, 1);
         copiedTasks.splice(destination.index, 0, removed);
+        taskService.updateDraggingTask(container._id, container._id, removed._id, source.index, destination.index)
+            .then(res => console.log(res))
+            .catch(e => console.log(e));
         setContainers({
             ...containers,
             [source.droppableId]: {
@@ -144,24 +190,28 @@ const emptyCard = (projectId) => {
     return (
         <React.Fragment>
             <Typography >You don' have any container yet. Create one!</Typography>
-            <AddContainer  value={projectId}/>
+            <AddContainer value={projectId}/>
         </React.Fragment>
     )
 };
 
 export default function Project(props) {
-    const pathArray = props.location.pathname.split('/');
     const [containers, setContainers] = useState("");
     const classes = useStyles();
-    const [anchorEl, setAnchorEl] = React.useState(null);
+    const [anchorEl, setAnchorEl] = useState(null);
+    const [taskAnchorEl, setTaskAnchorEL] = useState(null);
     const [emptyContainer, setEmptyContainer] = useState(false);
-    const [projectId, setProjectId] = useState(pathArray[pathArray.length - 1]);
+    const [projectId] = useState(props.match.params.projectId);
+    const [projectContent, setProjectContent] = useState(null);
     const [targetContainerId, setTargetContainerId] = useState(null);
+    const [targetTaskId, setTargetTaskId] = useState(null);
     const [openTask, setOpenTask] = useState(false);
     const [emptyInput, setEmptyInput] = useState(true);
     const containerRef = useRef(anchorEl);
+    const taskRef = useRef(taskAnchorEl);
     const open = Boolean(anchorEl);
     const tapRef = useRef(anchorEl);
+    const openTaskMore = Boolean(taskAnchorEl);
     const initTaskInfo = Object.freeze({
         containerId: "",
         title: "",
@@ -175,6 +225,7 @@ export default function Project(props) {
     };
     const handleClose = () => {
         setAnchorEl(null);
+        setTaskAnchorEL(null);
     };
     const handleAddTask = (e) => {
         setOpenTask(true);
@@ -195,9 +246,13 @@ export default function Project(props) {
     };
     const handleSubmitNewTask = (e) => {
         e.preventDefault();
-        console.log(newTask);
-        taskService.createTask(newTask).then(res => {return res;}).catch(err => {console.log(err)});
+        taskService.createTask(projectId, newTask.containerId, newTask.title, newTask.content).then(res => {return res;}).catch(err => {console.log(err)});
         window.location.reload();
+    };
+    const handleOpenTaskMore = (e) => {
+        setTaskAnchorEL(e.currentTarget);
+        setTargetTaskId(e.currentTarget.attributes.id.value);
+        setTargetContainerId(e.currentTarget.attributes.value.value);
     };
 
     useEffect(()=> {
@@ -209,6 +264,9 @@ export default function Project(props) {
     },[newTask]);
 
     useEffect(() => {
+        projectService.getProjectContent(projectId).then(res => {
+            setProjectContent(res);
+        });
         containerService.getContainers(projectId).then(res => {
             if(Object.entries(res).length === 0) {
                 setEmptyContainer(true);
@@ -218,15 +276,27 @@ export default function Project(props) {
             }
         })
     }, [projectId]);
-
     return (
         <div className={classes.root}>
-            <Grid container className={classes.title}>
-                <Grid item xs>
-                    <Typography align="left" variant='h6'>
-                        Project Name
-                    </Typography>
+            <ProjectMenuBar value={{projectName: projectContent && projectContent.projectName, projectId: projectId}}/>
+            <Grid container className={classes.toolbar}>
+                <AddContainer value={projectId}/>
+                <Grid item style={{flexGrow: 1}}>
                 </Grid>
+                <div className={classes.search}>
+                    <div className={classes.searchIcon}>
+                        <SearchIcon />
+                    </div>
+                    <InputBase
+                        placeholder="Search…"
+                        classes={{
+                            root: classes.inputRoot,
+                            input: classes.inputInput,
+                        }}
+                        inputProps={{ 'aria-label': 'search' }}
+                    />
+                </div>
+                <Button size="small" startIcon={<SettingsIcon/>}>No Fun</Button>
                 <Grid container item xs justify="flex-end" spacing={1}>
                     <Grid item>
                         <AvatarGroup spacing={2}>
@@ -254,16 +324,10 @@ export default function Project(props) {
                 <Button size="small">Dashboard</Button>
                 <Button size="small">Timeline</Button>
             </Grid>
-            <Divider/>
-            <Grid container justify="center" className={classes.dragDropArea}>
-                <Grid item xs={12}>
-                    <AddContainer value={projectId} />
-                    <Typography >
-                        Page
-                    </Typography>
-                </Grid>
-                {(emptyContainer)? (<Grid container item className={classes.emptyCard} justify='center' alignContent='center'
-                >{emptyCard(projectId)}</Grid>): (
+            <Grid container justify='center' className={classes.dragDropArea}>
+                {(emptyContainer)? (
+                    <Grid container item className={classes.emptyCard} justify='center' alignContent='center'>{emptyCard(projectId)}</Grid>
+                ): (
                     <DragDropContext onDragEnd={result => onDragEnd(result,containers, setContainers)} >
                         <Grid container direction='row'  wrap='nowrap' className={classes.containersArea}>
                             {containers && Object.entries(containers).map(([id, container]) => {
@@ -349,9 +413,13 @@ export default function Project(props) {
                                                                             >
                                                                                 <Grid container item justify='space-between' alignItems='center'>
                                                                                     <Typography>{task.title}</Typography>
-                                                                                    <IconButton size='small' aria-label= {`task-more-${task._id}`}  id={task._id} onClick={()=> alert(task._id)}><MoreVertIcon/></IconButton>
+                                                                                    <IconButton size='small' aria-label= {`task-more-${task._id}`} value={container._id} id={task._id} onClick={handleOpenTaskMore}><MoreVertIcon/></IconButton>
                                                                                 </Grid>
-                                                                                <div style={{wordWrap: 'break-word'}}>{task.content}</div>
+                                                                                <Grid container wrap='nowrap' justify='center'>
+                                                                                    <Grid item xs>
+                                                                                        <Typography style={{wordWrap: 'break-word'}} >{task.content}</Typography>
+                                                                                    </Grid>
+                                                                                </Grid>
                                                                             </Grid>
                                                                         )
                                                                     }}
@@ -373,11 +441,30 @@ export default function Project(props) {
                                 open={open}
                                 onClose={handleClose}
                             >
-                                {open &&  (<EditContainer id={targetContainerId} ref={containerRef}/>)}
-                                {open && <DeleteContainer value={{containerId: targetContainerId, projectId: projectId}} ref={containerRef}/>}
+                                {open && (
+                                    <div>
+                                        <EditContainer id={targetContainerId} ref={containerRef}/>
+                                        <DeleteContainer value={{containerId: targetContainerId, projectId: projectId}} ref={containerRef}/>
+                                    </div>
+                                )}
+                            </Menu>
+                            <Menu
+                                id={targetTaskId}
+                                anchorEl={taskAnchorEl}
+                                keepMounted
+                                open={openTaskMore}
+                                onClose={handleClose}
+                            >
+                                {openTaskMore && (
+                                    <div>
+                                        <EditTaskForm id={targetTaskId} ref={taskRef}/>
+                                        <TaskCompleted value={{taskId: targetTaskId}} ref={taskRef}/>
+                                        <DeleteTask value={{projectId: projectId, taskId: targetTaskId}} ref={taskRef}/>
+                                        <TurnIntoIssues value={{taskId: targetTaskId}} ref={taskRef}/>
+                                    </div>
+                                )}
                             </Menu>
                         </Grid>
-
                     </DragDropContext>
                 )}
 

@@ -12,47 +12,50 @@ import MoreVertIcon from '@material-ui/icons/MoreVert';
 import IconButton from "@material-ui/core/IconButton";
 import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
+import AddProject from "./AddProject";
 import EditProjectFormDialog from "./EditProject";
-import {Link} from "react-router-dom";
+import { Link } from "react-router-dom";
 const projectService = require("../services/projects.service");
-const useStyles = makeStyles({
+const useStyles = makeStyles((theme) => ({
     table: {
         minWidth: 650,
     },
     emptyRow: {
         height: 300,
     }
-});
+}));
 
-export default function ClosedProjects(props) {
-    const [closedProject, setClosedProjects] = useState([]);
+export default function SearchedProjects(props) {
+    const [openProject, setOpenProjects] = useState([]);
     const [isEmptyProject, setIsEmptyProject] = useState(false);
-    const [anchorEl, setAnchorEl] = React.useState(null);
+    const [anchorEl, setAnchorEl] = useState(null);
     const [targetId, setTargetId] = useState(null);
     const open = Boolean(anchorEl);
     const classes = useStyles();
     const tapRef = useRef(anchorEl);
+    const [searchProject, setSearchProjects] = useState([]);
 
     useEffect(()=> {
-        projectService.getClosedProjects().then(res => {
+        projectService.getSearchProjects().then(res => {
             if(!(res.data.length)) {
                 setIsEmptyProject(true);
-                setClosedProjects(res.data);
+                setOpenProjects(res.data);
             } else {
                 setIsEmptyProject(false);
-                setClosedProjects(res.data);
+                setOpenProjects(res.data);
             }
         })
     }, []);
 
-    const handleClickMore = (event) => {
-        setAnchorEl(event.currentTarget);
-        setTargetId(event.currentTarget.attributes.id.value);
-    };
+    // const handleClickMore = (event) => {
+    //     setAnchorEl(event.currentTarget);
+    //     setTargetId(event.currentTarget.attributes.id.value);
+    // };
 
-    const handleCloseMore = () => {
-        setAnchorEl(null);
-    };
+    // const handleCloseMore = () => {
+    //     setAnchorEl(null);
+    // };
+
     const handleProjectStatusChange = (event) => {
         let changeStatus = {};
         changeStatus.operation = event.target.attributes.name && event.target.attributes.name.value;
@@ -65,7 +68,7 @@ export default function ClosedProjects(props) {
 
     return (
         <React.Fragment>
-            <TableContainer component={Paper}>
+            <TableContainer component={Paper} >
                 <Table className={classes.table} aria-label="project table">
                     {(!isEmptyProject)?(
                         <React.Fragment>
@@ -79,25 +82,28 @@ export default function ClosedProjects(props) {
                                 </TableRow>
                             </TableHead>
                             <TableBody>
-                                {closedProject && closedProject.map((project, index) => {
+                                {openProject && openProject.map((project, index) => {
                                     return (
                                         <TableRow key={project._id}>
-                                            <TableCell component="th" scope="row"><Link
-                                                to={{pathname:`/projects/${project._id}`,
-                                                    state: {projectId: project._id}
+                                            <TableCell component="th" scope="row">
+
+                                                <Link
+                                                to={{pathname:`/projects/${project._id}`
                                                 }}
-                                            >{project.projectName}</Link></TableCell>
+                                                >{project.projectName}
+                                                </Link>
+                                            </TableCell>
                                             <TableCell align="center" width={50}>{project.visibility}</TableCell>
                                             <TableCell align="center" width={150}>{project.lastUpdateTime}</TableCell>
                                             <TableCell align="center">{project.description}</TableCell>
                                             <TableCell align="right">
                                                 <IconButton
                                                     aria-label="more"
-                                                    aria-controls="project-menu"
+                                                    aria-controls="project-more-menu"
                                                     aria-haspopup="true"
                                                     id={project._id}
                                                     tabIndex={index}
-                                                    onClick={handleClickMore}
+                                                    // onClick={handleClickMore}
                                                 >
                                                     <MoreVertIcon/>
                                                 </IconButton>
@@ -110,16 +116,16 @@ export default function ClosedProjects(props) {
                                     anchorEl={anchorEl}
                                     keepMounted
                                     open={open}
-                                    onClose={handleCloseMore}
+                                    // onClose={handleCloseMore}
                                 >
                                     {open && (
                                         <MenuItem
                                             key={targetId}
                                             id={targetId}
-                                            name="open"
+                                            name="closed"
                                             onClick={handleProjectStatusChange}
                                         >
-                                            Open Project
+                                            Close Project
                                         </MenuItem>
                                     )}
                                     {open && (
@@ -132,7 +138,8 @@ export default function ClosedProjects(props) {
                         <TableBody>
                             <TableRow className={classes.emptyRow}>
                                 <TableCell align="center">
-                                    <Typography variant="h5">You haven't completed have any project.</Typography>
+                                    <Typography variant="h5">You Don't have any project yet. Create one!</Typography>
+                                    <AddProject/>
                                 </TableCell>
                             </TableRow>
                         </TableBody>

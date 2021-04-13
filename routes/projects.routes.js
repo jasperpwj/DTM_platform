@@ -11,9 +11,14 @@ router.get("/open_projects", [authJwt.verifyToken], projectController.getOpenPro
 
 router.get("/closed_projects", [authJwt.verifyToken], projectController.getClosedProjects);
 
+router.post("/getProjectContent", [authJwt.verifyToken], projectController.getProjectContent);
+
 router.patch("/change_project_status", [authJwt.verifyToken], projectController.changeProjectStatus);
 
 router.patch("/edit_project", [authJwt.verifyToken], projectController.editProject);
 
 router.post("/project_member", [authJwt.verifyToken], projectController.getProjectMember);
+
+router.post("/search_projects", [authJwt.verifyToken], projectController.getSearchProjects);
+
 module.exports = router;

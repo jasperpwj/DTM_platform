@@ -45,6 +45,7 @@ export default function OpenProjects(props) {
             }
         })
     }, []);
+
     const handleClickMore = (event) => {
         setAnchorEl(event.currentTarget);
         setTargetId(event.currentTarget.attributes.id.value);

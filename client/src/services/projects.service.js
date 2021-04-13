@@ -13,6 +13,14 @@ function getOpenProjects() {
         return res;
     })
 }
+function getProjectContent(projectId) {
+    let projectObj = {
+        projectId: projectId,
+    };
+    return axios.post(API_URL + "/getProjectContent", projectObj, {headers:authHeader()})
+        .then(res => {return res.data});
+}
+
 function getClosedProjects() {
     return axios.get(API_URL + "closed_projects", {headers:authHeader()}).then(res => {
         return res;
@@ -33,6 +41,12 @@ function getProjectMember(project) {
         return res;
     })
 }
+function getSearchProjects(searchWords) {
+    return axios.post(API_URL + "search_projects", searchWords, {headers:authHeader()}).then(res => {
+        return res;
+    })
+}
+
 export {
     createProject,
     getOpenProjects,
@@ -40,4 +54,6 @@ export {
     changeProjectStatus,
     editProjectInfo,
     getProjectMember,
+    getSearchProjects,
+    getProjectContent,
 }

@@ -3,7 +3,6 @@ const projects = mongoCollection.projects;
 const { ObjectId } = require("mongodb");
 const projectHelper = require("./projects.helper");
 
-
 async function addProject(req, res) {
     if (!req.body.projectName || typeof req.body.projectName !== 'string') throw 'name of project is empty or invalid input type';
     const projectCollection = await projects();
@@ -71,7 +70,6 @@ async function changeProjectStatus(req, res) {
     res.status(200).json({ message: "Project Status changes successfully." })
 }
 
-
 async function getProjectById(req, res) {
     // if (!id || typeof id !== "string") throw "invalid id is provided";
     const objId = ObjectId.createFromHexString(req.id);
@@ -94,18 +92,16 @@ async function editProject(req, res) {
     if (req.body.description) {
         editInfo.description = req.body.description;
     }
-
     if (req.body.status) {
         editInfo.status = req.body.status;
     }
-
-    editInfo.lastUpdateTime = new Date().toLocaleString();
+    editInfo.lastUpdateTime = new Date().toLocaleDateString();
     if (JSON.stringify(editInfo) !== '{}') {
         const editStatus = await projectCollection.updateOne({ _id: objId }, { $set: editInfo });
         if (editStatus.modifiedCount === 0) throw "Failed to edit project's info";
     }
 
-    return res.status(200).send({ message: "Edition of project info succeeded!" })
+    return res.status(200).send({message: "Edition of project info succeeded!"})
 }
 
 async function getProjectMember(req, res) {
@@ -148,6 +144,49 @@ async function getProjectMember(req, res) {
     });
 }
 
+async function getSearchProjects(req, res) {
+    // console.log(req.body) // input
+    // console.log(req.id); // user id
+    const projectId = await projectHelper.getProjectListByUserId(req.id);
+    const projects=[];
+    for(let i=0; i<projectId.length; i++) {
+        projects.push(await projectHelper.getProjectById(projectId[i].toString()));
+    }
+    const projectSearchedList = [];
+    if(projects.length !== 0 ) {        
+        for (i = 0; i < projects.length; i++){
+            if (projects[i].projectName.includes(req.body.inPut)) {
+                projectSearchedList.push(projects[i]);
+            }
+        }
+        if (projectSearchedList.length !== 0){
+            res.status(200).send(projectSearchedList);
+        }
+    } else {
+        return null;
+        const projectCollection = await projects();
+        let openProjects = [];
+        for(let project of projectList) {
+            const openProject = await projectCollection.findOne({_id: project._id, status: "open"});
+            if(openProject !== null) {
+                openProjects.push(openProject);
+            }
+        }
+        res.status(200).json(openProjects);
+    }
+}
+
+async function getProjectContent(req, res) {
+    const projectsCollection = await projects();
+    const project = await projectsCollection.findOne({_id: ObjectId.createFromHexString(req.body.projectId)});
+    if(!project) throw `Fail to find the project with id: ${req.body.projectId}`;
+    let returnInfo = {
+        projectName: project.projectName,
+        description: project.description,
+    };
+    return res.status(200).json(returnInfo);
+}
+
 module.exports = {
     addProject,
     getOpenProjects,
@@ -156,4 +195,6 @@ module.exports = {
     getProjectById,
     editProject,
     getProjectMember,
+    getSearchProjects,
+    getProjectContent,
 };

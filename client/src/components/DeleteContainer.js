@@ -1,11 +1,9 @@
-import React, {useState, useEffect, forwardRef} from 'react';
+import React, {useState, forwardRef} from 'react';
 import MenuItem from "@material-ui/core/MenuItem";
 import Dialog from "@material-ui/core/Dialog";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import DialogContent from "@material-ui/core/DialogContent";
-import TextField from "@material-ui/core/TextField";
 import DialogActions from "@material-ui/core/DialogActions";
-import Grid from "@material-ui/core/Grid";
 import Button from "@material-ui/core/Button";
 import DialogContentText from '@material-ui/core/DialogContentText';
 const containerService = require('../services/container.service');
@@ -24,9 +22,9 @@ const EditContainer = (props, ref) => {
     };
     const handleSubmit = (e) => {
         containerService.deleteContainer(containerInfo).then(res => {
-            console.log(res);
-            window.location.reload();
-        })
+            console.log(res)
+        });
+        window.location.reload();
     };
 
     return (
