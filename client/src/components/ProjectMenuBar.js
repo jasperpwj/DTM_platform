@@ -4,8 +4,8 @@ import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import AvatarGroup from "@material-ui/lab/AvatarGroup";
 import Avatar from "@material-ui/core/Avatar";
-import IconButton from "@material-ui/core/IconButton";
-import PersonAddIcon from "@material-ui/icons/PersonAdd";
+import ProjectMembers from "./ProjectMembers";
+import AddMember from "./AddMember";
 import ProjectSettingButton from "./projectSettingButton";
 import Button from "@material-ui/core/Button";
 import Link from "@material-ui/core/Link";
@@ -48,7 +48,10 @@ export default function ProjectMenuBar(props) {
                         </AvatarGroup>
                     </Grid>
                     <Grid item>
-                        <IconButton size="small"><PersonAddIcon/></IconButton>
+                        <ProjectMembers id={props.value.projectId}/>
+                    </Grid>
+                    <Grid item>
+                        <AddMember id={props.value.projectId}/>
                     </Grid>
                     <Grid item>
                         <ProjectSettingButton value={props.value.projectId}/>
