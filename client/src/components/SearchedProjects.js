@@ -33,7 +33,6 @@ export default function SearchedProjects(props) {
     const open = Boolean(anchorEl);
     const classes = useStyles();
     const tapRef = useRef(anchorEl);
-    const [searchProject, setSearchProjects] = useState([]);
 
     useEffect(()=> {
         projectService.getSearchProjects().then(res => {

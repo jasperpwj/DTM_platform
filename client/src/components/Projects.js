@@ -11,14 +11,11 @@ import Box from "@material-ui/core/Box";
 import AddProject from "./AddProject";
 import OpenProjects from "./OpenProjects";
 import ClosedProjects from "./ClosedProjects";
-import SearchedProjects from "./SearchedProjects";
-import { Link } from "react-router-dom";
 import TextField from '@material-ui/core/TextField';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import { useHistory } from "react-router-dom";
 
 const projectService = require("../services/projects.service");
-const ITEM_HEIGHT = 48;
 const useStyles = makeStyles((theme) => ({
     root: {
         display: 'block',
@@ -112,7 +109,6 @@ export default function Projects() {
     const classes = useStyles();
     const [value, setValue] = useState(0);
     
-    const [anchorEl, setAnchorEl] = useState(null);
     const handleContentChange = (event, newValue) =>{
         setValue(newValue)
     };

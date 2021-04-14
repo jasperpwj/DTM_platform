@@ -11,6 +11,9 @@ import AdjustIcon from '@material-ui/icons/Adjust';
 import { Animation } from '@devexpress/dx-react-chart';
 import { createMuiTheme, responsiveFontSizes, ThemeProvider } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
+import Grid from '@material-ui/core/Grid';
+import {VictoryPie} from 'victory';
+import ReactDOM from 'react-dom';
 
 const projectService = require("../services/projects.service");
 const taskService = require("../services/tasks.service");
@@ -18,6 +21,12 @@ const taskService = require("../services/tasks.service");
 const useStyles = makeStyles((theme) => ({
     root: {
         display: 'flex',
+        flexWrap: 'wrap',
+        '& > *': {
+        margin: theme.spacing(1),
+        width: theme.spacing(16),
+        height: theme.spacing(16),
+        },
     },
 
     content: {
@@ -28,11 +37,19 @@ const useStyles = makeStyles((theme) => ({
     },
 
     paper: {
+        padding: 20,
         marginLeft: '5%',
-    }
+        height: 200,
+        width: 500,
+    },
+
+    chart: {
+        outerRadius: 10
+    },
 }));
 let theme = createMuiTheme();
 theme = responsiveFontSizes(theme);
+
 export default function DashboardPage() {
     const classes = useStyles();
     
@@ -40,6 +57,7 @@ export default function DashboardPage() {
     const projectIdList = [];
     const [openProject, setOpenProjects] = useState([]);
     useEffect(()=> {
+        console.log(1)
         projectService.getOpenProjects().then(res => {
             if(!(res.data.length)) {
                 setOpenProjects(res.data);
@@ -53,8 +71,8 @@ export default function DashboardPage() {
         projectIdList.push(openProject[i]._id)
     }
 
-
     useEffect(() => {
+        console.log(2)
         taskService.getAllTasksByProjectIdList(projectIdList)
             .then(res => {setTasks(res);})
             .catch(err => {console.log(err)})
@@ -63,7 +81,7 @@ export default function DashboardPage() {
     let issue = 0;
     let completed = 0;
     let active = 0;
-
+    console.log(tasks)
     // count tasks
     if (tasks.length !== 0) {
         for (let i = 0; i < tasks.length; i++) {
@@ -82,37 +100,66 @@ export default function DashboardPage() {
     // console.log(completed)
     // console.log(active)
 
-    const data = [
-        { region: 'active', val: active },
-        { region: 'completed', val: completed },
-        { region: 'issue', val: issue },
+    const data2 = [
+        { x: "activeTask", y: active },
+        { x: "completedTask", y: completed },
+        { x: "issue", y: issue },
     ];
+
+    console.log(openProject)
+    const projectData = [
+        {projectName: '', initial_Date: '', lastUpdatedTime:'', status: ''}
+    ]
+    for (let i = 0; i < openProject.length; i++) {
+        projectData.push({projectName:openProject[i].projectName, initial_Date:openProject[i].initial_Date, lastUpdatedTime:openProject[i].lastUpdatedTime, status: openProject[i].status});
+    }
+    // console.log(projectData && projectData[0].projectName)
 
 
     return (
         <div className={classes.root}>
             <main className={classes.content}>
                 <div className={classes.toolbar}>
-                    <Paper elevation={0} className={classes.paper}>
-                        <Chart
-                            data={data}
-                        >
-                        <PieSeries
-                            valueField="val"
-                            argumentField="region"
-                            innerRadius={0.5}
-                        />
-                        <Title
-                            text="All Tasks in your account"
-                        />
-                        <Animation />
-                        </Chart>
-                        <br></br>
-                        <AdjustIcon fontSize = "small" style={{ color: green[400] }} /> Issue
-                        <AdjustIcon fontSize = "small" style={{ color: orange[600] }} /> completed
-                        <AdjustIcon fontSize = "small" style={{ color: blue[500] }} /> active
-                    </Paper>
-                    
+                    <Grid container direction="row" justify="center" alignItems="center" spacing={5}>
+                        <Grid item align='left'>
+                            <Paper elevation={20} className={classes.paper}>
+                                <Grid container wrap="nowrap" spacing={2}>
+                                Project Name: {projectData && projectData[0].projectName} <br></br>
+                                Initial Date: {projectData && projectData[0].initial_Date} <br></br>
+                                LastUpdated Time：{projectData && projectData[0].lastUpdatedTime} <br></br>
+                                Project Status: {projectData && projectData[0].status} <br></br>
+                                Tasks:
+                                <VictoryPie
+                                    cornerRadius={({ datum }) => datum.y * 2}
+                                    innerRadius={20}
+                                    padAngle={({ datum }) => datum.y}
+                                    colorScale={["#FFCCCC", "#FF99CC", "#CCCCFF"]}
+                                    data={data2}
+                                    height={250}
+                                />
+                                </Grid>
+                            </Paper>
+                        </Grid>
+                        <Grid item align='left'>
+                            <Paper elevation={20} className={classes.paper}>
+                                <Grid container wrap="nowrap" spacing={2}>
+                                Project Name: {projectData[0].projectName} <br></br>
+                                Initial Date: {projectData[0].initial_Date} <br></br>
+                                LastUpdated Time：{projectData[0].lastUpdatedTime} <br></br>
+                                Project Status: {projectData[0].status} <br></br>
+                                Tasks:
+                                <VictoryPie
+                                    cornerRadius={({ datum }) => datum.y * 2}
+                                    innerRadius={20}
+                                    padAngle={({ datum }) => datum.y}
+                                    colorScale={["#FFCCCC", "#FF99CC", "#CCCCFF"]}
+                                    data={data2}
+                                    height={250}
+                                />
+                                </Grid>
+                            </Paper>
+                        </Grid>
+                    </Grid>
                 </div>
             </main>
         </div>
