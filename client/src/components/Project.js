@@ -206,6 +206,7 @@ export default function Project(props) {
     const containerRef = useRef(anchorEl);
     const taskRef = useRef(taskAnchorEl);
     const open = Boolean(anchorEl);
+    const tapRef = useRef(anchorEl);
     const openTaskMore = Boolean(taskAnchorEl);
     const initTaskInfo = Object.freeze({
         containerId: "",
@@ -257,6 +258,7 @@ export default function Project(props) {
             setEmptyInput(true);
         }
     },[newTask]);
+
     useEffect(() => {
         projectService.getProjectContent(projectId).then(res => {
             setProjectContent(res);

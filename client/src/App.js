@@ -14,6 +14,7 @@ import Tasks from "./components/Tasks";
 import ProjectDashboard from "./components/ProjectDashboard";
 import ProjectHistory from "./components/ProjectHistory";
 import NotFoundPage from "./components/NotFoundPage";
+import Invitation from "./components/Invitation";
 import ProjectIssues from "./components/ProjectIssues";
 const authService = require("./services/auth.service");
 
@@ -34,6 +35,7 @@ function App() {
                               <Route exact path="/projects" component={Projects}/>
                               <Route exact path="/dashboard" component={DashboardPage}/>
                               <Route exact path='/projects/:projectId' component={Project}/>
+                              <Route exact path='/invitation' component={Invitation}/>
                               <Route exact path='/projects/:projectId/tasks' component={Tasks}/>
                               <Route exact path='/projects/:projectId/dashboard' component={ProjectDashboard}/>
                               <Route exact path='/projects/:projectId/history' component={ProjectHistory}/>

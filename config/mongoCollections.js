@@ -17,5 +17,6 @@ module.exports = {
     users: getCollection("users"),
     projects: getCollection("projects"),
     containers: getCollection("containers"),
-    tasks: getCollection("tasks")
+    tasks: getCollection("tasks"),
+    invitations: getCollection("invitations")
 };

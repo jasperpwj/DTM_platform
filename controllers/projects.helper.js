@@ -35,10 +35,19 @@ async function getProjectById(projectId) {
     return project;
 }
 
+async function getUserById(userId) {
+    const userMongoId = ObjectId.createFromHexString(userId);
+    const userCollection = await users();
+    const user = await userCollection.findOne({_id:userMongoId});
+    if(!user) throw 'No user found';
+    return user;
+}
+
 
 module.exports = {
     getProjectListByUserId,
     addProjectIdToUser,
     getProjectById,
+    getUserById,
 };
 

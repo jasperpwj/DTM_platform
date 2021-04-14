@@ -36,6 +36,11 @@ function editProjectInfo(project) {
         return res;
     })
 }
+function getProjectMember(project) {
+    return axios.post(API_URL + "project_member", project, {headers:authHeader()}).then(res => {
+        return res;
+    })
+}
 function getSearchProjects(searchWords) {
     return axios.post(API_URL + "search_projects", searchWords, {headers:authHeader()}).then(res => {
         return res;
@@ -48,6 +53,7 @@ export {
     getClosedProjects,
     changeProjectStatus,
     editProjectInfo,
+    getProjectMember,
     getSearchProjects,
     getProjectContent,
 }
