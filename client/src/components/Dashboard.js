@@ -9,13 +9,15 @@ const projectService = require("../services/projects.service");
 
 const useStyles = makeStyles((theme) => ({
     root: {
-        display: 'flex',
-        flexWrap: 'wrap',
+        display: "flex",
+        // flexGrow: 1,
+        flexWrap: "wrap",
     },
 
     content: {
         flexGrow: 1,
-        marginTop: theme.spacing(8),
+        marginTop: theme.spacing(6),
+        flexWrap: "wrap",
     },
 
     paper: {
@@ -24,9 +26,24 @@ const useStyles = makeStyles((theme) => ({
         width: 500,
         height: 200,
         marginLeft: "7%",
+        textAlign: "left",
     },
+    font1: {
+        fontFamily: 'Raleway',
+        color: "gold",
+    },
+    font2: {
+        fontFamily: 'Raleway',
+        color: "orange",
+    },
+    font3: {
+        fontFamily: 'Raleway',
+        color: "tomato",
+    }
 }));
-let theme = createMuiTheme();
+let theme = createMuiTheme(
+
+);
 theme = responsiveFontSizes(theme);
 
 export default function DashboardPage() {
@@ -48,9 +65,9 @@ export default function DashboardPage() {
                 {data && data.map((project) => {
                     return (
                         <Paper elevation={20} className={classes.paper}>
-                            <Grid item xs container spacing={1}>
-                                <Grid item xs>
-                                    <Typography variant="body1">
+                            <Grid container spacing={1} direction="row" justify="flex-start">
+                                <Grid item> 
+                                    <Typography variant="h6" > 
                                         Project Name: {project.projectName}
                                     </Typography>
                                     <Typography variant="body1">
@@ -60,21 +77,27 @@ export default function DashboardPage() {
                                         Updated Date：{project.lastUpdateTime}
                                     </Typography>
                                     <Typography variant="body1">
-                                        Project Status: {project.status}
+                                        Status: {project.status}
                                     </Typography>
                                     <Typography variant="body1">
-                                        Project Visibility: {project.visibility}
+                                        Visibility: {project.visibility}
                                     </Typography>
-                                    <Typography variant="body1">
-                                        Tasks:
+                                    <Typography variant="body1" className={classes.font1}>
+                                        Active Task: {project.activeTask}
+                                    </Typography>
+                                    <Typography variant="body1" className={classes.font2}>
+                                        Completed Task: {project.completedTask}
+                                    </Typography>
+                                    <Typography variant="body1" className={classes.font3}>
+                                        Issue: {project.issue}
                                     </Typography>
                                 </Grid>
-                                <Grid item>
+                                <Grid item>                                
                                     <VictoryPie
                                         cornerRadius={({ datum }) => datum.y * 2}
-                                        innerRadius={20}
-                                        padAngle={({ datum }) => datum.y}
-                                        colorScale={["#FFCCCC", "#FF99CC", "#CCCCFF"]}
+                                        innerRadius={40}
+                                        padAngle={({ datum }) => datum.y*2}
+                                        colorScale={["gold", "orange", "tomato"]}
                                         data={[
                                             { x: "activeTask", y: project.activeTask, label: " "},
                                             { x: "completedTask", y: project.completedTask, label: " " },
@@ -87,6 +110,9 @@ export default function DashboardPage() {
                         </Paper>
                     )
                 })}
+                <Paper elevation={20}>
+                    test
+                </Paper>
             </main>
         </div>
     )
