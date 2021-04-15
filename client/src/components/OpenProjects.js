@@ -64,7 +64,7 @@ export default function OpenProjects(props) {
         });
         window.location.reload();
     };
-
+    console.log(openProject)
     return (
         <React.Fragment>
             <TableContainer component={Paper} >

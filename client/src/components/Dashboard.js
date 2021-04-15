@@ -1,119 +1,119 @@
 import React, {useState, useEffect} from 'react';
 import {makeStyles} from "@material-ui/core";
-import { green, orange,blue } from '@material-ui/core/colors';
 import Paper from '@material-ui/core/Paper';
-import {
-    Chart,
-    PieSeries,
-    Title,
-} from '@devexpress/dx-react-chart-material-ui';
-import AdjustIcon from '@material-ui/icons/Adjust';
-import { Animation } from '@devexpress/dx-react-chart';
-import { createMuiTheme, responsiveFontSizes, ThemeProvider } from '@material-ui/core/styles';
+import { createMuiTheme, responsiveFontSizes } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
-
+import Grid from '@material-ui/core/Grid';
+import {VictoryPie} from 'victory';
 const projectService = require("../services/projects.service");
-const taskService = require("../services/tasks.service");
 
 const useStyles = makeStyles((theme) => ({
     root: {
-        display: 'flex',
+        display: "flex",
+        // flexGrow: 1,
+        flexWrap: "wrap",
+        minWidth: 900,
     },
 
     content: {
         flexGrow: 1,
-        marginTop: theme.spacing(8),
-        padding: theme.spacing(2),
-
+        marginTop: theme.spacing(6),
+        flexWrap: "wrap",
     },
 
+   
     paper: {
-        marginLeft: '5%',
+        padding: theme.spacing(3),
+        margin: theme.spacing(6),
+        width: 500,
+        maxheight: 200,
+        marginLeft: "7%",
+        textAlign: "left",
+    },
+    font1: {
+        fontFamily: 'Raleway',
+        color: "gold",
+    },
+    font2: {
+        fontFamily: 'Raleway',
+        color: "orange",
+    },
+    font3: {
+        fontFamily: 'Raleway',
+        color: "tomato",
     }
 }));
-let theme = createMuiTheme();
+let theme = createMuiTheme(
+
+);
 theme = responsiveFontSizes(theme);
+
 export default function DashboardPage() {
     const classes = useStyles();
-    
-    const [tasks, setTasks] = useState([]);
-    const projectIdList = [];
-    const [openProject, setOpenProjects] = useState([]);
+    const [data, setData] = useState();
     useEffect(()=> {
-        projectService.getOpenProjects().then(res => {
+        projectService.getDashboardData().then(res => {
             if(!(res.data.length)) {
-                setOpenProjects(res.data);
+                setData(res.data);
             } else {
-                setOpenProjects(res.data);
+                setData(res.data);
             }
         })
     }, []);
 
-    for (let i = 0; i < openProject.length; i++) {
-        projectIdList.push(openProject[i]._id)
-    }
-
-
-    useEffect(() => {
-        taskService.getAllTasksByProjectIdList(projectIdList)
-            .then(res => {setTasks(res);})
-            .catch(err => {console.log(err)})
-    },[projectIdList.length]);
-    
-    let issue = 0;
-    let completed = 0;
-    let active = 0;
-
-    // count tasks
-    if (tasks.length !== 0) {
-        for (let i = 0; i < tasks.length; i++) {
-            // console.log(tasks[i])
-            if (tasks[i].status === "active") {
-                active += 1                
-            } else if (tasks[i].status === "issue") {
-                issue += 1
-            } else if (tasks[i].status === "completed") {
-                completed += 1
-            }
-
-        }
-    }
-    // console.log(issue)
-    // console.log(completed)
-    // console.log(active)
-
-    const data = [
-        { region: 'active', val: active },
-        { region: 'completed', val: completed },
-        { region: 'issue', val: issue },
-    ];
-
-
     return (
         <div className={classes.root}>
             <main className={classes.content}>
-                <div className={classes.toolbar}>
-                    <Paper elevation={0} className={classes.paper}>
-                        <Chart
-                            data={data}
-                        >
-                        <PieSeries
-                            valueField="val"
-                            argumentField="region"
-                            innerRadius={0.5}
-                        />
-                        <Title
-                            text="All Tasks in your account"
-                        />
-                        <Animation />
-                        </Chart>
-                        <br></br>
-                        <AdjustIcon fontSize = "small" style={{ color: green[400] }} /> Issue
-                        <AdjustIcon fontSize = "small" style={{ color: orange[600] }} /> completed
-                        <AdjustIcon fontSize = "small" style={{ color: blue[500] }} /> active
-                    </Paper>
-                    
-                </div>
+                <Grid container>
+                {data && data.map((project) => {
+                    return (
+                        <Paper elevation={20} className={classes.paper}>
+                            <Grid container direction="row" justify="flex-start">
+                                <Grid item> 
+                                    <Typography variant="h6" > 
+                                        Project Name: {project.projectName}
+                                    </Typography>
+                                    <Typography variant="body1">
+                                        Initial Date: {project.initial_Date}
+                                    </Typography>
+                                    <Typography variant="body1">
+                                        Updated Date：{project.lastUpdateTime}
+                                    </Typography>
+                                    <Typography variant="body1">
+                                        Status: {project.status}
+                                    </Typography>
+                                    <Typography variant="body1">
+                                        Visibility: {project.visibility}
+                                    </Typography>
+                                    <Typography variant="body1" className={classes.font1}>
+                                        Active Task: {project.activeTask}
+                                    </Typography>
+                                    <Typography variant="body1" className={classes.font2}>
+                                        Completed Task: {project.completedTask}
+                                    </Typography>
+                                    <Typography variant="body1" className={classes.font3}>
+                                        Issue: {project.issue}
+                                    </Typography>
+                                </Grid>
+                                <Grid item>                                
+                                    <VictoryPie
+                                        cornerRadius={({ datum }) => datum.y * 2}
+                                        innerRadius={40}
+                                        padAngle={({ datum }) => datum.y*2}
+                                        colorScale={["gold", "orange", "tomato"]}
+                                        data={[
+                                            { x: "activeTask", y: project.activeTask, label: " "},
+                                            { x: "completedTask", y: project.completedTask, label: " " },
+                                            { x: "issue", y: project.issue, label: " " },
+                                        ]}
+                                        height={280}
+                                    />
+                                </Grid>
+                            </Grid>
+                        </Paper>
+                    )
+                })}
+                </Grid>
             </main>
         </div>
     )

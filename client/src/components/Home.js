@@ -1,5 +1,4 @@
 import React, {useState, useEffect}from "react";
-import TopNavBar from "./navigation/TopNavBar";
 import UnauthNavBar from "./navigation/UnauthNavBar";
 import {makeStyles,ThemeProvider} from "@material-ui/core";
 import Typography from "@material-ui/core/Typography";
@@ -50,13 +49,6 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 
-let sectionStyle = {
-    width: "100%",
-    height: "400px",
-  // makesure here is String确保这里是一个字符串，以下是es6写法
-    backgroundImage: `url(${Background})` 
-};
-
 export default function Home(props) {
     const classes = useStyles();
 
@@ -68,10 +60,6 @@ export default function Home(props) {
         }
     },[isAuthenticated]);
 
-
-    const navBarInfo = {
-        title: "Home"
-    };
     const navInfo = {
         button: "home"
     };

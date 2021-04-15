@@ -46,6 +46,11 @@ function getSearchProjects(searchWords) {
         return res;
     })
 }
+function getDashboardData() {
+    return axios.get(API_URL + "project_data", {headers:authHeader()}).then(res => {
+        return res;
+    })
+}
 
 export {
     createProject,
@@ -56,4 +61,5 @@ export {
     getProjectMember,
     getSearchProjects,
     getProjectContent,
+    getDashboardData,
 }
