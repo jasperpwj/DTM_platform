@@ -12,6 +12,7 @@ const useStyles = makeStyles((theme) => ({
         display: "flex",
         // flexGrow: 1,
         flexWrap: "wrap",
+        minWidth: 900,
     },
 
     content: {
@@ -20,11 +21,12 @@ const useStyles = makeStyles((theme) => ({
         flexWrap: "wrap",
     },
 
+   
     paper: {
-        padding: theme.spacing(2),
+        padding: theme.spacing(3),
         margin: theme.spacing(6),
         width: 500,
-        height: 200,
+        maxheight: 200,
         marginLeft: "7%",
         textAlign: "left",
     },
@@ -62,10 +64,11 @@ export default function DashboardPage() {
     return (
         <div className={classes.root}>
             <main className={classes.content}>
+                <Grid container>
                 {data && data.map((project) => {
                     return (
                         <Paper elevation={20} className={classes.paper}>
-                            <Grid container spacing={1} direction="row" justify="flex-start">
+                            <Grid container direction="row" justify="flex-start">
                                 <Grid item> 
                                     <Typography variant="h6" > 
                                         Project Name: {project.projectName}
@@ -110,9 +113,7 @@ export default function DashboardPage() {
                         </Paper>
                     )
                 })}
-                <Paper elevation={20}>
-                    test
-                </Paper>
+                </Grid>
             </main>
         </div>
     )
