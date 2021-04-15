@@ -1,5 +1,7 @@
 const mongoCollection = require("../config/mongoCollections");
 const projects = mongoCollection.projects;
+const tasks = mongoCollection.tasks;
+
 const { ObjectId } = require("mongodb");
 const projectHelper = require("./projects.helper");
 
@@ -164,15 +166,6 @@ async function getSearchProjects(req, res) {
         }
     } else {
         return null;
-        const projectCollection = await projects();
-        let openProjects = [];
-        for(let project of projectList) {
-            const openProject = await projectCollection.findOne({_id: project._id, status: "open"});
-            if(openProject !== null) {
-                openProjects.push(openProject);
-            }
-        }
-        res.status(200).json(openProjects);
     }
 }
 
@@ -187,6 +180,52 @@ async function getProjectContent(req, res) {
     return res.status(200).json(returnInfo);
 }
 
+async function getDashboardData(req, res) {
+    const projectList = await projectHelper.getProjectListByUserId(req.id);
+    if (!projectList.length) {
+        res.status(200).send(projectList);
+    } else {
+        const projectCollection = await projects();
+        let projectsData = [];
+        let data = [];
+        for (let project of projectList) {
+            const allProject = await projectCollection.findOne({ _id: project._id});
+            if (allProject !== null) {
+                projectsData.push(allProject);
+            }
+        }
+        for(let i = 0; i < projectsData.length; i++) {
+            let activeTask = 0;
+            let completedTask = 0;
+            let issue = 0;
+            if (projectsData[i].tasks.length !== 0){
+                for (let j = 0; j < projectsData[i].tasks.length; j++) {
+                    const task_id = projectsData[i].tasks[j]
+                    const tasksCollection = await tasks();
+                    let taskObj = await tasksCollection.findOne({_id: task_id});
+                    if (taskObj.status == 'active') {
+                        activeTask += 1;
+                    } else if (taskObj.status == 'completed') {
+                        completedTask += 1;
+                    } else if (taskObj.status === "issue") {
+                        issue += 1;
+                    }
+                }
+            }
+            data.push({projectName: projectsData[i].projectName, 
+                       status: projectsData[i].status, 
+                       initial_Date: projectsData[i].initial_Date.split(",")[0],
+                       lastUpdateTime: projectsData[i].lastUpdateTime,
+                       visibility: projectsData[i].visibility,
+                       activeTask: activeTask,
+                       completedTask: completedTask,
+                       issue: issue,
+            })
+        }
+        res.status(200).json(data);
+    }
+}
+
 module.exports = {
     addProject,
     getOpenProjects,
@@ -197,4 +236,5 @@ module.exports = {
     getProjectMember,
     getSearchProjects,
     getProjectContent,
+    getDashboardData,
 };

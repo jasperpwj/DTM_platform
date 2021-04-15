@@ -21,4 +21,6 @@ router.post("/project_member", [authJwt.verifyToken], projectController.getProje
 
 router.post("/search_projects", [authJwt.verifyToken], projectController.getSearchProjects);
 
+router.get("/project_data", [authJwt.verifyToken], projectController.getDashboardData);
+
 module.exports = router;
