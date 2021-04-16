@@ -52,7 +52,7 @@ export default function ProjectDashboard(props) {
 
         container_data.push({x: containers[key].containerName, y:containers[key].taskCount})
     }
-
+    console.log(container_data)
     return (
         <div className={classes.root}>
             <ProjectMenuBar value={{projectName: projectContent && projectContent.projectName, projectId: projectId}}/>
@@ -66,7 +66,6 @@ export default function ProjectDashboard(props) {
                     <VictoryBar
                         barRatio={0.8}
                         cornerRadius={{ topLeft: ({ datum }) => datum.x * 4 }}
-                        barWidth={({ index }) => index * 2 + 8}
                         style={{ data: { fill: "#CCCCFF" } }}
                         data={container_data}
                         height={10}
