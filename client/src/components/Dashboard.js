@@ -23,9 +23,9 @@ const useStyles = makeStyles((theme) => ({
 
    
     paper: {
-        padding: theme.spacing(3),
-        margin: theme.spacing(6),
-        width: 500,
+        padding: theme.spacing(2),
+        margin: theme.spacing(3),
+        width: 590,
         maxheight: 200,
         marginLeft: "7%",
         textAlign: "left",
@@ -106,9 +106,10 @@ export default function DashboardPage() {
                                             { x: "completedTask", y: project.completedTask, label: " " },
                                             { x: "issue", y: project.issue, label: " " },
                                         ]}
-                                        height={280}
+                                        height={290}
                                     />
                                 </Grid>
+                                
                             </Grid>
                         </Paper>
                     )
