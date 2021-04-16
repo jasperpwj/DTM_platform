@@ -3,7 +3,15 @@ import ProjectMenuBar from "./ProjectMenuBar";
 import {makeStyles} from "@material-ui/core";
 import Paper from '@material-ui/core/Paper';
 import {VictoryChart, VictoryTheme,VictoryBar} from 'victory';
-
+import {
+    Chart,
+    BarSeries,
+    Title,
+    ArgumentAxis,
+    ValueAxis,
+  } from '@devexpress/dx-react-chart-material-ui';
+  
+import { Animation } from '@devexpress/dx-react-chart';
 const projectService = require("../services/projects.service");
 const containerService = require("../services/container.service");
 const useStyles = makeStyles((theme) => ({
@@ -57,20 +65,24 @@ export default function ProjectDashboard(props) {
         <div className={classes.root}>
             <ProjectMenuBar value={{projectName: projectContent && projectContent.projectName, projectId: projectId}}/>
             
+
             <Paper elevation={0} className={classes.paper}>
-                <VictoryChart
-                    theme={VictoryTheme.material}
-                    domainPadding={20}
-                    height={200}
-                    >
-                    <VictoryBar
-                        barRatio={0.8}
-                        cornerRadius={{ topLeft: ({ datum }) => datum.x * 4 }}
-                        style={{ data: { fill: "#CCCCFF" } }}
-                        data={container_data}
-                        height={10}
-                    />
-                </VictoryChart>
+            <Chart
+                data={container_data}
+                >
+                <ArgumentAxis />
+                <ValueAxis max={7} />
+
+                <BarSeries
+                    valueField="y"
+                    argumentField="x"
+                    color="#CCCCFF"
+                    barWidth={0.8}
+
+                />
+                <Title text="Tasks in container" />
+                <Animation />
+                </Chart>
                 <b>ContainerName </b>
                 
             </Paper>
