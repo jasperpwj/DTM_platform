@@ -1,5 +1,5 @@
 import React from 'react';
-import {makeStyles} from "@material-ui/core";
+import { makeStyles } from "@material-ui/core";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import AvatarGroup from "@material-ui/lab/AvatarGroup";
@@ -13,13 +13,13 @@ import Divider from "@material-ui/core/Divider";
 
 const useStyles = makeStyles((theme) => ({
     title: {
-        padding: theme.spacing(2,2,1,2),
+        padding: theme.spacing(2, 2, 1, 2),
         spacing: theme.spacing(1),
         backgroundColor: "white",
     },
     button_group: {
         backgroundColor: "white",
-        padding: theme.spacing(0,0,0,1),
+        padding: theme.spacing(0, 0, 0, 1),
     },
     avatar: {
         width: theme.spacing(3),
@@ -29,6 +29,7 @@ const useStyles = makeStyles((theme) => ({
 
 export default function ProjectMenuBar(props) {
     const classes = useStyles();
+
     return (
         <React.Fragment>
             <Grid container className={classes.title}>
@@ -48,14 +49,16 @@ export default function ProjectMenuBar(props) {
                         </AvatarGroup>
                     </Grid>
                     <Grid item>
-                        <ProjectMembers id={props.value.projectId}/>
+                        <ProjectMembers id={props.value.projectId} value={{ userIdentity: props.value.userIdentity }} />
                     </Grid>
-                    <Grid item>
-                        <AddMember id={props.value.projectId}/>
-                    </Grid>
-                    <Grid item>
-                        <ProjectSettingButton value={props.value.projectId}/>
-                    </Grid>
+                    {(props.value.userIdentity === "owner") ? (
+                        <Grid item>
+                            <AddMember id={props.value.projectId} />
+                        </Grid>) : null}
+                    {(props.value.userIdentity === "owner" || props.value.userIdentity === "developer") ? (
+                        <Grid item>
+                            <ProjectSettingButton value={props.value.projectId} />
+                        </Grid>) : null}
                 </Grid>
             </Grid>
             <Grid container className={classes.button_group}>
@@ -65,7 +68,7 @@ export default function ProjectMenuBar(props) {
                 <Button size="small"><Link href={`/projects/${props.value.projectId}/issues`} >Issues</Link></Button>
                 <Button size="small"><Link href={`/projects/${props.value.projectId}/dashboard`} >Dashboard</Link></Button>
             </Grid>
-            <Divider/>
+            <Divider />
         </React.Fragment>
     )
 }

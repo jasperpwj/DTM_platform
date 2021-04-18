@@ -74,7 +74,7 @@ const ProjectMembers = (props, ref) => {
             alert("Please select a project member to delete");
         }
         else {
-            projectService.deleteProjectMember({projectId: props.id, username: selectedUser}).then(res => {
+            projectService.deleteProjectMember({ projectId: props.id, username: selectedUser }).then(res => {
                 if (res.data.memberDelete) {
                     setSelectedUser(null);
                     window.location.reload();
@@ -91,14 +91,14 @@ const ProjectMembers = (props, ref) => {
         <ListItem button
             key={developer}
             selected={selectedUser === developer}
-            className={ classes.selected }
+            className={classes.selected}
             onClick={(event) => handleListItemClick(event, developer)}><ListItemIcon><PersonIcon /></ListItemIcon>{developer}</ListItem>);
 
     const clientList = clients.map((client) =>
         <ListItem button
             key={client}
             selected={selectedUser === client}
-            className={ classes.selected }
+            className={classes.selected}
             onClick={(event) => handleListItemClick(event, client)}><ListItemIcon><PersonIcon /></ListItemIcon>{client}</ListItem>);
 
     return (
@@ -129,12 +129,13 @@ const ProjectMembers = (props, ref) => {
                     </Grid>
                 </DialogContent>
                 <DialogActions>
-                    <Button
-                        variant="contained"
-                        color="secondary"
-                        startIcon={<DeleteIcon />}
-                        onClick={handleDeleteUser}
-                    >Delete</Button>
+                    {(props.value.userIdentity === "owner") ? (
+                        <Button
+                            variant="contained"
+                            color="secondary"
+                            startIcon={<DeleteIcon />}
+                            onClick={handleDeleteUser}
+                        >Delete</Button>) : null}
                     <Button onClick={handleClose} variant="contained" color="primary">
                         Close
                     </Button>

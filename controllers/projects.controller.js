@@ -260,6 +260,29 @@ async function deleteProjectMember(req, res) {
     return res.status(200).json({ memberDelete: deleteResult});
 }
 
+async function getUserIdentity(req, res) {
+    const objId = ObjectId.createFromHexString(req.body.projectId);
+    const projectCollection = await projects();
+    const project = await projectCollection.findOne({ _id: objId });
+    if (!project) {
+        res.status(400).send({ message: "Project not found" })
+    }
+    if (project.owner === req.id) {
+        return res.status(200).json({ userIdentity: "owner" });
+    }
+    for (let developer of project.developers) {
+        if (developer === req.id) {
+            return res.status(200).json({ userIdentity: "developer" });
+        }
+    }
+    for (let client of project.clients) {
+        if (client === req.id) {
+            return res.status(200).json({ userIdentity: "client" });
+        }
+    }
+    return res.status(404).send({ message: "User not found" });
+}
+
 module.exports = {
     addProject,
     getOpenProjects,
@@ -272,4 +295,5 @@ module.exports = {
     getProjectContent,
     getDashboardData,
     deleteProjectMember,
+    getUserIdentity,
 };

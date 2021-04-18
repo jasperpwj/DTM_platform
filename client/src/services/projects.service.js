@@ -56,6 +56,13 @@ function deleteProjectMember(projectMember) {
         return res;
     })
 }
+function getUserIdentity(projectId) {
+    let projectObj = {
+        projectId: projectId,
+    };
+    return axios.post(API_URL + "get_user_identity", projectObj, {headers:authHeader()})
+        .then(res => {return res.data});
+}
 
 export {
     createProject,
@@ -68,4 +75,5 @@ export {
     getProjectContent,
     getDashboardData,
     deleteProjectMember,
+    getUserIdentity,
 }
