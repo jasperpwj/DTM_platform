@@ -51,6 +51,18 @@ function getDashboardData() {
         return res;
     })
 }
+function deleteProjectMember(projectMember) {
+    return axios.patch(API_URL + "delete_project_member", projectMember, {headers:authHeader()}).then(res => {
+        return res;
+    })
+}
+function getUserIdentity(projectId) {
+    let projectObj = {
+        projectId: projectId,
+    };
+    return axios.post(API_URL + "get_user_identity", projectObj, {headers:authHeader()})
+        .then(res => {return res.data});
+}
 
 export {
     createProject,
@@ -62,4 +74,6 @@ export {
     getSearchProjects,
     getProjectContent,
     getDashboardData,
+    deleteProjectMember,
+    getUserIdentity,
 }

@@ -103,7 +103,7 @@ async function editProject(req, res) {
         if (editStatus.modifiedCount === 0) throw "Failed to edit project's info";
     }
 
-    return res.status(200).send({message: "Edition of project info succeeded!"})
+    return res.status(200).send({ message: "Edition of project info succeeded!" })
 }
 
 async function getProjectMember(req, res) {
@@ -150,18 +150,18 @@ async function getSearchProjects(req, res) {
     // console.log(req.body) // input
     // console.log(req.id); // user id
     const projectId = await projectHelper.getProjectListByUserId(req.id);
-    const projects=[];
-    for(let i=0; i<projectId.length; i++) {
+    const projects = [];
+    for (let i = 0; i < projectId.length; i++) {
         projects.push(await projectHelper.getProjectById(projectId[i].toString()));
     }
     const projectSearchedList = [];
-    if(projects.length !== 0 ) {        
-        for (i = 0; i < projects.length; i++){
+    if (projects.length !== 0) {
+        for (i = 0; i < projects.length; i++) {
             if (projects[i].projectName.includes(req.body.inPut)) {
                 projectSearchedList.push(projects[i]);
             }
         }
-        if (projectSearchedList.length !== 0){
+        if (projectSearchedList.length !== 0) {
             res.status(200).send(projectSearchedList);
         }
     } else {
@@ -171,8 +171,8 @@ async function getSearchProjects(req, res) {
 
 async function getProjectContent(req, res) {
     const projectsCollection = await projects();
-    const project = await projectsCollection.findOne({_id: ObjectId.createFromHexString(req.body.projectId)});
-    if(!project) throw `Fail to find the project with id: ${req.body.projectId}`;
+    const project = await projectsCollection.findOne({ _id: ObjectId.createFromHexString(req.body.projectId) });
+    if (!project) throw `Fail to find the project with id: ${req.body.projectId}`;
     let returnInfo = {
         projectName: project.projectName,
         description: project.description,
@@ -189,20 +189,20 @@ async function getDashboardData(req, res) {
         let projectsData = [];
         let data = [];
         for (let project of projectList) {
-            const allProject = await projectCollection.findOne({ _id: project._id});
+            const allProject = await projectCollection.findOne({ _id: project._id });
             if (allProject !== null) {
                 projectsData.push(allProject);
             }
         }
-        for(let i = 0; i < projectsData.length; i++) {
+        for (let i = 0; i < projectsData.length; i++) {
             let activeTask = 0;
             let completedTask = 0;
             let issue = 0;
-            if (projectsData[i].tasks.length !== 0){
+            if (projectsData[i].tasks.length !== 0) {
                 for (let j = 0; j < projectsData[i].tasks.length; j++) {
                     const task_id = projectsData[i].tasks[j]
                     const tasksCollection = await tasks();
-                    let taskObj = await tasksCollection.findOne({_id: task_id});
+                    let taskObj = await tasksCollection.findOne({ _id: task_id });
                     if (taskObj.status == 'active') {
                         activeTask += 1;
                     } else if (taskObj.status == 'completed') {
@@ -212,18 +212,75 @@ async function getDashboardData(req, res) {
                     }
                 }
             }
-            data.push({projectName: projectsData[i].projectName, 
-                       status: projectsData[i].status, 
-                       initial_Date: projectsData[i].initial_Date.split(",")[0],
-                       lastUpdateTime: projectsData[i].lastUpdateTime,
-                       visibility: projectsData[i].visibility,
-                       activeTask: activeTask,
-                       completedTask: completedTask,
-                       issue: issue,
+            data.push({
+                projectName: projectsData[i].projectName,
+                status: projectsData[i].status,
+                initial_Date: projectsData[i].initial_Date.split(",")[0],
+                lastUpdateTime: projectsData[i].lastUpdateTime,
+                visibility: projectsData[i].visibility,
+                activeTask: activeTask,
+                completedTask: completedTask,
+                issue: issue,
             })
         }
         res.status(200).json(data);
     }
+}
+
+async function deleteProjectMember(req, res) {
+    const objId = ObjectId.createFromHexString(req.body.projectId);
+    const projectCollection = await projects();
+    const project = await projectCollection.findOne({ _id: objId });
+    if (!project) {
+        res.status(400).send({ message: "Project not found" })
+    }
+    const targetUser = await projectHelper.getUserByUsername(req.body.username);
+
+    let deleteResult = false;
+    if (project.developers) {
+        for (let developer of project.developers) {
+            if (targetUser._id.toString() === developer) {
+                let deleteUserFromProject = await projectCollection.updateOne({ _id: objId }, { $pull: { developers: developer } });
+                if (deleteUserFromProject.modifiedCount === 0) res.status(400).send({ message: "Fail to remove invitation id from user" });
+                deleteResult = await projectHelper.removeProjectFromUser(req.body.projectId, targetUser._id);
+                break;
+            }
+        }
+    }
+    if (project.clients) {
+        for (let client of project.clients) {
+            if (targetUser._id.toString() === client) {
+                let deleteUserFromProject = await projectCollection.updateOne({ _id: objId }, { $pull: { clients: client } });
+                if (deleteUserFromProject.modifiedCount === 0) res.status(400).send({ message: "Fail to remove invitation id from user" });
+                deleteResult = await projectHelper.removeProjectFromUser(req.body.projectId, targetUser._id);
+                break;
+            }
+        }
+    }
+    return res.status(200).json({ memberDelete: deleteResult});
+}
+
+async function getUserIdentity(req, res) {
+    const objId = ObjectId.createFromHexString(req.body.projectId);
+    const projectCollection = await projects();
+    const project = await projectCollection.findOne({ _id: objId });
+    if (!project) {
+        res.status(400).send({ message: "Project not found" })
+    }
+    if (project.owner === req.id) {
+        return res.status(200).json({ userIdentity: "owner" });
+    }
+    for (let developer of project.developers) {
+        if (developer === req.id) {
+            return res.status(200).json({ userIdentity: "developer" });
+        }
+    }
+    for (let client of project.clients) {
+        if (client === req.id) {
+            return res.status(200).json({ userIdentity: "client" });
+        }
+    }
+    return res.status(404).send({ message: "User not found" });
 }
 
 module.exports = {
@@ -237,4 +294,6 @@ module.exports = {
     getSearchProjects,
     getProjectContent,
     getDashboardData,
+    deleteProjectMember,
+    getUserIdentity,
 };
