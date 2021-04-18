@@ -43,11 +43,28 @@ async function getUserById(userId) {
     return user;
 }
 
+async function getUserByUsername(username) {
+    const userCollection = await users();
+    const user = await userCollection.findOne({ username: username });
+    if (!user) throw 'No user found';
+    return user;
+}
+
+async function removeProjectFromUser(projectId, userId) {
+    const projectMongoId = ObjectId.createFromHexString(projectId);
+    const userCollection = await users();
+    let deleteProjectFromUser = await userCollection.updateOne({ _id: userId }, { $pull: { projects: projectMongoId } });
+    if (deleteProjectFromUser.modifiedCount === 0) throw "Failed to delete project from user"
+    return true;
+}
+
 
 module.exports = {
     getProjectListByUserId,
     addProjectIdToUser,
     getProjectById,
     getUserById,
+    getUserByUsername,
+    removeProjectFromUser,
 };
 

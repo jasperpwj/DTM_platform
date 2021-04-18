@@ -1,4 +1,5 @@
 import React, { useState, useEffect, forwardRef } from "react";
+import { makeStyles } from '@material-ui/core/styles';
 import Dialog from "@material-ui/core/Dialog";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import DialogContent from "@material-ui/core/DialogContent";
@@ -20,10 +21,19 @@ const ProjectMembers = (props, ref) => {
     const [author, setAuthor] = useState("");
     const [developers, setDevelopers] = useState([]);
     const [clients, setClients] = useState([]);
+    const [selectedUser, setSelectedUser] = useState(null);
 
-    useEffect(()=> {
+    // style to be discussed
+    const useStyles = makeStyles((theme) => ({
+        selected: {
+            backgroundColor: 'grey'
+        }
+    }));
+    const classes = useStyles();
+
+    useEffect(() => {
         if (props && props.id) {
-            projectService.getProjectMember({projectId: props.id}).then(res =>{
+            projectService.getProjectMember({ projectId: props.id }).then(res => {
                 if (res) {
                     setAuthor(res.data.owner);
                     setDevelopers(res.data.developers);
@@ -45,13 +55,51 @@ const ProjectMembers = (props, ref) => {
     };
     const handleClose = () => {
         setOpen(false);
+        setSelectedUser(null);
     };
 
+    const handleListItemClick = (event, user) => {
+        event.preventDefault();
+        if (selectedUser === user) {
+            setSelectedUser(null);
+        }
+        else {
+            setSelectedUser(user);
+        }
+    }
+
+    const handleDeleteUser = (event) => {
+        event.preventDefault();
+        if (!selectedUser) {
+            alert("Please select a project member to delete");
+        }
+        else {
+            projectService.deleteProjectMember({projectId: props.id, username: selectedUser}).then(res => {
+                if (res.data.memberDelete) {
+                    setSelectedUser(null);
+                    window.location.reload();
+                    alert(selectedUser + " has been deleted successfully");
+                }
+                else {
+                    alert("Error: project member deletion failed");
+                }
+            });
+        }
+    }
+
     const developerList = developers.map((developer) =>
-        <ListItem button key={developer}><ListItemIcon><PersonIcon /></ListItemIcon>{developer}</ListItem>);
+        <ListItem button
+            key={developer}
+            selected={selectedUser === developer}
+            className={ classes.selected }
+            onClick={(event) => handleListItemClick(event, developer)}><ListItemIcon><PersonIcon /></ListItemIcon>{developer}</ListItem>);
 
     const clientList = clients.map((client) =>
-        <ListItem button key={client}><ListItemIcon><PersonIcon /></ListItemIcon>{client}</ListItem>);
+        <ListItem button
+            key={client}
+            selected={selectedUser === client}
+            className={ classes.selected }
+            onClick={(event) => handleListItemClick(event, client)}><ListItemIcon><PersonIcon /></ListItemIcon>{client}</ListItem>);
 
     return (
         <div>
@@ -85,6 +133,7 @@ const ProjectMembers = (props, ref) => {
                         variant="contained"
                         color="secondary"
                         startIcon={<DeleteIcon />}
+                        onClick={handleDeleteUser}
                     >Delete</Button>
                     <Button onClick={handleClose} variant="contained" color="primary">
                         Close
