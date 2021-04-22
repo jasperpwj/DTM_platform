@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import {makeStyles} from "@material-ui/core";
 import Paper from '@material-ui/core/Paper';
-import { createMuiTheme, responsiveFontSizes } from '@material-ui/core/styles';
+import { createMuiTheme } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
 import {VictoryPie} from 'victory';
@@ -21,13 +21,12 @@ const useStyles = makeStyles((theme) => ({
         flexWrap: "wrap",
     },
 
-   
     paper: {
         padding: theme.spacing(2),
         margin: theme.spacing(3),
         width: 590,
         maxheight: 200,
-        marginLeft: "7%",
+        marginLeft: 100,
         textAlign: "left",
     },
     font1: {
@@ -43,10 +42,6 @@ const useStyles = makeStyles((theme) => ({
         color: "tomato",
     }
 }));
-let theme = createMuiTheme(
-
-);
-theme = responsiveFontSizes(theme);
 
 export default function DashboardPage() {
     const classes = useStyles();

@@ -121,14 +121,11 @@ export default function Projects() {
     ];
     const [openProject, setOpenProjects] = useState([]);
     const [closeProject, setClosedProjects] = useState([]);
-    const [isEmptyProject, setIsEmptyProject] = useState(false);
     useEffect(()=> {
         projectService.getOpenProjects().then(res => {
             if(!(res.data.length)) {
-                setIsEmptyProject(true);
                 setOpenProjects(res.data);
             } else {
-                setIsEmptyProject(false);
                 setOpenProjects(res.data);
             }
         })
@@ -136,10 +133,8 @@ export default function Projects() {
     useEffect(()=> {
         projectService.getClosedProjects().then(res => {
             if(!(res.data.length)) {
-                setIsEmptyProject(true);
                 setClosedProjects(res.data);
             } else {
-                setIsEmptyProject(false);
                 setClosedProjects(res.data);
             }
         })
