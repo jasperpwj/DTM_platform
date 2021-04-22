@@ -2,7 +2,6 @@ import React, {useState, useEffect} from 'react';
 import ProjectMenuBar from "./ProjectMenuBar";
 import {makeStyles} from "@material-ui/core";
 import Paper from '@material-ui/core/Paper';
-import {VictoryChart, VictoryTheme,VictoryBar} from 'victory';
 import {
     Chart,
     BarSeries,
