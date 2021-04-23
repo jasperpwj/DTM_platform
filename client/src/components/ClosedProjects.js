@@ -71,11 +71,11 @@ export default function ClosedProjects(props) {
                         <React.Fragment>
                             <TableHead>
                                 <TableRow>
-                                    <TableCell>Name</TableCell>
-                                    <TableCell align="center">Visibility</TableCell>
-                                    <TableCell align="center">Last Updated</TableCell>
-                                    <TableCell align="center">Description</TableCell>
-                                    <TableCell align="right">More</TableCell>
+                                    <TableCell><Typography>Name</Typography></TableCell>
+                                    <TableCell align="center"><Typography>Visibility</Typography> </TableCell>
+                                    <TableCell align="center"><Typography>Updated Time</Typography></TableCell>
+                                    <TableCell align="center"><Typography>Descriptions</Typography></TableCell>
+                                    <TableCell align="right"><Typography>Actions</Typography></TableCell>
                                 </TableRow>
                             </TableHead>
                             <TableBody>
@@ -93,6 +93,7 @@ export default function ClosedProjects(props) {
                                             <TableCell align="right">
                                                 <IconButton
                                                     aria-label="more"
+                                                    size='small'
                                                     aria-controls="project-menu"
                                                     aria-haspopup="true"
                                                     id={project._id}

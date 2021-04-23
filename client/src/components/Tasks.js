@@ -21,12 +21,12 @@ const projectService = require("../services/projects.service");
 const taskService = require("../services/tasks.service");
 
 const columns = [
-    {id: 'title', label: 'Title', minWidth: 150, align: 'center',},
+    {id: 'title', label: 'Title', minWidth: 80, align: 'center',},
     {id: 'content', label: 'Content', minWidth: 170, align: 'center',},
     {id: 'requester', label: 'Requester', minWidth: 80, align: 'center',},
     {id: 'createDate', label: 'Created Date', minWidth: 80, align: 'center',},
     {id: 'status', label: 'Status', minWidth: 50, align: 'center',},
-    {id: 'action', label: 'Action', minWidth: 20, align: 'center',},
+    {id: 'action', label: 'Actions', minWidth: 20, align: 'center',},
 ];
 
 const useStyles = makeStyles((theme) => ({
@@ -65,6 +65,7 @@ export default function Tasks(props) {
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [targetTaskId, setTargetTaskId] = useState(null);
     const [taskAnchor, setTaskAnchor] = useState(null);
+    const [loading, setLoading] = useState(true);
     const taskRef = useRef(taskAnchor);
     const openTaskMore = Boolean(taskAnchor);
 
@@ -89,87 +90,102 @@ export default function Tasks(props) {
         projectService.getProjectContent(projectId)
             .then(res => {
                 setProjectContent(res);
+                setLoading(false);
             })
             .catch(err => {console.log(err)})
     },[projectId]);
     
     useEffect(() => {
         taskService.getTasksByProjectId(projectId)
-            .then(res => {setTasks(res);})
+            .then(res => {
+                setTasks(res);
+                setLoading(false);
+            })
             .catch(err => {console.log(err)})
     },[projectId]);
-    return (
-        <div className={classes.root}>
-            <ProjectMenuBar value={{projectName: projectContent && projectContent.projectName, projectId: projectId}}/>
-            {(tasks && tasks.length > 0)? (
-                <Paper className={classes.table}>
-                    <TableContainer className={classes.container}>
-                        <Table stickyHeader aria-label="sticky table">
-                            <TableHead>
-                                <TableRow>
-                                    {columns.map((column) => (
-                                        <TableCell
-                                            key={column.id}
-                                            align={column.align}
-                                            style={{ minWidth: column.minWidth }}
-                                        >
-                                            {column.label}
-                                        </TableCell>
-                                    ))}
-                                </TableRow>
-                            </TableHead>
-                            <TableBody>
-                                {tasks && tasks.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((task, index) => {
-                                    return (
-                                        <TableRow hover role="checkbox" tabIndex={index} key={task._id}>
-                                            <TableCell key='title' align='center'>{task.title}</TableCell>
-                                            <TableCell key='content' align='center'><Typography className={classes.content}>{task.content}</Typography></TableCell>
-                                            <TableCell key='requester' align='center'>{task.requester}</TableCell>
-                                            <TableCell key='createDate' align='center'>{new Date(task.createDate).toLocaleDateString()}</TableCell>
-                                            <TableCell key='status' align='center'>{task.status}</TableCell>
-                                            <TableCell key='edit' align='center' id={task._id} onClick={handleOpenTaskMore} ><MoreVertIcon/></TableCell>
-                                        </TableRow>
-                                    );
-                                })}
-                            </TableBody>
-                        </Table>
-                    </TableContainer>
-                    <TablePagination
-                        rowsPerPageOptions={[10, 25, 100]}
-                        component="div"
-                        count={tasks && tasks.length}
-                        rowsPerPage={rowsPerPage}
-                        page={page}
-                        onChangePage={handleChangePage}
-                        onChangeRowsPerPage={handleChangeRowsPerPage}
-                    />
 
-                    <Menu
-                        id={targetTaskId}
-                        anchorEl={taskAnchor}
-                        keepMounted
-                        open={openTaskMore}
-                        onClose={handleCloseTaskMore}
-                    >
-                        {openTaskMore && (
-                            <div>
-                                <EditTaskForm  id={targetTaskId} ref={taskRef}/>
-                                <TaskCompleted value={{taskId: targetTaskId}} ref={taskRef}/>
-                                <TurnIntoIssues value={{taskId: targetTaskId}} ref={taskRef}/>
-                                <DeleteTask value={{projectId: projectId, taskId: targetTaskId}} ref={taskRef}/>
-                            </div>
-                        )}
-                    </Menu>
+    if(loading) {
+        return (
+            <div>
+                <Typography>Loading...</Typography>
+            </div>
+        )
+    } else {
+        return (
+            <div className={classes.root}>
+                <ProjectMenuBar value={{projectName: projectContent && projectContent.projectName, projectId: projectId}} title='Tasks'/>
+                {(tasks && tasks.length > 0)? (
+                    <Paper className={classes.table}>
+                        <TableContainer className={classes.container}>
+                            <Table stickyHeader aria-label="sticky table">
+                                <TableHead>
+                                    <TableRow>
+                                        {columns.map((column) => (
+                                            <TableCell
+                                                key={column.id}
+                                                align={column.align}
+                                                style={{ minWidth: column.minWidth }}
+                                            >
+                                                {column.label}
+                                            </TableCell>
+                                        ))}
+                                    </TableRow>
+                                </TableHead>
+                                <TableBody>
+                                    {tasks && tasks.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((task, index) => {
+                                        return (
+                                            <TableRow hover role="checkbox" tabIndex={index} key={task._id}>
+                                                <TableCell key='title' align='center'>{task.title}</TableCell>
+                                                <TableCell key='content' align='center' className={classes.content}>{task.content}</TableCell>
+                                                <TableCell key='requester' align='center'>{task.requester}</TableCell>
+                                                <TableCell key='createDate' align='center'>{new Date(task.createDate).toLocaleDateString()}</TableCell>
+                                                <TableCell key='status' align='center'>{task.status}</TableCell>
+                                                <TableCell key='edit' align='center' id={task._id} onClick={handleOpenTaskMore} ><MoreVertIcon/></TableCell>
+                                            </TableRow>
+                                        );
+                                    })}
+                                </TableBody>
+                            </Table>
+                        </TableContainer>
+                        <TablePagination
+                            rowsPerPageOptions={[10, 25, 100]}
+                            component="div"
+                            count={tasks && tasks.length}
+                            rowsPerPage={rowsPerPage}
+                            page={page}
+                            onChangePage={handleChangePage}
+                            onChangeRowsPerPage={handleChangeRowsPerPage}
+                        />
 
-                </Paper>
+                        <Menu
+                            id={targetTaskId}
+                            anchorEl={taskAnchor}
+                            keepMounted
+                            open={openTaskMore}
+                            onClose={handleCloseTaskMore}
+                        >
+                            {openTaskMore && (
+                                <div>
+                                    <EditTaskForm  id={targetTaskId} ref={taskRef}/>
+                                    <TaskCompleted value={{taskId: targetTaskId}} ref={taskRef}/>
+                                    <TurnIntoIssues value={{taskId: targetTaskId}} ref={taskRef}/>
+                                    <DeleteTask value={{projectId: projectId, taskId: targetTaskId}} ref={taskRef}/>
+                                </div>
+                            )}
+                        </Menu>
 
-            ):(
-                <Grid container item justify='center' alignContent='center'>
-                    <Grid container justify='center' alignContent='center' className={classes.emptyContainer}>
-                        <Typography variant="h5" align='center'>You have no tasks.</Typography>
+                    </Paper>
+
+                ):(
+                    <Grid container item justify='center' alignContent='center'>
+                        <Grid container justify='center' alignContent='center' className={classes.emptyContainer}>
+                            <Typography variant="h5" align='center'>You have no tasks.</Typography>
+                        </Grid>
                     </Grid>
-                </Grid>
-            )}
-        </div>
-    )
+                )}
+            </div>
+        )
+    }
+
+
 }

@@ -34,18 +34,13 @@ export default function ProjectMenuBar(props) {
         <React.Fragment>
             <Grid container className={classes.title}>
                 <Grid item xs>
-                    <Typography align="left" variant='h6'>
-                        {props.value.projectName}
+                    <Typography align="left" variant='h5' component='h2'>
+                        {props.value.projectName} {props.title && props.title}
                     </Typography>
                 </Grid>
                 <Grid container item xs justify="flex-end" spacing={1}>
                     <Grid item>
                         <AvatarGroup spacing={2}>
-                            <Avatar className={classes.avatar}>M</Avatar>
-                            <Avatar className={classes.avatar}>M</Avatar>
-                            <Avatar className={classes.avatar}>M</Avatar>
-                            <Avatar className={classes.avatar}>M</Avatar>
-                            <Avatar className={classes.avatar}>M</Avatar>
                         </AvatarGroup>
                     </Grid>
                     <Grid item>

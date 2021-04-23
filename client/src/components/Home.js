@@ -5,6 +5,7 @@ import Typography from "@material-ui/core/Typography";
 import Paper from '@material-ui/core/Paper';
 import Background from '../bkg.jpg';
 import test from '../home.gif';
+import Grid from "@material-ui/core/Grid";
 
 
 const authService = require("../services/auth.service");
@@ -13,39 +14,29 @@ const useStyles = makeStyles((theme) => ({
     root: {
         display: 'flex',
         height: '100vh',
-        // backgroundColor: "lightgrey",
-        // backgroundColor: "#64b5f6",
         backgroundImage: `url(${Background})`,
         backgroundSize: 'cover',
+        marginBottom: theme.spacing(0),
         minWidth:1500
     },
-
     content: {
         flexGrow: 1,
         marginTop: theme.spacing(8),
         padding: theme.spacing(2),
-        // minWidth: 1500,
-
-        // backgroundColor: "#64b5f6",
-        // backgroundImage: `url(${Background})`,
-        // backgroundSize: 'cover',
     },
-
+    time: {
+        marginTop: theme.spacing(2),
+    },
     paper: {
-        // display: "inline-block",
-        width: '33%',
-        marginLeft: '33%',
-        // minWidth: 200,
+        margin: theme.spacing(10),
+        width: 500,
+        height: 500,
         fontSize: '50px',
         fontFamily: 'Old Times American',
-        // fontSize: 40,
-        // fontFamily: 'New Tegomin',
     },
-
     media: {
         height: 140,
     }
-
 }));
 
 
@@ -59,13 +50,10 @@ export default function Home(props) {
             setIsAuthenticated(true)
         }
     },[isAuthenticated]);
-
     const navInfo = {
         button: "home"
     };
-
     // get date
-    
     let sep = "-";
     let date = new Date();
     let year = date.getFullYear(); 
@@ -77,50 +65,36 @@ export default function Home(props) {
     if (day <= 9) {
         day = "0" + day;
     }
-
     let currentDate = year + sep + month + sep + day;
-
     return (
-        // <ThemeProvider theme={zhuti}>
         <div className={classes.root} >
-            <main className={classes.content}>
+            <Grid className={classes.content}>
                 {(isAuthenticated)? (<div/>):(<UnauthNavBar info = {navInfo} />)}
-                <ThemeProvider>
-                <div className={classes.toolbar}>
-                    <Typography paragraph>
-                        {/* This is home page */}
-                    </Typography>
-                </div>
-                        <font color="010913">
-                            <Typography variant="h3"> Today: {currentDate}</Typography>
-                        </font>
-                        
-                        <br></br>
-                        <br></br>
-                        <Paper elevation={20} className={classes.paper} minWidth="200"> 
-                            <br></br>  
-                            <b>What is DTM ? </b>
-                            <br></br>
-                            <Typography variant="h6" component="p">
-                            <br></br>
-                            kan-ban style, <br></br>
-                            more interactive, <br></br>
-                            power devop team, <br></br>
-                            customizable features, <br></br>
-                            customer involvement<br></br>
-                            <br></br>
-                            "ALL WITH A DRAG !!"        <br></br>                       
-                            <img src={test} width="200" height="100"/>           
-                            </Typography>
-
+                <Grid container justify='center'>
+                    <Grid  item xs={12} className={classes.time}>
+                        <Typography variant="h3" align='center'> Today: {currentDate}</Typography>
+                    </Grid>
+                    <Grid container item xs={12} justify='center'>
+                        <Paper elevation={20} className={classes.paper}>
+                            <br/>
+                            <Typography variant="h3" component="h2">What is DTM ?</Typography>
+                            <br/>
+                            <Typography variant="h6" component="p">more interactive,</Typography>
+                            <Typography variant="h6" component="p">KanBan style,</Typography>
+                            <Typography variant="h6" component="p">more interactive,</Typography>
+                            <Typography variant="h6" component="p">power DevOps team,</Typography>
+                            <Typography variant="h6" component="p">customizable features,</Typography>
+                            <Typography variant="h6" component="p">customer involvement</Typography>
+                            <Typography variant="h6" component="p">"ALL WITH A DRAG !!"</Typography>
+                            <img src={test} width="200" height="100"/>
+                            <br/>
                         </Paper>
-                        <br></br>
-                        <br></br>
-                        <br></br>
+                    </Grid>
 
-                </ThemeProvider>
-            </main>
+                </Grid>
+
+
+            </Grid>
         </div>
-        // </ThemeProvider>
     )
 }

@@ -15,6 +15,7 @@ import TextField from '@material-ui/core/TextField';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import { useHistory } from "react-router-dom";
 
+
 const projectService = require("../services/projects.service");
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -25,10 +26,11 @@ const useStyles = makeStyles((theme) => ({
         minWidth: 800,
     },
     appBar: {
-        backgroundColor: "grey",
+        backgroundColor: "white",
     },
     tap: {
         flexGrow: 1,
+        color: 'black'
     },
     search: {
         position: 'relative',
@@ -52,6 +54,7 @@ const useStyles = makeStyles((theme) => ({
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
+
     },
     inputRoot: {
         color: 'inherit',
@@ -70,14 +73,8 @@ const useStyles = makeStyles((theme) => ({
         },
     },
     content: {
-        margin: theme.spacing(3, 3, 3, 3),
-        backgroundColor: "lightblue",
-        padding: theme.spacing(1),
+        margin: theme.spacing(2, 2, 2, 3),
     },
-    test : {
-        backgroundColor: "orange",
-        maxHeight: 100
-    }
 }));
 
 
@@ -153,17 +150,13 @@ export default function Projects() {
     const handleClick = (e) => {
         e.preventDefault();
         if (zhi === 0) {
-            console.log(zhi)
-            console.log("zheer")
             setZhi(0)
         } else {
-            console.log(zhi)
-            let path = 'projects/'+ zhi.id
-            history.push(path)
-            console.log("Cool")
+            let path = 'projects/'+ zhi.id;
+            history.push(path);
             setZhi(0)
         }
-    }
+    };
 
     return (
         <div className={classes.root}>
@@ -190,7 +183,7 @@ export default function Projects() {
                         </div>
                         <IconButton 
                             onClick={handleClick} >
-                            <SearchIcon style={{fill:"white"}}/>
+                            <SearchIcon style={{fill:"black"}}/>
                         </IconButton>                        
                     </Toolbar>
                 </AppBar>

@@ -4,7 +4,6 @@ const { ObjectId } = require("mongodb");
 const invitationHelper = require("./invitation.helper");
 const projectHelper = require("./projects.helper");
 
-
 async function addInvitation(req, res) {
     if (!req.body.invType || typeof req.body.invType !== 'string') throw 'invitation type is empty or invalid input type';
     if (!req.body.targetUsername || typeof req.body.targetUsername !== 'string') throw 'Target username is empty or invalid input type';
@@ -40,7 +39,7 @@ async function addInvitation(req, res) {
 
 async function getInvitations(req, res) {
     const invitationList = await invitationHelper.getInvitationsByUserId(req.id);
-    if (!invitationList.length) {
+    if (invitationList !== undefined && !invitationList.length) {
         res.status(200).send(invitationList);
     } else {
         const invitationCollection = await invitations();
@@ -55,7 +54,6 @@ async function getInvitations(req, res) {
         res.status(200).json(invList);
     }
 }
-
 
 async function getInvitationById(req, res) {
     const objId = ObjectId.createFromHexString(req.id);
