@@ -66,11 +66,13 @@ export default function AddProject() {
                 onClick={handleClickOpen}
                 startIcon={<AddIcon/>}
                 size="large"
+                id='add-project-button'
                 color="inherit"
             >
             </Button>
             <Dialog
                 open={open}
+                id='add-project'
                 onClose={handleClickClose}
                 aria-labelledby="form-dialog-addProject-title"
                 fullWidth={true}>

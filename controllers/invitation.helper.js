@@ -31,7 +31,6 @@ async function getInvitationsByUserId(userId) {
 async function addInvitationIdToUser(username, invitationId) {
     const targetUser = await getUserByUsername(username);
     const userMongoId = targetUser._id;
-
     const userCollection = await users();
     const user = await userCollection.findOne({ _id: userMongoId });
     if (!user) throw 'No user found';
@@ -149,4 +148,4 @@ module.exports = {
     checkProjectMember,
     checkUserExist,
     checkDupInvitations
-}
+};

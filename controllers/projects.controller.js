@@ -200,12 +200,12 @@ async function getDashboardData(req, res) {
             let issue = 0;
             if (projectsData[i].tasks.length !== 0) {
                 for (let j = 0; j < projectsData[i].tasks.length; j++) {
-                    const task_id = projectsData[i].tasks[j]
+                    const task_id = projectsData[i].tasks[j];
                     const tasksCollection = await tasks();
                     let taskObj = await tasksCollection.findOne({ _id: task_id });
-                    if (taskObj.status == 'active') {
+                    if (taskObj.status === 'active') {
                         activeTask += 1;
-                    } else if (taskObj.status == 'completed') {
+                    } else if (taskObj.status === 'completed') {
                         completedTask += 1;
                     } else if (taskObj.status === "issue") {
                         issue += 1;
@@ -214,6 +214,7 @@ async function getDashboardData(req, res) {
             }
             data.push({
                 projectName: projectsData[i].projectName,
+                _id: projectsData[i]._id,
                 status: projectsData[i].status,
                 initial_Date: projectsData[i].initial_Date.split(",")[0],
                 lastUpdateTime: projectsData[i].lastUpdateTime,

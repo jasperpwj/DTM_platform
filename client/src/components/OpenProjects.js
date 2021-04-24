@@ -64,7 +64,6 @@ export default function OpenProjects(props) {
         });
         window.location.reload();
     };
-    console.log(openProject)
     return (
         <React.Fragment>
             <TableContainer component={Paper} >
@@ -73,11 +72,11 @@ export default function OpenProjects(props) {
                         <React.Fragment>
                             <TableHead>
                                 <TableRow>
-                                    <TableCell>Name</TableCell>
-                                    <TableCell align="center">Visibility</TableCell>
-                                    <TableCell align="center">Last Updated</TableCell>
-                                    <TableCell align="center">Description</TableCell>
-                                    <TableCell align="right">More</TableCell>
+                                    <TableCell><Typography>Name</Typography></TableCell>
+                                    <TableCell align="center"><Typography>Visibility</Typography> </TableCell>
+                                    <TableCell align="center"><Typography>Updated Time</Typography></TableCell>
+                                    <TableCell align="center"><Typography>Descriptions</Typography></TableCell>
+                                    <TableCell align="right"><Typography>Actions</Typography></TableCell>
                                 </TableRow>
                             </TableHead>
                             <TableBody>
@@ -98,6 +97,7 @@ export default function OpenProjects(props) {
                                             <TableCell align="right">
                                                 <IconButton
                                                     aria-label="more"
+                                                    size='small'
                                                     aria-controls="project-more-menu"
                                                     aria-haspopup="true"
                                                     id={project._id}

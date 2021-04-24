@@ -15,7 +15,7 @@ const UserService = require("../services/user.service");
 const useStyles = makeStyles((theme) => ({
     root: {
         display: 'flex',
-        height: '100vh',
+        height: '100%',
         backgroundSize: 'cover',
         minWidth: 900,
     },
@@ -25,7 +25,7 @@ const useStyles = makeStyles((theme) => ({
         opacity: 0.9,
         margin: theme.spacing(20,30,0,36),
         minWidth: 500,
-        maxWidth: 900,
+        maxWidth: 800,
     },
     typography: {
         fontSize: 35,
@@ -39,12 +39,12 @@ const useStyles = makeStyles((theme) => ({
         margin: theme.spacing(0,30,20,36),
         backgroundColor: "white",
         minWidth: 500,
-        maxWidth: 900,
+        maxWidth: 800,
     },
     img: {
         width: "160px",
         height: "160px",
-        marginTop: theme.spacing(3),
+        marginTop: theme.spacing(6),
     },
     button: {
         margin: theme.spacing(3, 0, 2, 0),
@@ -79,13 +79,13 @@ export default function AccountPage() {
                         <ChangePasswordFormDialog/>
                     </Grid>
                     <Grid item align='left'>
-                        <Typography variant='h2' className={classes.typography}>
+                        <Typography variant='h2' component='h2' className={classes.typography}>
                             Account
                         </Typography>
                     </Grid>
                     <br/>
                     <Grid container item>
-                        <Typography paragraph variant='h5' component='h6'>
+                        <Typography paragraph variant='h5' component='h3'>
                             {currentUser && currentUser.firstName} {currentUser && currentUser.lastName}
                         </Typography>
                     </Grid>

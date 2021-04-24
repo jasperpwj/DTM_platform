@@ -92,14 +92,14 @@ const useStyles = makeStyles((theme) => ({
         height: '100vh',
         width: 350,
         margin: theme.spacing(1, 1, 2, 1),
-        borderRadius: '8px',
-        border: "2px solid #bdbdbd",
+        borderRadius: '6px',
+        border: "2px solid #eeeeee",
     },
     containerHead: {
         padding: theme.spacing(0, 0, 0, 1),
         height: 50,
         width: "100%",
-        borderRadius: '8px 8px 0 0',
+        borderRadius: '4px 4px 0 0',
         backgroundColor: '#eeeeee',
     },
     containerTitle: {
@@ -114,12 +114,12 @@ const useStyles = makeStyles((theme) => ({
     },
     task: {
         userSelect: 'none',
-
         padding: theme.spacing(1),
-        margin: theme.spacing(0, 1, 2, 1),
-        minHeight: '50px',
-        borderRadius: '8px',
-        border: "2px solid #e0e0e0",
+        margin: theme.spacing(1, 1, 2, 1),
+        minHeight: '100px',
+        borderRadius: '4px',
+        border: "1px solid #e0e0e0",
+        boxShadow: "0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)",
     },
     emptyCard: {
         height: 250,
@@ -130,8 +130,9 @@ const useStyles = makeStyles((theme) => ({
     },
     taskForm: {
         backgroundColor: 'lightyellow',
-        borderRadius: '8px',
+        borderRadius: '6px',
         border: "2px solid #e0e0e0",
+        marginBottom: theme.spacing(2),
     }
 }));
 
@@ -293,7 +294,7 @@ export default function Project(props) {
 
     return (
         <div className={classes.root}>
-            <ProjectMenuBar value={{ projectName: projectContent && projectContent.projectName, projectId: projectId, userIdentity: identity }} />
+            <ProjectMenuBar value={{ projectName: projectContent && projectContent.projectName, projectId: projectId}} />
             <Grid container className={classes.toolbar}>
                 {(identity === "owner" || identity === "developer") ? (
                     <AddContainer value={projectId} />) : null}
@@ -312,7 +313,7 @@ export default function Project(props) {
                         inputProps={{ 'aria-label': 'search' }}
                     />
                 </div>
-                <Button size="small" startIcon={<SettingsIcon />}>No Fun</Button>
+                {/*<Button size="small" startIcon={<SettingsIcon />}>No Fun</Button>*/}
             </Grid>
             <Grid container justify='center' className={classes.dragDropArea}>
                 {(emptyContainer) ? (
@@ -326,12 +327,13 @@ export default function Project(props) {
                                         <Grid container alignItems='center' className={classes.containerHead}>
                                             <Avatar className={classes.taskCount} variant='circular'><Typography variant='body2'>{container.taskCount}</Typography></Avatar>
                                             <Grid container item xs alignItems='center' className={classes.containerTitle}>
-                                                <Typography variant='subtitle1'>{container.containerName}</Typography>
+                                                <Typography variant='subtitle1' component='h3'>{container.containerName}</Typography>
                                             </Grid>
+                                            {(identity === "owner" || identity === "developer") ? (
                                             <Grid container item xs={3} alignItems='flex-end' justify='flex-end'>
                                                 <IconButton size='small' aria-label='add-task' id={id} onClick={handleAddTask}><AddIcon /></IconButton>
                                                 <IconButton size='small' aria-label='container-more' id={id} onClick={handleOpenContainerMore}><MoreVertIcon /></IconButton>
-                                            </Grid>
+                                            </Grid> ) : null}
                                         </Grid>
                                         <Droppable droppableId={id} key={container._id}>
                                             {(provided, snapshot) => {
@@ -378,8 +380,8 @@ export default function Project(props) {
                                                                         variant='contained'
                                                                         disabled={emptyInput}
                                                                         style={{
-                                                                            backgroundColor: emptyInput ? '#81c784' : '#2e7d32',
-                                                                            color: emptyInput ? '#e8f5e9' : 'white',
+                                                                            backgroundColor: emptyInput ? '#008578' : '#008a00',
+                                                                            color: 'white',
                                                                         }}
                                                                         onClick={handleSubmitNewTask}
                                                                     >Submit</Button>
@@ -396,14 +398,15 @@ export default function Project(props) {
                                                                                 {...provided.draggableProps}
                                                                                 {...provided.dragHandleProps}
                                                                                 style={{
-                                                                                    backgroundColor: snapshot.isDragging ? 'lightblue' : '#ffecb3',
+                                                                                    backgroundColor: snapshot.isDragging ? '#ff9800' : '#ffecb3',
                                                                                     ...provided.draggableProps.style
                                                                                 }}
                                                                                 className={classes.task}
                                                                             >
                                                                                 <Grid container item justify='space-between' alignItems='center'>
                                                                                     <Typography>{task.title}</Typography>
-                                                                                    <IconButton size='small' aria-label={`task-more-${task._id}`} value={container._id} id={task._id} onClick={handleOpenTaskMore}><MoreVertIcon /></IconButton>
+                                                                                    {(identity === "owner" || identity === "developer") ? (
+                                                                                    <IconButton size='small' aria-label={`task-more-${task._id}`} value={container._id} id={task._id} onClick={handleOpenTaskMore}><MoreVertIcon /></IconButton>) : null}
                                                                                 </Grid>
                                                                                 <Grid container wrap='nowrap' justify='center'>
                                                                                     <Grid item xs>

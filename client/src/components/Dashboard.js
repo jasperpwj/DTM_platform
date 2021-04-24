@@ -1,46 +1,42 @@
 import React, {useState, useEffect} from 'react';
 import {makeStyles, TableContainer} from "@material-ui/core";
 import Paper from '@material-ui/core/Paper';
-import { createMuiTheme } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
 import {VictoryPie} from 'victory';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
-import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 const projectService = require("../services/projects.service");
+
 
 const useStyles = makeStyles((theme) => ({
     root: {
         display: "flex",
-        // flexGrow: 1,
         flexWrap: "wrap",
         minWidth: 900,
     },
-
     content: {
         flexGrow: 1,
-        marginTop: theme.spacing(6),
+        marginTop: theme.spacing(9),
         flexWrap: "wrap",
     },
-
     paper: {
         padding: theme.spacing(2),
         margin: theme.spacing(3),
         width: 590,
-        maxheight: 200,
         marginLeft: 100,
         textAlign: "left",
     },
-    font1: {
+    taskFont: {
         fontFamily: 'Raleway',
-        color: "gold",
+        marginLeft: theme.spacing(1),
     },
-    font2: {
-        fontFamily: 'Raleway',
-        color: "orange",
+    activeTask: {
+        height: theme.spacing(3),
+        width: theme.spacing(3),
+        backgroundColor: "gold",
     },
     font3: {
         fontFamily: 'Raleway',

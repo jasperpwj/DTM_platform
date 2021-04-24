@@ -22,6 +22,7 @@ const ProjectMembers = (props, ref) => {
     const [developers, setDevelopers] = useState([]);
     const [clients, setClients] = useState([]);
     const [selectedUser, setSelectedUser] = useState(null);
+    const [identity, setIdentity] = useState(null);
 
     // style to be discussed
     const useStyles = makeStyles((theme) => ({
@@ -47,6 +48,14 @@ const ProjectMembers = (props, ref) => {
         else {
             alert("Error: project id failed to pass in");
         }
+    }, []);
+
+    useEffect(() => {
+        projectService.getUserIdentity(props.id).then(res => {
+            if (res) {
+                setIdentity(res.userIdentity);
+            }
+        });
     }, []);
 
     const handleClickOpen = (scrollType) => {
@@ -128,7 +137,7 @@ const ProjectMembers = (props, ref) => {
                     </Grid>
                 </DialogContent>
                 <DialogActions>
-                    {(props.value.userIdentity === "owner") ? (
+                    {(identity === "owner") ? (
                         <Button
                             variant="contained"
                             color="secondary"

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { makeStyles } from "@material-ui/core";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
@@ -10,6 +10,7 @@ import ProjectSettingButton from "./projectSettingButton";
 import Button from "@material-ui/core/Button";
 import Link from "@material-ui/core/Link";
 import Divider from "@material-ui/core/Divider";
+const projectService = require("../services/projects.service");
 
 const useStyles = makeStyles((theme) => ({
     title: {
@@ -30,32 +31,37 @@ const useStyles = makeStyles((theme) => ({
 export default function ProjectMenuBar(props) {
     const classes = useStyles();
 
+    const [identity, setIdentity] = useState(null);
+
+    useEffect(() => {
+        projectService.getUserIdentity(props.value.projectId).then(res => {
+            if (res) {
+                setIdentity(res.userIdentity);
+            }
+        });
+    }, []);
+
     return (
         <React.Fragment>
             <Grid container className={classes.title}>
                 <Grid item xs>
-                    <Typography align="left" variant='h6'>
-                        {props.value.projectName}
+                    <Typography align="left" variant='h5' component='h2'>
+                        {props.value.projectName} {props.title && props.title}
                     </Typography>
                 </Grid>
                 <Grid container item xs justify="flex-end" spacing={1}>
                     <Grid item>
                         <AvatarGroup spacing={2}>
-                            <Avatar className={classes.avatar}>M</Avatar>
-                            <Avatar className={classes.avatar}>M</Avatar>
-                            <Avatar className={classes.avatar}>M</Avatar>
-                            <Avatar className={classes.avatar}>M</Avatar>
-                            <Avatar className={classes.avatar}>M</Avatar>
                         </AvatarGroup>
                     </Grid>
                     <Grid item>
                         <ProjectMembers id={props.value.projectId} value={{ userIdentity: props.value.userIdentity }} />
                     </Grid>
-                    {(props.value.userIdentity === "owner") ? (
+                    {(identity === "owner") ? (
                         <Grid item>
                             <AddMember id={props.value.projectId} />
                         </Grid>) : null}
-                    {(props.value.userIdentity === "owner" || props.value.userIdentity === "developer") ? (
+                    {(identity === "owner" || identity === "developer") ? (
                         <Grid item>
                             <ProjectSettingButton value={props.value.projectId} />
                         </Grid>) : null}
