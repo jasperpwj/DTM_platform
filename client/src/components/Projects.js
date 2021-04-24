@@ -146,9 +146,7 @@ export default function Projects() {
     for (let i = 0; i < closeProject.length; i++){
         ProjectList.push({name: closeProject[i].projectName, id: closeProject[i]._id})
     }
-    console.log(ProjectList)
     const [zhi, setZhi] = useState(0);
-    // console.log(zhi)
 
     const handleClick = (e) => {
         e.preventDefault();
