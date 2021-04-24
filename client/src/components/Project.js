@@ -294,7 +294,7 @@ export default function Project(props) {
 
     return (
         <div className={classes.root}>
-            <ProjectMenuBar value={{ projectName: projectContent && projectContent.projectName, projectId: projectId, userIdentity: identity }} />
+            <ProjectMenuBar value={{ projectName: projectContent && projectContent.projectName, projectId: projectId}} />
             <Grid container className={classes.toolbar}>
                 {(identity === "owner" || identity === "developer") ? (
                     <AddContainer value={projectId} />) : null}
@@ -329,10 +329,11 @@ export default function Project(props) {
                                             <Grid container item xs alignItems='center' className={classes.containerTitle}>
                                                 <Typography variant='subtitle1' component='h3'>{container.containerName}</Typography>
                                             </Grid>
+                                            {(identity === "owner" || identity === "developer") ? (
                                             <Grid container item xs={3} alignItems='flex-end' justify='flex-end'>
                                                 <IconButton size='small' aria-label='add-task' id={id} onClick={handleAddTask}><AddIcon /></IconButton>
                                                 <IconButton size='small' aria-label='container-more' id={id} onClick={handleOpenContainerMore}><MoreVertIcon /></IconButton>
-                                            </Grid>
+                                            </Grid> ) : null}
                                         </Grid>
                                         <Droppable droppableId={id} key={container._id}>
                                             {(provided, snapshot) => {
@@ -404,7 +405,8 @@ export default function Project(props) {
                                                                             >
                                                                                 <Grid container item justify='space-between' alignItems='center'>
                                                                                     <Typography>{task.title}</Typography>
-                                                                                    <IconButton size='small' aria-label={`task-more-${task._id}`} value={container._id} id={task._id} onClick={handleOpenTaskMore}><MoreVertIcon /></IconButton>
+                                                                                    {(identity === "owner" || identity === "developer") ? (
+                                                                                    <IconButton size='small' aria-label={`task-more-${task._id}`} value={container._id} id={task._id} onClick={handleOpenTaskMore}><MoreVertIcon /></IconButton>) : null}
                                                                                 </Grid>
                                                                                 <Grid container wrap='nowrap' justify='center'>
                                                                                     <Grid item xs>

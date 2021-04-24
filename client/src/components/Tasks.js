@@ -1,6 +1,6 @@
-import React, {useState, useEffect, useRef} from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import ProjectMenuBar from "./ProjectMenuBar";
-import {makeStyles} from "@material-ui/core";
+import { makeStyles } from "@material-ui/core";
 import Paper from '@material-ui/core/Paper';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -21,23 +21,31 @@ const projectService = require("../services/projects.service");
 const taskService = require("../services/tasks.service");
 
 const columns = [
-    {id: 'title', label: 'Title', minWidth: 80, align: 'center',},
-    {id: 'content', label: 'Content', minWidth: 170, align: 'center',},
-    {id: 'requester', label: 'Requester', minWidth: 80, align: 'center',},
-    {id: 'createDate', label: 'Created Date', minWidth: 80, align: 'center',},
-    {id: 'status', label: 'Status', minWidth: 50, align: 'center',},
-    {id: 'action', label: 'Actions', minWidth: 20, align: 'center',},
+    { id: 'title', label: 'Title', minWidth: 80, align: 'center', },
+    { id: 'content', label: 'Content', minWidth: 170, align: 'center', },
+    { id: 'requester', label: 'Requester', minWidth: 80, align: 'center', },
+    { id: 'createDate', label: 'Created Date', minWidth: 80, align: 'center', },
+    { id: 'status', label: 'Status', minWidth: 50, align: 'center', },
+    { id: 'action', label: 'Actions', minWidth: 20, align: 'center', },
+];
+
+const columns2 = [
+    { id: 'title', label: 'Title', minWidth: 80, align: 'center', },
+    { id: 'content', label: 'Content', minWidth: 170, align: 'center', },
+    { id: 'requester', label: 'Requester', minWidth: 80, align: 'center', },
+    { id: 'createDate', label: 'Created Date', minWidth: 80, align: 'center', },
+    { id: 'status', label: 'Status', minWidth: 50, align: 'center', },
 ];
 
 const useStyles = makeStyles((theme) => ({
     root: {
         display: 'block',
         minWidth: 800,
-        margin: theme.spacing(8,0,0,9),
+        margin: theme.spacing(8, 0, 0, 9),
         backgroundColor: "white",
     },
     table: {
-        margin: theme.spacing(0,0,0,0),
+        margin: theme.spacing(0, 0, 0, 0),
         height: '100%',
     },
     content: {
@@ -49,7 +57,7 @@ const useStyles = makeStyles((theme) => ({
     emptyContainer: {
         width: 500,
         height: 240,
-        margin: theme.spacing(10,0,0,0),
+        margin: theme.spacing(10, 0, 0, 0),
         borderRadius: '8px 8px 8px 8px',
         border: "2px dashed black",
 
@@ -68,6 +76,7 @@ export default function Tasks(props) {
     const [loading, setLoading] = useState(true);
     const taskRef = useRef(taskAnchor);
     const openTaskMore = Boolean(taskAnchor);
+    const [identity, setIdentity] = useState(null);
 
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
@@ -92,19 +101,27 @@ export default function Tasks(props) {
                 setProjectContent(res);
                 setLoading(false);
             })
-            .catch(err => {console.log(err)})
-    },[projectId]);
-    
+            .catch(err => { console.log(err) })
+    }, [projectId]);
+
     useEffect(() => {
         taskService.getTasksByProjectId(projectId)
             .then(res => {
                 setTasks(res);
                 setLoading(false);
             })
-            .catch(err => {console.log(err)})
-    },[projectId]);
+            .catch(err => { console.log(err) })
+    }, [projectId]);
 
-    if(loading) {
+    useEffect(() => {
+        projectService.getUserIdentity(projectId).then(res => {
+            if (res) {
+                setIdentity(res.userIdentity);
+            }
+        });
+    }, []);
+
+    if (loading) {
         return (
             <div>
                 <Typography>Loading...</Typography>
@@ -113,23 +130,36 @@ export default function Tasks(props) {
     } else {
         return (
             <div className={classes.root}>
-                <ProjectMenuBar value={{projectName: projectContent && projectContent.projectName, projectId: projectId}} title='Tasks'/>
-                {(tasks && tasks.length > 0)? (
+                <ProjectMenuBar value={{ projectName: projectContent && projectContent.projectName, projectId: projectId }} title='Tasks' />
+                {(tasks && tasks.length > 0) ? (
                     <Paper className={classes.table}>
                         <TableContainer className={classes.container}>
                             <Table stickyHeader aria-label="sticky table">
                                 <TableHead>
-                                    <TableRow>
-                                        {columns.map((column) => (
-                                            <TableCell
-                                                key={column.id}
-                                                align={column.align}
-                                                style={{ minWidth: column.minWidth }}
-                                            >
-                                                {column.label}
-                                            </TableCell>
-                                        ))}
-                                    </TableRow>
+                                    {(identity === "owner" || identity === "developer") ? (
+                                        <TableRow>
+                                            {columns.map((column) => (
+                                                <TableCell
+                                                    key={column.id}
+                                                    align={column.align}
+                                                    style={{ minWidth: column.minWidth }}
+                                                >
+                                                    {column.label}
+                                                </TableCell>
+                                            ))}
+                                        </TableRow>) : (
+                                        <TableRow>
+                                            {columns2.map((column) => (
+                                                <TableCell
+                                                    key={column.id}
+                                                    align={column.align}
+                                                    style={{ minWidth: column.minWidth }}
+                                                >
+                                                    {column.label}
+                                                </TableCell>
+                                            ))}
+                                        </TableRow>
+                                    )}
                                 </TableHead>
                                 <TableBody>
                                     {tasks && tasks.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((task, index) => {
@@ -140,7 +170,8 @@ export default function Tasks(props) {
                                                 <TableCell key='requester' align='center'>{task.requester}</TableCell>
                                                 <TableCell key='createDate' align='center'>{new Date(task.createDate).toLocaleDateString()}</TableCell>
                                                 <TableCell key='status' align='center'>{task.status}</TableCell>
-                                                <TableCell key='edit' align='center' id={task._id} onClick={handleOpenTaskMore} ><MoreVertIcon/></TableCell>
+                                                {(identity === "owner" || identity === "developer") ? (
+                                                    <TableCell key='edit' align='center' id={task._id} onClick={handleOpenTaskMore} ><MoreVertIcon /></TableCell>) : null}
                                             </TableRow>
                                         );
                                     })}
@@ -166,17 +197,17 @@ export default function Tasks(props) {
                         >
                             {openTaskMore && (
                                 <div>
-                                    <EditTaskForm  id={targetTaskId} ref={taskRef}/>
-                                    <TaskCompleted value={{taskId: targetTaskId}} ref={taskRef}/>
-                                    <TurnIntoIssues value={{taskId: targetTaskId}} ref={taskRef}/>
-                                    <DeleteTask value={{projectId: projectId, taskId: targetTaskId}} ref={taskRef}/>
+                                    <EditTaskForm id={targetTaskId} ref={taskRef} />
+                                    <TaskCompleted value={{ taskId: targetTaskId }} ref={taskRef} />
+                                    <TurnIntoIssues value={{ taskId: targetTaskId }} ref={taskRef} />
+                                    <DeleteTask value={{ projectId: projectId, taskId: targetTaskId }} ref={taskRef} />
                                 </div>
                             )}
                         </Menu>
 
                     </Paper>
 
-                ):(
+                ) : (
                     <Grid container item justify='center' alignContent='center'>
                         <Grid container justify='center' alignContent='center' className={classes.emptyContainer}>
                             <Typography variant="h5" align='center'>You have no tasks.</Typography>
