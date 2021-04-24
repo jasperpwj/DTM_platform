@@ -95,7 +95,6 @@ const ProjectMembers = (props, ref) => {
             });
         }
     }
-
     const developerList = developers.map((developer) =>
         <ListItem button
             key={developer}
