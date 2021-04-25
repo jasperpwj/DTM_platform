@@ -15,8 +15,6 @@ import MoreVertIcon from '@material-ui/icons/MoreVert';
 import Grid from "@material-ui/core/Grid";
 import Menu from "@material-ui/core/Menu";
 import TurnIntoIssues from "./TurnIntoIssues";
-import EditTaskForm from "./EditTaskForm";
-import TaskCompleted from "./TaskCompleted";
 const projectService = require("../services/projects.service");
 const taskService = require("../services/tasks.service");
 

@@ -8,7 +8,6 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
-import Button from '@material-ui/core/Button';
 import CheckIcon from '@material-ui/icons/Check';
 import CloseIcon from '@material-ui/icons/Close';
 import IconButton from "@material-ui/core/IconButton";
@@ -96,7 +95,7 @@ export default function Invitation(props) {
                                             <IconButton aria-label='accept' size='small' style={{color: 'green'}} id={invitation._id} onClick={handleAccept}>
                                                 <CheckIcon/>
                                             </IconButton>
-                                            <IconButton aria-label='decline' size='small' style={{color: 'red'}} id={invitation._id} onClick={handleAccept}>
+                                            <IconButton aria-label='decline' size='small' style={{color: 'red'}} id={invitation._id} onClick={handleDecline}>
                                                 <CloseIcon/>
                                             </IconButton>
 
