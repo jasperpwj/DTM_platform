@@ -113,7 +113,7 @@ export default function CompletedTasks(props) {
                 setIdentity(res.userIdentity);
             }
         });
-    }, []);
+    }, [projectId]);
 
     if (loading) {
         return (

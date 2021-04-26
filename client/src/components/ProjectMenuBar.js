@@ -38,7 +38,7 @@ export default function ProjectMenuBar(props) {
                 setIdentity(res.userIdentity);
             }
         });
-    }, []);
+    }, [props.value.projectId]);
 
     return (
         <React.Fragment>

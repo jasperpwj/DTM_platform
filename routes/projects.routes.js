@@ -26,5 +26,6 @@ router.get("/project_data", [authJwt.verifyToken], projectController.getDashboar
 router.patch("/delete_project_member", [authJwt.verifyToken], projectController.deleteProjectMember);
 
 router.post("/get_user_identity", [authJwt.verifyToken], projectController.getUserIdentity);
+router.post("/project-dashboard-content", [authJwt.verifyToken], projectController.getProjectDashboardContent);
 
 module.exports = router;

@@ -42,7 +42,7 @@ async function createTask(req, res) {
     if(!project) throw `Fail to find the project with project Id: ${req.body.projectId}`;
     project.tasks.push(taskId);
     let projectContentToBeUpdated = {
-        lastUpdatedTime: new Date().toLocaleDateString(),
+        lastUpdatedTime: new Date().toLocaleString(),
         tasks: project.tasks,
     };
     const projectUpdatedStatus = await projectsCollection.updateOne({_id: ObjectId.createFromHexString(req.body.projectId)}, {$set: projectContentToBeUpdated});
@@ -230,7 +230,7 @@ async function deleteTask(req, res) {
         }
     }
     let projectInfoToBeUpdated = {
-        lastUpdatedTime: new Date().toLocaleDateString(),
+        lastUpdatedTime: new Date().toLocaleString(),
         tasks: project.tasks,
     };
     const projectUpdatedStatus = await projectsCollection.updateOne({_id: ObjectId.createFromHexString(req.body.projectId)}, {$set:projectInfoToBeUpdated});

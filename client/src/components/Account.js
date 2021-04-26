@@ -15,7 +15,7 @@ const UserService = require("../services/user.service");
 const useStyles = makeStyles((theme) => ({
     root: {
         display: 'flex',
-        height: '100%',
+        height: '100vh',
         backgroundSize: 'cover',
         minWidth: 900,
     },

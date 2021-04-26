@@ -9,5 +9,5 @@ module.exports = {
     projects: projectData,
     containers: containerData,
     tasks: taskData,
-    invitations: invitationData
+    invitations: invitationData,
 };

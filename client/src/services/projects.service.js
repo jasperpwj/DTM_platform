@@ -64,6 +64,14 @@ function getUserIdentity(projectId) {
         .then(res => {return res.data});
 }
 
+function getProjectDashboardContent(projectId) {
+    let projectObj = {
+        projectId: projectId,
+    };
+    return axios.post(API_URL + 'project-dashboard-content', projectObj, {headers:authHeader()})
+        .then(res => {return res.data})
+}
+
 export {
     createProject,
     getOpenProjects,
@@ -76,4 +84,5 @@ export {
     getDashboardData,
     deleteProjectMember,
     getUserIdentity,
+    getProjectDashboardContent,
 }
