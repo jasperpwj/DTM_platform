@@ -15,10 +15,13 @@ async function getUserByEmail(email) {
     return user;
 }
 async function getUserNameByUserId(userId) {
-    // const userMongoId = ObjectId.createFromHexString(userId);
+    let userInputId = userId;
+    if(!ObjectId.isValid(userInputId) || typeof userInputId === 'string'){
+        userInputId = ObjectId.createFromHexString(userInputId);
+    }
     const usersCollection = await users();
-    let user = await usersCollection.findOne({_id: userId});
-    if(!user) throw `Cannot find user by id: ${userId}`;
+    let user = await usersCollection.findOne({_id: userInputId});
+    if(!user) throw `Cannot find user by id: ${userInputId}`;
     return user.firstName + " " + user.lastName;
 }
 

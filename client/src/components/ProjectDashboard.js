@@ -144,11 +144,11 @@ export default function ProjectDashboard(props) {
                                         </TableRow>
                                         <TableRow>
                                             <TableCell>Teams:</TableCell>
-                                            <TableCell>{projectSummary && projectSummary.teams}</TableCell>
+                                            <TableCell>{projectSummary && projectSummary.teams.toString()}</TableCell>
                                         </TableRow>
                                         <TableRow>
                                             <TableCell>Clients:</TableCell>
-                                            <TableCell>{projectSummary && projectSummary.clients}</TableCell>
+                                            <TableCell>{projectSummary && projectSummary.clients.toString()}</TableCell>
                                         </TableRow>
                                         <TableRow>
                                             <TableCell>Initial Date:</TableCell>
@@ -362,22 +362,32 @@ export default function ProjectDashboard(props) {
                     </Grid>
                     <Grid container item xs={3} direction='column' id='column2' className={classes.column3}>
                         {radarData && Object.entries(radarData).map(([key, value]) => {
+                            console.log(value)
                             return (
                                 <Grid container item className={classes.col3row1} style={{flexGrow: 1}} key={key}>
-                                    <Paper key={key} style={{width:"100%", padding: 8}}>
+                                    <Paper key={key} style={{width:"100%", padding: 20}}>
                                         <Typography align='left'>Tasks: {key}</Typography>
                                         <VictoryChart
                                             theme={VictoryTheme.material}
                                         >
-                                            <VictoryGroup horizontal
-                                                          offset={10}
+                                            <VictoryGroup
+                                                          offset={0}
                                                           style={{ data: { width: 10 } }}
-                                                          // colorScale={["brown", "tomato", "gold"]}
-                                                          color={(key=== "active")?"gold": ((key === "completed")? "tomato":"blue")}
+                                                          colorScale={["tomato", "orange", "gold", "blue", "grey", "green"]}
+                                                          animate={{
+                                                              duration: 500,
+                                                              onLoad: { duration: 100 }
+                                                          }}
+                                                          // color={(key=== "active")?"gold": ((key === "completed")? "tomato":"blue")}
                                             >
-                                                <VictoryBar
-                                                    data={value}
-                                                />
+                                                {value && value.map(set => {
+                                                    return (
+                                                        <VictoryBar
+                                                            data={[set]}
+                                                        />
+                                                        )
+                                                })}
+
                                             </VictoryGroup>
                                         </VictoryChart>
                                     </Paper>
