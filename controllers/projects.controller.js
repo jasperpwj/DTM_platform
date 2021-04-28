@@ -302,14 +302,14 @@ async function getProjectDashboardContent(req, res) {
     if(project.developers.length > 0) {
         for(let developerId of project.developers) {
             let member = await userHelper.getUserNameByUserId(developerId);
-            developers.push(member.firstName + member.lastName);
+            await developers.push(member);
         }
     }
     let clients = [];
     if(project.clients.length > 0) {
         for(let clientId of project.clients) {
             let member = await userHelper.getUserNameByUserId(clientId);
-            clients.push(member.firstName + member.lastName);
+            await clients.push(member);
         }
     }
     let timeInterval = Math.abs(new Date(project.lastUpdateTime) - new Date(project.initial_Date))/1000;
