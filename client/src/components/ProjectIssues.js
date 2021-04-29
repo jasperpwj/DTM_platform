@@ -10,7 +10,6 @@ import TableHead from '@material-ui/core/TableHead';
 import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
 import Typography from "@material-ui/core/Typography";
-import EditTaskForm from "./EditTaskForm";
 import DeleteTask from "./DeleteTask";
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import Grid from "@material-ui/core/Grid";
@@ -111,7 +110,7 @@ export default function CompletedTasks(props) {
                 setIdentity(res.userIdentity);
             }
         });
-    }, []);
+    }, [projectId]);
 
     if (loading) {
         return (

@@ -86,13 +86,13 @@ export default function OpenProjects(props) {
                                             <TableCell component="th" scope="row">
 
                                                 <Link
-                                                to={{pathname:`/projects/${project._id}`
-                                                }}
+                                                    to={{pathname:`/projects/${project._id}`
+                                                    }}
                                                 >{project.projectName}
                                                 </Link>
                                             </TableCell>
                                             <TableCell align="center" width={50}>{project.visibility}</TableCell>
-                                            <TableCell align="center" width={150}>{project.lastUpdateTime}</TableCell>
+                                            <TableCell align="center" width={180}>{project.lastUpdateTime}</TableCell>
                                             <TableCell align="center">{project.description}</TableCell>
                                             <TableCell align="right">
                                                 <IconButton

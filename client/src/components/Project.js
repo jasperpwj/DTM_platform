@@ -5,7 +5,6 @@ import Grid from "@material-ui/core/Grid";
 import Avatar from "@material-ui/core/Avatar";
 import Button from "@material-ui/core/Button";
 import IconButton from "@material-ui/core/IconButton";
-import SettingsIcon from '@material-ui/icons/Settings';
 import AddIcon from '@material-ui/icons/Add';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import Menu from '@material-ui/core/Menu';
@@ -199,7 +198,6 @@ export default function Project(props) {
     const containerRef = useRef(anchorEl);
     const taskRef = useRef(taskAnchorEl);
     const open = Boolean(anchorEl);
-    const tapRef = useRef(anchorEl);
     const openTaskMore = Boolean(taskAnchorEl);
     const initTaskInfo = Object.freeze({
         containerId: "",
@@ -258,7 +256,7 @@ export default function Project(props) {
                 setIdentity(res.userIdentity);
             }
         });
-    }, []);
+    }, [projectId]);
 
     useEffect(() => {
         projectService.getProjectContent(projectId).then(res => {

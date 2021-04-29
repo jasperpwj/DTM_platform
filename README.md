@@ -1,5 +1,4 @@
-# DTM_platform (Capstone Project)
-Dynamic Task Management Platform Capstone Project(on progress...)
+# Dynamic Task Management Platform
 
 
 ## Usage

@@ -80,6 +80,7 @@ const useStyles = makeStyles((theme) => ({
 
 function TabContent(props) {
     const {children, value, index, ...other} = props;
+    console.log(other);
 
     return (
         <Grid

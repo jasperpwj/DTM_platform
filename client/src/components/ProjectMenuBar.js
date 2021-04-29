@@ -3,7 +3,6 @@ import { makeStyles } from "@material-ui/core";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import AvatarGroup from "@material-ui/lab/AvatarGroup";
-import Avatar from "@material-ui/core/Avatar";
 import ProjectMembers from "./ProjectMembers";
 import AddMember from "./AddMember";
 import ProjectSettingButton from "./projectSettingButton";
@@ -39,7 +38,7 @@ export default function ProjectMenuBar(props) {
                 setIdentity(res.userIdentity);
             }
         });
-    }, []);
+    }, [props.value.projectId]);
 
     return (
         <React.Fragment>

@@ -1,9 +1,12 @@
 const mongoCollection = require("../config/mongoCollections");
 const projects = mongoCollection.projects;
 const tasks = mongoCollection.tasks;
+const users = mongoCollection.users;
 
 const { ObjectId } = require("mongodb");
 const projectHelper = require("./projects.helper");
+const userHelper = require("./user.helper");
+const timeHelper = require("./time.helper");
 
 async function addProject(req, res) {
     if (!req.body.projectName || typeof req.body.projectName !== 'string') throw 'name of project is empty or invalid input type';
@@ -12,7 +15,7 @@ async function addProject(req, res) {
         projectName: req.body.projectName,
         status: "open",  // open: open, closed: closed or completed
         initial_Date: new Date().toLocaleString(),
-        lastUpdateTime: new Date().toLocaleDateString(),
+        lastUpdateTime: new Date().toLocaleString(),
         description: (req.body.description) ? req.body.description : "No description",
         visibility: req.body.visibility, // public or private
         owner: req.id,  // owner is the string of email
@@ -97,7 +100,7 @@ async function editProject(req, res) {
     if (req.body.status) {
         editInfo.status = req.body.status;
     }
-    editInfo.lastUpdateTime = new Date().toLocaleDateString();
+    editInfo.lastUpdateTime = new Date().toLocaleString();
     if (JSON.stringify(editInfo) !== '{}') {
         const editStatus = await projectCollection.updateOne({ _id: objId }, { $set: editInfo });
         if (editStatus.modifiedCount === 0) throw "Failed to edit project's info";
@@ -284,6 +287,108 @@ async function getUserIdentity(req, res) {
     return res.status(404).send({ message: "User not found" });
 }
 
+async function getProjectDashboardContent(req, res) {
+    const objId = ObjectId.createFromHexString(req.body.projectId);
+    const projectCollection = await projects();
+    const project = await projectCollection.findOne({ _id: objId });
+    let dashboardContent = {};
+    if (!project) {
+        res.status(400).send({ message: "Project not found" })
+    }
+    //fetch project summary information
+    const usersCollection = await users();
+    const owner = await usersCollection.findOne({_id:ObjectId.createFromHexString(project.owner)});
+    let developers = [];
+    if(project.developers.length > 0) {
+        for(let developerId of project.developers) {
+            let member = await userHelper.getUserNameByUserId(developerId);
+            await developers.push(member);
+        }
+    }
+    let clients = [];
+    if(project.clients.length > 0) {
+        for(let clientId of project.clients) {
+            let member = await userHelper.getUserNameByUserId(clientId);
+            await clients.push(member);
+        }
+    }
+    let timeInterval = Math.abs(new Date(project.lastUpdateTime) - new Date(project.initial_Date))/1000;
+    let durations = "";
+    if(durations < 86400) {
+        durations = (Math.floor(timeInterval/3600)%24).toString() + " hours";
+    } else {
+        durations = Math.floor(timeInterval/86400).toString() + " days";
+    }
+    let summary = {
+        projectManager: owner.firstName + owner.lastName,
+        teams: developers,
+        clients: clients,
+        initialDate: new Date(project.initial_Date).toLocaleString(),
+        lastUpdateTime: project.lastUpdateTime,
+        duration: durations,
+        status: project.status,
+    };
+    dashboardContent['summary'] = summary;
+
+    let projectProgress = {
+        active: {},
+        completed: {},
+        issue: {},
+    };
+    let timeSeries = {
+        active: {},
+        completed: {},
+        issue: {},
+    };
+    let pieChart = {
+        active: 0,
+        completed: 0,
+        issue: 0,
+    };
+    let radarChart = {
+        active: {},
+        completed: {},
+        issue: {},
+    };
+    const tasksCollection = await tasks();
+    for(let taskId of project.tasks) {
+        let taskObj = await tasksCollection.findOne({_id: taskId});
+        if(!taskObj) throw `Cannot find task by id: ${taskId}`;
+        //fetch project progress information
+        if(await timeHelper.calculateDays(taskObj.createDate, new Date()) < 7) {
+            let dayName = await timeHelper.calculateDayName(taskObj.createDate, 'abbr');
+            if(dayName && projectProgress[taskObj.status].hasOwnProperty(dayName)) {
+                projectProgress[taskObj.status][dayName] += 1;
+            } else {
+                projectProgress[taskObj.status][dayName] = 1;
+            }
+        }
+        //fetch time series info
+        let dayObj = await new Date(taskObj.lastUpdatedTime).toLocaleDateString();
+        if(timeSeries[taskObj.status].hasOwnProperty(dayObj)) {
+            timeSeries[taskObj.status][dayObj] += 1;
+        } else {
+            timeSeries[taskObj.status][dayObj] = 1;
+        }
+        // fetch pie chart info
+        pieChart[taskObj.status] += 1;
+        //fetch radar info
+        let editor = await userHelper.getUserNameByUserId(taskObj.editor);
+        if(radarChart[taskObj.status].hasOwnProperty(editor)) {
+            radarChart[taskObj.status][editor] += 1;
+        } else {
+            radarChart[taskObj.status][editor] = 1;
+        }
+
+    }
+    dashboardContent["progress"] = projectProgress;
+    dashboardContent["timeSeries"] = timeSeries;
+    dashboardContent["pieChart"] = pieChart;
+    dashboardContent["radarChart"] = radarChart;
+
+    return res.status(200).json({dashboardContent})
+}
+
 module.exports = {
     addProject,
     getOpenProjects,
@@ -297,4 +402,5 @@ module.exports = {
     getDashboardData,
     deleteProjectMember,
     getUserIdentity,
+    getProjectDashboardContent,
 };

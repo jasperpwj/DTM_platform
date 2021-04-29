@@ -88,7 +88,7 @@ export default function ClosedProjects(props) {
                                                 }}
                                             >{project.projectName}</Link></TableCell>
                                             <TableCell align="center" width={50}>{project.visibility}</TableCell>
-                                            <TableCell align="center" width={150}>{project.lastUpdateTime}</TableCell>
+                                            <TableCell align="center" width={180}>{project.lastUpdateTime}</TableCell>
                                             <TableCell align="center">{project.description}</TableCell>
                                             <TableCell align="right">
                                                 <IconButton

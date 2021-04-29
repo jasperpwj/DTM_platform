@@ -1,6 +1,6 @@
 import React, {useState, useEffect}from "react";
 import UnauthNavBar from "./navigation/UnauthNavBar";
-import {makeStyles,ThemeProvider} from "@material-ui/core";
+import {makeStyles} from "@material-ui/core";
 import Typography from "@material-ui/core/Typography";
 import Paper from '@material-ui/core/Paper';
 import Background from '../bkg.jpg';
@@ -86,7 +86,7 @@ export default function Home(props) {
                             <Typography variant="h6" component="p">customizable features,</Typography>
                             <Typography variant="h6" component="p">customer involvement</Typography>
                             <Typography variant="h6" component="p">"ALL WITH A DRAG !!"</Typography>
-                            <img src={test} width="200" height="100"/>
+                            <img alt="squid gif" src={test} width="200" height="100"/>
                             <br/>
                         </Paper>
                     </Grid>
