@@ -21,7 +21,7 @@ const useStyles = makeStyles((theme) => ({
         backgroundColor: "white",
     },
     paper1: {
-        marginLeft: '1%',
+        marginLeft: '2%',
         padding: 20,
         height: 100,
         width: 300,
@@ -85,12 +85,12 @@ export default function ProjectDashboard(props) {
             <ProjectMenuBar value={{projectName: projectContent && projectContent.projectName, projectId: projectId}}/>
             <Grid container direction="row" justify="flex-start">
                 <Grid item>
-                    <Paper elevation={10} className={classes.paper1}>
+                    <Paper elevation={0} className={classes.paper1}>
                         Project Member:
                     </Paper>
                 </Grid>
                 <Grid item>
-                    <Paper elevation={10} className={classes.paper1}>
+                    <Paper elevation={0} className={classes.paper1}>
                         Project Member:
                     </Paper>
                 </Grid>
