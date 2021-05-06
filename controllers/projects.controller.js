@@ -314,7 +314,7 @@ async function getProjectDashboardContent(req, res) {
     }
     let timeInterval = Math.abs(new Date(project.lastUpdateTime) - new Date(project.initial_Date))/1000;
     let durations = "";
-    if(durations < 86400) {
+    if(parseInt(durations) < 86400) {
         durations = (Math.floor(timeInterval/3600)%24).toString() + " hours";
     } else {
         durations = Math.floor(timeInterval/86400).toString() + " days";

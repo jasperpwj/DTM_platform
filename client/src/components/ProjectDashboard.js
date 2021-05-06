@@ -98,7 +98,7 @@ export default function ProjectDashboard(props) {
         });
         projectService.getProjectDashboardContent(projectId)
             .then(res => {
-                console.log(res.dashboardContent.radarChart);
+                // console.log(res.dashboardContent.radarChart);
                 setProjectSummary(res.dashboardContent.summary);
                 setProgress(res.dashboardContent.progress);
                 setTimeSeries(res.dashboardContent.timeSeries);
@@ -362,7 +362,6 @@ export default function ProjectDashboard(props) {
                     </Grid>
                     <Grid container item xs={3} direction='column' id='column2' className={classes.column3}>
                         {radarData && Object.entries(radarData).map(([key, value]) => {
-                            console.log(value)
                             return (
                                 <Grid container item className={classes.col3row1} style={{flexGrow: 1}} key={key}>
                                     <Paper key={key} style={{width:"100%", padding: 20}}>

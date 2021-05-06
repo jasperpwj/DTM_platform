@@ -118,9 +118,9 @@ export default function DashboardPage() {
                                                 href={`/projects/${project._id}`}
                                             >
                                                 <VictoryPie
-                                                    cornerRadius={({ datum }) => datum.y * 2}
-                                                    innerRadius={40}
-                                                    padAngle={({ datum }) => datum.y*2}
+                                                    cornerRadius={0.5}
+                                                    innerRadius={60}
+                                                    padAngle={4}
                                                     colorScale={["gold", "orange", "tomato"]}
                                                     data={[
                                                         { x: "activeTask", y: (project.activeTask)? project.activeTask: 1, label: `Active: ${project.activeTask}`},
