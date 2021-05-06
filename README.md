@@ -36,5 +36,8 @@ the pictures below are snapshots of our product. Feel free to play with our appl
 
 <img width="1571" alt="Screen Shot 2021-05-05 at 7 31 03 PM" src="https://user-images.githubusercontent.com/53663744/117238748-7702c980-adfb-11eb-9339-f34fe69f203f.png">
 
+![Screen Shot 2021-05-06 at 9 46 55 AM](https://user-images.githubusercontent.com/53663744/117309109-22d60480-ae50-11eb-9cdd-18bc4a5d61d3.png)
+
+
 
 And have fun!!
