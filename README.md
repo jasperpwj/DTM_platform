@@ -28,5 +28,13 @@ and open another terminal to locate to the client and start the app by:
 ```
 npm start
 ```
+the pictures below are snapshots of our product. Feel free to play with our application and have fun!
+
+<img width="1565" alt="Screen Shot 2021-05-05 at 7 30 22 PM" src="https://user-images.githubusercontent.com/53663744/117238717-6e11f800-adfb-11eb-9f30-6834575d4b4d.png">
+
+<img width="1571" alt="Screen Shot 2021-05-05 at 7 14 26 PM" src="https://user-images.githubusercontent.com/53663744/117238738-71a57f00-adfb-11eb-82db-0daa8205a63a.png">
+
+<img width="1571" alt="Screen Shot 2021-05-05 at 7 31 03 PM" src="https://user-images.githubusercontent.com/53663744/117238748-7702c980-adfb-11eb-9339-f34fe69f203f.png">
+
 
 And have fun!!
